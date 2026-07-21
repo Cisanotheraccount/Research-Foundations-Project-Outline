@@ -259,13 +259,6 @@ input {
   letter-spacing: -0.05em;
 }
 
-.hero-visual .year-pill {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.year-pill,
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -1179,7 +1172,6 @@ footer {
   .hero__intro { font-size: 18px; }
   .hero-visual { min-height: 720px; margin-top: 58px; border-radius: 24px; }
   .hero-visual__heading { display: block; }
-  .year-pill { margin-top: 16px; }
   .terrain-frame { inset: 205px 0 94px; }
   .terrain-key { display: none; }
   .visual-caption { left: 24px; right: 24px; bottom: 22px; max-width: none; text-align: left; }

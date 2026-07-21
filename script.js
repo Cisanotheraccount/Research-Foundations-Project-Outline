@@ -160,6 +160,149 @@ function drawHexPrism(context, x, y, radius, height, palette = {}) {
   polygon(context, top, palette.top || "#ff8a2b", palette.stroke || "rgba(255,190,125,.45)", 0.65);
 }
 
+function createHoneycombLayout(width, height, options = {}) {
+  const radius = Math.min(width * (options.radiusRatio || 0.027), height * (options.heightRadiusRatio || 0.072));
+  const rootThree = Math.sqrt(3);
+  const columns = 16;
+  const rowsAcross = 4;
+  const maxX = (columns - 1) * radius * 1.5;
+  const minY = -rootThree * radius * 0.5;
+  const maxY = (rowsAcross - 1) * rootThree * radius + rootThree * radius;
+  const angle = (options.angleDegrees || -24) * (Math.PI / 180);
+
+  return {
+    radius,
+    rootThree,
+    columns,
+    rowsAcross,
+    maxX,
+    minY,
+    maxY,
+    localCenterX: maxX * 0.5,
+    localCenterY: (minY + maxY) * 0.5,
+    centerX: width * (options.centerXRatio || 0.52),
+    centerY: height * (options.centerYRatio || 0.63),
+    depthScale: options.depthScale || 0.66,
+    cosine: Math.cos(angle),
+    sine: Math.sin(angle),
+  };
+}
+
+function projectHoneyPoint(layout, x, y) {
+  const localX = x - layout.localCenterX;
+  const localY = (y - layout.localCenterY) * layout.depthScale;
+  return {
+    x: layout.centerX + localX * layout.cosine - localY * layout.sine,
+    y: layout.centerY + localX * layout.sine + localY * layout.cosine,
+  };
+}
+
+function projectedHexagon(layout, centerX, centerY) {
+  const r = layout.radius;
+  const halfDepth = layout.rootThree * r * 0.5;
+  return [
+    { x: centerX + r, y: centerY },
+    { x: centerX + r * 0.5, y: centerY + halfDepth },
+    { x: centerX - r * 0.5, y: centerY + halfDepth },
+    { x: centerX - r, y: centerY },
+    { x: centerX - r * 0.5, y: centerY - halfDepth },
+    { x: centerX + r * 0.5, y: centerY - halfDepth },
+  ].map((point) => projectHoneyPoint(layout, point.x, point.y));
+}
+
+function drawProjectedHexPrism(context, base, height, palette = {}) {
+  const top = base.map((point) => ({ x: point.x, y: point.y - height }));
+  const centerX = base.reduce((sum, point) => sum + point.x, 0) / base.length;
+  const centerY = base.reduce((sum, point) => sum + point.y, 0) / base.length;
+
+  for (let index = 0; index < base.length; index += 1) {
+    const next = (index + 1) % base.length;
+    const midpointY = (base[index].y + base[next].y) * 0.5;
+    if (midpointY < centerY - 0.25) continue;
+    const midpointX = (base[index].x + base[next].x) * 0.5;
+    polygon(context, [top[index], top[next], base[next], base[index]], midpointX < centerX
+      ? (palette.left || "#b74217")
+      : (palette.right || "#df5b21"));
+  }
+
+  polygon(context, top, palette.top || "#ff8a3d", palette.stroke || "rgba(255,214,174,.7)", 0.65);
+  return { base, top, center: { x: centerX, y: centerY }, topCenter: { x: centerX, y: centerY - height } };
+}
+
+function drawHoneycombTerrain(context, width, height, rows, options = {}) {
+  const layout = createHoneycombLayout(width, height, options);
+  const r = layout.radius;
+  const frame = [
+    { x: -r * 1.3, y: layout.localCenterY },
+    { x: -r * 0.25, y: layout.minY - r * 0.48 },
+    { x: layout.maxX + r * 0.25, y: layout.minY - r * 0.48 },
+    { x: layout.maxX + r * 1.3, y: layout.localCenterY },
+    { x: layout.maxX + r * 0.25, y: layout.maxY + r * 0.48 },
+    { x: -r * 0.25, y: layout.maxY + r * 0.48 },
+  ].map((point) => projectHoneyPoint(layout, point.x, point.y));
+
+  const slabDepth = Math.max(5, height * 0.018);
+  const slab = frame.map((point) => ({ x: point.x, y: point.y + slabDepth }));
+  const shadow = slab.map((point) => ({ x: point.x + width * 0.01, y: point.y + slabDepth }));
+  context.save();
+  context.shadowColor = "rgba(0,0,0,.72)";
+  context.shadowBlur = Math.max(16, width * 0.025);
+  polygon(context, shadow, "rgba(0,0,0,.46)");
+  context.restore();
+  polygon(context, slab, "#777775");
+  polygon(context, frame, "#f3f1e9", "rgba(255,255,255,.9)", 1);
+
+  const values = rows.map((row) => Number(row.rent)).filter(Number.isFinite);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const cells = rows.slice(0, 64).map((row, index) => {
+    const column = Math.floor(index / layout.rowsAcross);
+    const across = index % layout.rowsAcross;
+    const localX = column * r * 1.5;
+    const localY = across * layout.rootThree * r + (column % 2) * layout.rootThree * r * 0.5;
+    const value = Number(row.rent);
+    const normalized = Number.isFinite(value) && max > min ? (value - min) / (max - min) : 0.08;
+    const prismHeight = height * ((options.minimumHeightRatio || 0.045) + normalized * (options.heightRangeRatio || 0.23));
+    const base = projectedHexagon(layout, localX, localY);
+    const center = projectHoneyPoint(layout, localX, localY);
+    return { base, center, prismHeight, normalized, index };
+  }).sort((a, b) => a.center.y - b.center.y);
+
+  const rendered = [];
+  cells.forEach((cell) => {
+    const warmth = Math.round(44 + cell.normalized * 16);
+    rendered[cell.index] = drawProjectedHexPrism(context, cell.base, cell.prismHeight, {
+      left: `hsl(16 78% ${Math.max(28, warmth - 16)}%)`,
+      right: `hsl(18 82% ${Math.max(34, warmth - 9)}%)`,
+      top: `hsl(24 95% ${warmth}%)`,
+    });
+  });
+
+  if (options.showMotion) {
+    [8, 25, 42, 57].forEach((index) => {
+      const prism = rendered[index];
+      if (!prism) return;
+      const x = prism.topCenter.x + r * 0.18;
+      const bottom = prism.topCenter.y - r * 0.7;
+      const top = bottom - Math.max(13, height * 0.09);
+      context.strokeStyle = "rgba(255,255,255,.72)";
+      context.lineWidth = Math.max(1, width * 0.002);
+      context.beginPath();
+      context.moveTo(x, bottom);
+      context.lineTo(x, top);
+      context.stroke();
+      context.fillStyle = "#ff8a3d";
+      polygon(context, [
+        { x, y: top - 4 },
+        { x: x - 4, y: top + 3 },
+        { x: x + 4, y: top + 3 },
+      ], "#ff8a3d");
+    });
+  }
+
+  return { layout, rendered };
+}
+
 function drawTerrainScene(canvas, rows, options = {}) {
   const setup = setupCanvas(canvas);
   if (!setup) return;
@@ -186,62 +329,22 @@ function drawTerrainScene(canvas, rows, options = {}) {
     context.stroke();
   }
 
-  const geometry = islandGeometry(width, height);
-  const depth = Math.max(8, height * 0.022);
-  const shadowPoints = geometry.points.map((point) => ({ x: point.x + width * 0.012, y: point.y + depth * 1.8 }));
-  context.save();
-  context.shadowColor = "rgba(0,0,0,.7)";
-  context.shadowBlur = 28;
-  polygon(context, shadowPoints, "rgba(0,0,0,.48)");
-  context.restore();
-
-  const slabPoints = geometry.points.map((point) => ({ x: point.x, y: point.y + depth }));
-  polygon(context, slabPoints, "#777775");
-  polygon(context, geometry.points, "#f3f1e9", "rgba(255,255,255,.9)", 1.2);
-
-  context.save();
-  polygon(context, geometry.points, null, "rgba(35,35,35,.25)", 0.8);
-  context.clip();
-  context.strokeStyle = "rgba(30,30,30,.18)";
-  context.lineWidth = 0.8;
-  for (let index = 1; index < 15; index += 1) {
-    const t = index / 15;
-    const center = centerAt(width, height, t);
-    const span = islandHalfWidth(width, t) * 1.75;
-    context.beginPath();
-    context.moveTo(center.x - geometry.perpendicular.x * span, center.y - geometry.perpendicular.y * span);
-    context.lineTo(center.x + geometry.perpendicular.x * span, center.y + geometry.perpendicular.y * span);
-    context.stroke();
-  }
-  context.restore();
-
-  const values = rows.map((row) => Number(row.rent)).filter(Number.isFinite);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const radius = Math.max(4.2, Math.min(8, width / 120));
-  const minHeight = Math.max(15, height * 0.045);
-  const maxHeight = Math.max(72, height * 0.28);
-
-  rows.slice(0, 64).forEach((row, index) => {
-    const rowIndex = Math.floor(index / 4);
-    const columnIndex = index % 4;
-    const t = 0.055 + (rowIndex / 15) * 0.89;
-    const center = centerAt(width, height, t);
-    const halfWidth = islandHalfWidth(width, t);
-    const across = [-0.72, -0.24, 0.24, 0.72][columnIndex];
-    const x = center.x + geometry.perpendicular.x * halfWidth * across;
-    const y = center.y + geometry.perpendicular.y * halfWidth * across;
-    const value = Number(row.rent);
-    const normalized = Number.isFinite(value) && max > min ? (value - min) / (max - min) : 0.08;
-    const barHeight = minHeight + normalized * (maxHeight - minHeight);
-    drawHexPrism(context, x, y, radius, barHeight);
+  const honeycomb = drawHoneycombTerrain(context, width, height, rows, {
+    centerXRatio: 0.52,
+    centerYRatio: 0.55,
+    radiusRatio: 0.027,
+    heightRadiusRatio: 0.072,
+    minimumHeightRatio: 0.045,
+    heightRangeRatio: 0.23,
   });
 
   context.fillStyle = "rgba(255,255,255,.48)";
   context.font = `600 ${Math.max(9, Math.min(12, width / 100))}px -apple-system, BlinkMacSystemFont, sans-serif`;
   context.letterSpacing = "1px";
-  context.fillText("NORTH", width * 0.82, height * 0.15);
-  context.fillText("LOWER MANHATTAN", width * 0.12, height * 0.84);
+  const lower = projectHoneyPoint(honeycomb.layout, -honeycomb.layout.radius * 0.6, honeycomb.layout.maxY);
+  const north = projectHoneyPoint(honeycomb.layout, honeycomb.layout.maxX, honeycomb.layout.minY);
+  context.fillText("NORTH", north.x + honeycomb.layout.radius, north.y - honeycomb.layout.radius);
+  context.fillText("LOWER MANHATTAN", lower.x - honeycomb.layout.radius * 2.4, lower.y + honeycomb.layout.radius * 2.4);
 }
 
 function drawPressure(canvas, rows) {
@@ -287,38 +390,22 @@ function drawPlanA(canvas, rows) {
   context.fillStyle = "#080809";
   context.fillRect(0, 0, width, height);
 
-  const baseY = height * 0.78;
-  polygon(context, [
-    { x: width * 0.08, y: baseY },
-    { x: width * 0.84, y: baseY },
-    { x: width * 0.94, y: baseY + height * 0.08 },
-    { x: width * 0.18, y: baseY + height * 0.08 },
-  ], "#efeee8", "rgba(255,255,255,.5)", 1);
-
-  const eight = rows.slice(28, 36);
-  const values = eight.map((row) => Number(row.rent)).filter(Number.isFinite);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  eight.forEach((row, index) => {
-    const value = Number(row.rent);
-    const normalized = max > min ? (value - min) / (max - min) : 0.5;
-    const x = width * (0.17 + index * 0.095);
-    const y = baseY + (index % 2 ? height * 0.022 : 0);
-    const h = height * (0.18 + normalized * 0.45);
-    drawHexPrism(context, x, y, Math.max(6, width * 0.015), h);
-    context.strokeStyle = "rgba(255,255,255,.18)";
-    context.beginPath();
-    context.moveTo(x, baseY + height * 0.09);
-    context.lineTo(x, height * 0.93);
-    context.stroke();
+  drawHoneycombTerrain(context, width, height, rows, {
+    centerXRatio: 0.53,
+    centerYRatio: 0.68,
+    radiusRatio: 0.026,
+    heightRadiusRatio: 0.068,
+    minimumHeightRatio: 0.035,
+    heightRangeRatio: 0.19,
+    showMotion: true,
   });
 
   context.fillStyle = "#f36b21";
   context.font = `700 ${Math.max(11, width * 0.025)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-  context.fillText("8-COLUMN MOTION TEST", width * 0.07, height * 0.14);
+  context.fillText("64-CELL KINETIC HONEYCOMB", width * 0.07, height * 0.13);
   context.fillStyle = "rgba(255,255,255,.5)";
   context.font = `600 ${Math.max(8, width * 0.017)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-  context.fillText("GUIDE PLATE / SLIDING COLUMNS / COMMON DRIVE", width * 0.07, height * 0.22);
+  context.fillText("CONNECTED HEXAGONS / INDEPENDENT VERTICAL MOTION", width * 0.07, height * 0.21);
 }
 
 function drawPlanB(canvas) {
@@ -426,14 +513,14 @@ function drawPoster(canvas, rows) {
   const yearTop = height * 0.59;
   const gap = width * 0.018;
   const yearWidth = (width - margin * 2 - gap * 3) / 4;
-  [2010, 2015, 2020, 2025].forEach((year, index) => {
+  ["EARLY", "MID I", "MID II", "RECENT"].forEach((period, index) => {
     const x = margin + index * (yearWidth + gap);
     context.strokeStyle = "#171717";
     context.strokeRect(x, yearTop, yearWidth, height * 0.105);
     context.fillStyle = "#171717";
     context.font = `700 ${Math.max(7, width * 0.021)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-    context.fillText(String(year), x + 5, yearTop + 12);
-    context.strokeStyle = year === 2010 ? "rgba(23,23,23,.22)" : "#f36b21";
+    context.fillText(period, x + 5, yearTop + 12);
+    context.strokeStyle = index === 0 ? "rgba(23,23,23,.22)" : "#f36b21";
     context.beginPath();
     context.moveTo(x + 7, yearTop + height * 0.078);
     for (let step = 0; step < 5; step += 1) {
@@ -457,7 +544,7 @@ function drawPoster(canvas, rows) {
   }
   context.fillStyle = "#171717";
   context.font = `700 ${Math.max(7, width * 0.02)}px -apple-system, BlinkMacSystemFont, sans-serif`;
-  context.fillText("TIME SERIES / 2010—2025", margin, timelineY + 18);
+  context.fillText("RENT CHANGE OVER TIME", margin, timelineY + 18);
 
   const detailTop = height * 0.79;
   const detailHeight = height * 0.16;
@@ -488,13 +575,9 @@ function drawPoster(canvas, rows) {
 }
 
 function updateCaption(rows) {
-  const values = rows.map((row) => Number(row.rent)).filter(Number.isFinite).sort((a, b) => a - b);
-  if (!values.length) return;
-  const middle = Math.floor(values.length / 2);
-  const median = values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
   const caption = document.querySelector("#terrain-caption");
   if (caption) {
-    caption.textContent = `2025 median across the 64 designed cells: ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(median)}. Orange columns show asking-rent estimates above a white Manhattan ground plane.`;
+    caption.textContent = "Sixty-four connected hexagonal cells form Manhattan. Each column can rise and fall independently to translate rent data into a moving terrain.";
   }
 }
 
@@ -524,7 +607,8 @@ scheduleRender();
 if (window.d3) {
   d3.csv("./data/hex_cell_year.csv")
     .then((rows) => {
-      const selected = rows.filter((row) => Number(row.year) === 2025);
+      const latestYear = Math.max(...rows.map((row) => Number(row.year)).filter(Number.isFinite));
+      const selected = rows.filter((row) => Number(row.year) === latestYear);
       if (selected.length === 64) terrainRows = selected;
       updateCaption(terrainRows);
       scheduleRender();

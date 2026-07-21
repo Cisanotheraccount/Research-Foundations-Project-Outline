@@ -62,20 +62,19 @@
           <div class="hero-visual__heading">
             <div>
               <p class="overline">Manhattan asking-rent terrain</p>
-              <h2 id="terrain-title">64 cells. One changing city.</h2>
+              <h2 id="terrain-title">64 connected cells. One moving city.</h2>
             </div>
-            <span class="year-pill">2025</span>
           </div>
           <div class="terrain-frame" aria-hidden="true">
             <canvas id="terrain-canvas"></canvas>
             <div class="terrain-key">
-              <span><i></i>Asking rent</span>
-              <span><b></b>Manhattan</span>
+              <span><i></i>Rent height</span>
+              <span><b></b>Hexagonal field</span>
             </div>
           </div>
           <p id="terrain-caption" class="visual-caption">
-            Column height and color represent ZIP-level asking-rent estimates. The same values can drive
-            the website, drawing, kinetic model, and projection.
+            Sixty-four connected hexagonal cells form Manhattan. Each column can rise and fall
+            independently to translate rent data into a moving terrain.
           </p>
         </div>
       </section>
@@ -220,14 +219,14 @@
             <h2>64 cells become a temporal rent terrain.</h2>
             <p>D3 joins every cell to its annual rent estimate, then converts one value into color, height, drawing geometry, and fabrication instructions.</p>
             <ul class="check-list">
-              <li>2010–2025 timeline</li>
+              <li>Historical rent timeline</li>
               <li>Neighborhood and rent labels</li>
               <li>Visible missing-data states</li>
               <li>One dataset across every output</li>
             </ul>
           </div>
           <div class="data-card" aria-label="Rent data translation diagram">
-            <div class="data-card__value"><span>ASKING RENT</span><strong>$4,624</strong><small>example · 2025</small></div>
+            <div class="data-card__value"><span>ASKING RENT</span><strong>$4,624</strong><small>example data value</small></div>
             <div class="data-card__arrow">↓</div>
             <div class="translation-grid">
               <span>Color<strong>Orange</strong></span>
@@ -260,8 +259,8 @@
               <span class="status-pill">Primary Material Direction</span>
               <span class="plan-letter">A</span>
             </div>
-            <h3>64-cell kinetic rent terrain</h3>
-            <p>Sixty-four 3D-printed hexagonal columns form a physical Manhattan. The full digital simulation moves first; an eight-column mechanism tests whether the physical system can scale.</p>
+            <h3>64-cell kinetic honeycomb terrain</h3>
+            <p>Sixty-four 3D-printed hexagonal columns touch edge-to-edge to form a Manhattan-shaped honeycomb. Each cell moves vertically and independently, turning rent change into a kinetic topography. A smaller mechanism prototype will test whether the full system can scale.</p>
             <div class="plan-diagram" aria-hidden="true"><canvas id="plan-a-canvas"></canvas></div>
             <h4>Prototype tests</h4>
             <ul><li>Friction</li><li>Synchronization</li><li>Repeatability</li><li>Fabrication tolerances</li><li>Motor load</li></ul>
@@ -293,7 +292,7 @@
             <p>A suspended vertical field connects the digital rent terrain to time, material, mechanism, projection, and source notes.</p>
             <ul>
               <li>Large central Manhattan terrain</li>
-              <li>2010, 2015, 2020, and 2025 overlays</li>
+              <li>Four temporal rent overlays</li>
               <li>Rent timeline below the main drawing</li>
               <li>Plan A mechanical section</li>
               <li>Plan B projection geometry</li>
@@ -343,7 +342,7 @@
           <a href="https://www.nyc.gov/content/planning/pages/resources/datasets/nyc-3d-model" target="_blank" rel="noreferrer"><span>Model</span><strong>NYC Department of City Planning · NYC 3D Model</strong><i>↗</i></a>
           <a href="https://mitpress.mit.edu/9780262536530/data-feminism/" target="_blank" rel="noreferrer"><span>Theory</span><strong>D’Ignazio + Klein · Data Feminism</strong><i>↗</i></a>
         </div>
-        <p class="data-note">Data note: 2015–2025 values are annual averages from Zillow’s smoothed ZIP-level asking-rent estimates. Years without source data remain blank rather than interpolated.</p>
+        <p class="data-note">Data note: values are annual averages from Zillow’s smoothed ZIP-level asking-rent estimates. Periods without source data remain blank rather than interpolated.</p>
       </section>
     </main>
 
