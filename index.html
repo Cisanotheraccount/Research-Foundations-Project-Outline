@@ -66,9 +66,12 @@
             </div>
             <span class="year-pill">2025</span>
           </div>
-          <div class="terrain-frame">
-            <div id="terrain-grid" class="terrain-grid" aria-hidden="true"></div>
-            <div class="terrain-glow" aria-hidden="true"></div>
+          <div class="terrain-frame" aria-hidden="true">
+            <canvas id="terrain-canvas"></canvas>
+            <div class="terrain-key">
+              <span><i></i>Asking rent</span>
+              <span><b></b>Manhattan</span>
+            </div>
           </div>
           <p id="terrain-caption" class="visual-caption">
             Column height and color represent ZIP-level asking-rent estimates. The same values can drive
@@ -116,13 +119,13 @@
           <h2 id="fields-title">A project between numbers and matter.</h2>
         </div>
         <div class="field-map" role="img" aria-label="Housing, mapping, data, mechanics, projection, and computation connected around the project">
+          <span class="field-node field-node--housing">Housing</span>
+          <span class="field-node field-node--mapping">Mapping</span>
+          <span class="field-node field-node--computation">Computation</span>
           <span class="field-map__center">Rent as<br />Terrain</span>
-          <span style="--x: 15%; --y: 22%">Housing</span>
-          <span style="--x: 80%; --y: 18%">Mapping</span>
-          <span style="--x: 87%; --y: 64%">Data</span>
-          <span style="--x: 62%; --y: 84%">Mechanics</span>
-          <span style="--x: 18%; --y: 78%">Projection</span>
-          <span style="--x: 8%; --y: 48%">Computation</span>
+          <span class="field-node field-node--data">Data</span>
+          <span class="field-node field-node--projection">Projection</span>
+          <span class="field-node field-node--mechanics">Mechanics</span>
         </div>
       </section>
 
@@ -237,7 +240,7 @@
       </section>
 
       <section class="argument section-shell reveal">
-        <div class="argument__visual" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="argument__visual" aria-hidden="true"><canvas id="pressure-canvas"></canvas></div>
         <div class="argument__copy">
           <p class="eyebrow">Visual representation + rhetorical argument</p>
           <h2>Rent is not an isolated number.</h2>
@@ -259,9 +262,7 @@
             </div>
             <h3>64-cell kinetic rent terrain</h3>
             <p>Sixty-four 3D-printed hexagonal columns form a physical Manhattan. The full digital simulation moves first; an eight-column mechanism tests whether the physical system can scale.</p>
-            <div class="mini-columns" aria-hidden="true">
-              <i style="--h: 38%"></i><i style="--h: 56%"></i><i style="--h: 72%"></i><i style="--h: 45%"></i><i style="--h: 88%"></i><i style="--h: 62%"></i><i style="--h: 76%"></i><i style="--h: 51%"></i>
-            </div>
+            <div class="plan-diagram" aria-hidden="true"><canvas id="plan-a-canvas"></canvas></div>
             <h4>Prototype tests</h4>
             <ul><li>Friction</li><li>Synchronization</li><li>Repeatability</li><li>Fabrication tolerances</li><li>Motor load</li></ul>
           </article>
@@ -273,9 +274,7 @@
             </div>
             <h3>Projection-mapped Manhattan</h3>
             <p>A simplified white 3D-printed Manhattan receives the same rent timeline as projected color, labels, and motion. A calibration mode aligns the image to the model.</p>
-            <div class="projection-diagram" aria-hidden="true">
-              <span class="projector"></span><span class="beam"></span><span class="city"></span>
-            </div>
+            <div class="plan-diagram" aria-hidden="true"><canvas id="plan-b-canvas"></canvas></div>
             <h4>System tests</h4>
             <ul><li>Model simplification</li><li>Projection alignment</li><li>Ambient light</li><li>Color readability</li><li>Playback output</li></ul>
           </article>
@@ -301,10 +300,7 @@
             </ul>
           </div>
           <div class="poster" role="img" aria-label="Schematic of the proposed 36 by 72 inch vertical computational datascape">
-            <header><span>RENT AS TERRAIN</span><span>36 × 72 IN</span></header>
-            <div class="poster__terrain"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <div class="poster__years"><span>2010</span><span>2015</span><span>2020</span><span>2025</span></div>
-            <div class="poster__details"><span>MECHANICAL SECTION</span><span>PROJECTION GEOMETRY</span></div>
+            <canvas id="drawing-canvas"></canvas>
           </div>
         </div>
       </section>
