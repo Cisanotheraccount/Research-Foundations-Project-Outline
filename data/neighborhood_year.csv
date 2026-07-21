@@ -1,0 +1,673 @@
+neighborhood,year,median_asking_rent,yoy_pct
+Inwood (10034),2010,,
+Inwood (10034),2011,,
+Inwood (10034),2012,,
+Inwood (10034),2013,,
+Inwood (10034),2014,,
+Inwood (10034),2015,1837,
+Inwood (10034),2016,1880,2.3
+Inwood (10034),2017,1908,1.5
+Inwood (10034),2018,1957,2.5
+Inwood (10034),2019,2002,2.3
+Inwood (10034),2020,2003,0.1
+Inwood (10034),2021,1951,-2.6
+Inwood (10034),2022,2109,8.1
+Inwood (10034),2023,2243,6.3
+Inwood (10034),2024,2310,3.0
+Inwood (10034),2025,2436,5.5
+Fort George (10040),2010,,
+Fort George (10040),2011,,
+Fort George (10040),2012,,
+Fort George (10040),2013,,
+Fort George (10040),2014,,
+Fort George (10040),2015,1910,
+Fort George (10040),2016,1967,3.0
+Fort George (10040),2017,2057,4.6
+Fort George (10040),2018,2112,2.7
+Fort George (10040),2019,2162,2.4
+Fort George (10040),2020,2166,0.2
+Fort George (10040),2021,2121,-2.1
+Fort George (10040),2022,2366,11.5
+Fort George (10040),2023,2506,5.9
+Fort George (10040),2024,2611,4.2
+Fort George (10040),2025,2707,3.7
+Washington Heights South (10033),2010,,
+Washington Heights South (10033),2011,,
+Washington Heights South (10033),2012,,
+Washington Heights South (10033),2013,,
+Washington Heights South (10033),2014,,
+Washington Heights South (10033),2015,2016,
+Washington Heights South (10033),2016,2097,4.0
+Washington Heights South (10033),2017,2131,1.6
+Washington Heights South (10033),2018,2213,3.8
+Washington Heights South (10033),2019,2251,1.7
+Washington Heights South (10033),2020,2230,-0.9
+Washington Heights South (10033),2021,2178,-2.3
+Washington Heights South (10033),2022,2409,10.6
+Washington Heights South (10033),2023,2563,6.4
+Washington Heights South (10033),2024,2602,1.5
+Washington Heights South (10033),2025,2766,6.3
+Washington Heights (10032),2010,,
+Washington Heights (10032),2011,,
+Washington Heights (10032),2012,,
+Washington Heights (10032),2013,,
+Washington Heights (10032),2014,,
+Washington Heights (10032),2015,2058,
+Washington Heights (10032),2016,2098,1.9
+Washington Heights (10032),2017,2201,4.9
+Washington Heights (10032),2018,2220,0.9
+Washington Heights (10032),2019,2260,1.8
+Washington Heights (10032),2020,2219,-1.8
+Washington Heights (10032),2021,2184,-1.6
+Washington Heights (10032),2022,2441,11.8
+Washington Heights (10032),2023,2574,5.4
+Washington Heights (10032),2024,2677,4.0
+Washington Heights (10032),2025,2799,4.6
+Sugar Hill (10039),2010,,
+Sugar Hill (10039),2011,,
+Sugar Hill (10039),2012,,
+Sugar Hill (10039),2013,,
+Sugar Hill (10039),2014,,
+Sugar Hill (10039),2015,,
+Sugar Hill (10039),2016,,
+Sugar Hill (10039),2017,,
+Sugar Hill (10039),2018,,
+Sugar Hill (10039),2019,,
+Sugar Hill (10039),2020,2384,
+Sugar Hill (10039),2021,2293,-3.8
+Sugar Hill (10039),2022,2613,13.9
+Sugar Hill (10039),2023,2788,6.7
+Sugar Hill (10039),2024,2907,4.3
+Sugar Hill (10039),2025,2960,1.8
+Hamilton Heights (10031),2010,,
+Hamilton Heights (10031),2011,,
+Hamilton Heights (10031),2012,,
+Hamilton Heights (10031),2013,,
+Hamilton Heights (10031),2014,,
+Hamilton Heights (10031),2015,2109,
+Hamilton Heights (10031),2016,2212,4.9
+Hamilton Heights (10031),2017,2259,2.1
+Hamilton Heights (10031),2018,2307,2.1
+Hamilton Heights (10031),2019,2359,2.2
+Hamilton Heights (10031),2020,2282,-3.2
+Hamilton Heights (10031),2021,2232,-2.2
+Hamilton Heights (10031),2022,2508,12.4
+Hamilton Heights (10031),2023,2675,6.6
+Hamilton Heights (10031),2024,2773,3.7
+Hamilton Heights (10031),2025,2921,5.3
+Central Harlem North (10030),2010,,
+Central Harlem North (10030),2011,,
+Central Harlem North (10030),2012,,
+Central Harlem North (10030),2013,,
+Central Harlem North (10030),2014,,
+Central Harlem North (10030),2015,,
+Central Harlem North (10030),2016,,
+Central Harlem North (10030),2017,,
+Central Harlem North (10030),2018,,
+Central Harlem North (10030),2019,,
+Central Harlem North (10030),2020,2130,
+Central Harlem North (10030),2021,2074,-2.6
+Central Harlem North (10030),2022,2329,12.3
+Central Harlem North (10030),2023,2464,5.8
+Central Harlem North (10030),2024,2524,2.4
+Central Harlem North (10030),2025,2633,4.3
+Morningside Heights (10027),2010,,
+Morningside Heights (10027),2011,,
+Morningside Heights (10027),2012,,
+Morningside Heights (10027),2013,,
+Morningside Heights (10027),2014,,
+Morningside Heights (10027),2015,2666,
+Morningside Heights (10027),2016,2755,3.3
+Morningside Heights (10027),2017,2796,1.5
+Morningside Heights (10027),2018,2857,2.2
+Morningside Heights (10027),2019,2925,2.4
+Morningside Heights (10027),2020,2826,-3.4
+Morningside Heights (10027),2021,2745,-2.9
+Morningside Heights (10027),2022,3164,15.3
+Morningside Heights (10027),2023,3335,5.4
+Morningside Heights (10027),2024,3452,3.5
+Morningside Heights (10027),2025,3636,5.3
+Central Harlem South (10026),2010,,
+Central Harlem South (10026),2011,,
+Central Harlem South (10026),2012,,
+Central Harlem South (10026),2013,,
+Central Harlem South (10026),2014,,
+Central Harlem South (10026),2015,2579,
+Central Harlem South (10026),2016,2674,3.7
+Central Harlem South (10026),2017,2713,1.5
+Central Harlem South (10026),2018,2774,2.3
+Central Harlem South (10026),2019,2836,2.2
+Central Harlem South (10026),2020,2699,-4.8
+Central Harlem South (10026),2021,2667,-1.2
+Central Harlem South (10026),2022,3068,15.0
+Central Harlem South (10026),2023,3215,4.8
+Central Harlem South (10026),2024,3349,4.2
+Central Harlem South (10026),2025,3543,5.8
+East Harlem North (10035),2010,,
+East Harlem North (10035),2011,,
+East Harlem North (10035),2012,,
+East Harlem North (10035),2013,,
+East Harlem North (10035),2014,,
+East Harlem North (10035),2015,2150,
+East Harlem North (10035),2016,2220,3.3
+East Harlem North (10035),2017,2320,4.5
+East Harlem North (10035),2018,2361,1.7
+East Harlem North (10035),2019,2439,3.3
+East Harlem North (10035),2020,2378,-2.5
+East Harlem North (10035),2021,2326,-2.2
+East Harlem North (10035),2022,2622,12.7
+East Harlem North (10035),2023,2758,5.2
+East Harlem North (10035),2024,2816,2.1
+East Harlem North (10035),2025,2941,4.4
+Harlem River (10037),2010,,
+Harlem River (10037),2011,,
+Harlem River (10037),2012,,
+Harlem River (10037),2013,,
+Harlem River (10037),2014,,
+Harlem River (10037),2015,,
+Harlem River (10037),2016,2076,
+Harlem River (10037),2017,2122,2.2
+Harlem River (10037),2018,2190,3.2
+Harlem River (10037),2019,2245,2.5
+Harlem River (10037),2020,2210,-1.6
+Harlem River (10037),2021,2145,-3.0
+Harlem River (10037),2022,2420,12.8
+Harlem River (10037),2023,2540,5.0
+Harlem River (10037),2024,2601,2.4
+Harlem River (10037),2025,2699,3.8
+Upper West Side North (10025),2010,,
+Upper West Side North (10025),2011,,
+Upper West Side North (10025),2012,,
+Upper West Side North (10025),2013,,
+Upper West Side North (10025),2014,,
+Upper West Side North (10025),2015,3165,
+Upper West Side North (10025),2016,3220,1.7
+Upper West Side North (10025),2017,3213,-0.2
+Upper West Side North (10025),2018,3246,1.0
+Upper West Side North (10025),2019,3353,3.3
+Upper West Side North (10025),2020,3169,-5.5
+Upper West Side North (10025),2021,3184,0.5
+Upper West Side North (10025),2022,3779,18.7
+Upper West Side North (10025),2023,3936,4.2
+Upper West Side North (10025),2024,4076,3.5
+Upper West Side North (10025),2025,4294,5.4
+Upper West Side (10024),2010,,
+Upper West Side (10024),2011,,
+Upper West Side (10024),2012,,
+Upper West Side (10024),2013,,
+Upper West Side (10024),2014,,
+Upper West Side (10024),2015,2842,
+Upper West Side (10024),2016,2882,1.4
+Upper West Side (10024),2017,2882,-0.0
+Upper West Side (10024),2018,2917,1.2
+Upper West Side (10024),2019,2996,2.7
+Upper West Side (10024),2020,2871,-4.2
+Upper West Side (10024),2021,2836,-1.2
+Upper West Side (10024),2022,3394,19.7
+Upper West Side (10024),2023,3574,5.3
+Upper West Side (10024),2024,3735,4.5
+Upper West Side (10024),2025,4018,7.6
+East Harlem (10029),2010,,
+East Harlem (10029),2011,,
+East Harlem (10029),2012,,
+East Harlem (10029),2013,,
+East Harlem (10029),2014,,
+East Harlem (10029),2015,2525,
+East Harlem (10029),2016,2558,1.3
+East Harlem (10029),2017,2661,4.1
+East Harlem (10029),2018,2712,1.9
+East Harlem (10029),2019,2772,2.2
+East Harlem (10029),2020,2662,-4.0
+East Harlem (10029),2021,2513,-5.6
+East Harlem (10029),2022,2960,17.8
+East Harlem (10029),2023,3106,5.0
+East Harlem (10029),2024,3201,3.1
+East Harlem (10029),2025,3347,4.6
+Lincoln Square (10023),2010,,
+Lincoln Square (10023),2011,,
+Lincoln Square (10023),2012,,
+Lincoln Square (10023),2013,,
+Lincoln Square (10023),2014,,
+Lincoln Square (10023),2015,3473,
+Lincoln Square (10023),2016,3497,0.7
+Lincoln Square (10023),2017,3475,-0.6
+Lincoln Square (10023),2018,3521,1.3
+Lincoln Square (10023),2019,3598,2.2
+Lincoln Square (10023),2020,3410,-5.2
+Lincoln Square (10023),2021,3447,1.1
+Lincoln Square (10023),2022,4138,20.0
+Lincoln Square (10023),2023,4287,3.6
+Lincoln Square (10023),2024,4454,3.9
+Lincoln Square (10023),2025,4786,7.4
+Carnegie Hill (10128),2010,,
+Carnegie Hill (10128),2011,,
+Carnegie Hill (10128),2012,,
+Carnegie Hill (10128),2013,,
+Carnegie Hill (10128),2014,,
+Carnegie Hill (10128),2015,2800,
+Carnegie Hill (10128),2016,2840,1.4
+Carnegie Hill (10128),2017,2874,1.2
+Carnegie Hill (10128),2018,2937,2.2
+Carnegie Hill (10128),2019,3031,3.2
+Carnegie Hill (10128),2020,2926,-3.5
+Carnegie Hill (10128),2021,2815,-3.8
+Carnegie Hill (10128),2022,3449,22.5
+Carnegie Hill (10128),2023,3609,4.6
+Carnegie Hill (10128),2024,3718,3.0
+Carnegie Hill (10128),2025,3979,7.0
+Upper East Side (10028),2010,,
+Upper East Side (10028),2011,,
+Upper East Side (10028),2012,,
+Upper East Side (10028),2013,,
+Upper East Side (10028),2014,,
+Upper East Side (10028),2015,2596,
+Upper East Side (10028),2016,2654,2.2
+Upper East Side (10028),2017,2685,1.2
+Upper East Side (10028),2018,2731,1.7
+Upper East Side (10028),2019,2812,3.0
+Upper East Side (10028),2020,2681,-4.7
+Upper East Side (10028),2021,2602,-2.9
+Upper East Side (10028),2022,3183,22.3
+Upper East Side (10028),2023,3327,4.5
+Upper East Side (10028),2024,3453,3.8
+Upper East Side (10028),2025,3722,7.8
+Riverside South (10069),2010,,
+Riverside South (10069),2011,,
+Riverside South (10069),2012,,
+Riverside South (10069),2013,,
+Riverside South (10069),2014,,
+Riverside South (10069),2015,,
+Riverside South (10069),2016,,
+Riverside South (10069),2017,,
+Riverside South (10069),2018,,
+Riverside South (10069),2019,4413,
+Riverside South (10069),2020,4038,-8.5
+Riverside South (10069),2021,4201,4.0
+Riverside South (10069),2022,5067,20.6
+Riverside South (10069),2023,5156,1.8
+Riverside South (10069),2024,5440,5.5
+Riverside South (10069),2025,5751,5.7
+Lenox Hill (10021),2010,,
+Lenox Hill (10021),2011,,
+Lenox Hill (10021),2012,,
+Lenox Hill (10021),2013,,
+Lenox Hill (10021),2014,,
+Lenox Hill (10021),2015,2620,
+Lenox Hill (10021),2016,2664,1.7
+Lenox Hill (10021),2017,2693,1.1
+Lenox Hill (10021),2018,2739,1.7
+Lenox Hill (10021),2019,2816,2.8
+Lenox Hill (10021),2020,2678,-4.9
+Lenox Hill (10021),2021,2630,-1.8
+Lenox Hill (10021),2022,3242,23.3
+Lenox Hill (10021),2023,3393,4.6
+Lenox Hill (10021),2024,3535,4.2
+Lenox Hill (10021),2025,3763,6.5
+Upper East Side South (10065),2010,,
+Upper East Side South (10065),2011,,
+Upper East Side South (10065),2012,,
+Upper East Side South (10065),2013,,
+Upper East Side South (10065),2014,,
+Upper East Side South (10065),2015,2967,
+Upper East Side South (10065),2016,3010,1.5
+Upper East Side South (10065),2017,3034,0.8
+Upper East Side South (10065),2018,3081,1.5
+Upper East Side South (10065),2019,3163,2.7
+Upper East Side South (10065),2020,3024,-4.4
+Upper East Side South (10065),2021,2968,-1.8
+Upper East Side South (10065),2022,3592,21.0
+Upper East Side South (10065),2023,3765,4.8
+Upper East Side South (10065),2024,3910,3.8
+Upper East Side South (10065),2025,4216,7.8
+Midtown West (10019),2010,,
+Midtown West (10019),2011,,
+Midtown West (10019),2012,,
+Midtown West (10019),2013,,
+Midtown West (10019),2014,,
+Midtown West (10019),2015,3503,
+Midtown West (10019),2016,3509,0.2
+Midtown West (10019),2017,3504,-0.2
+Midtown West (10019),2018,3512,0.2
+Midtown West (10019),2019,3581,2.0
+Midtown West (10019),2020,3360,-6.2
+Midtown West (10019),2021,3415,1.6
+Midtown West (10019),2022,4089,19.7
+Midtown West (10019),2023,4215,3.1
+Midtown West (10019),2024,4329,2.7
+Midtown West (10019),2025,4568,5.5
+Times Square (10036),2010,,
+Times Square (10036),2011,,
+Times Square (10036),2012,,
+Times Square (10036),2013,,
+Times Square (10036),2014,,
+Times Square (10036),2015,3397,
+Times Square (10036),2016,3382,-0.4
+Times Square (10036),2017,3390,0.2
+Times Square (10036),2018,3402,0.3
+Times Square (10036),2019,3479,2.3
+Times Square (10036),2020,3269,-6.0
+Times Square (10036),2021,3295,0.8
+Times Square (10036),2022,4034,22.4
+Times Square (10036),2023,4160,3.1
+Times Square (10036),2024,4257,2.3
+Times Square (10036),2025,4447,4.5
+Midtown East (10022),2010,,
+Midtown East (10022),2011,,
+Midtown East (10022),2012,,
+Midtown East (10022),2013,,
+Midtown East (10022),2014,,
+Midtown East (10022),2015,3381,
+Midtown East (10022),2016,3427,1.4
+Midtown East (10022),2017,3432,0.2
+Midtown East (10022),2018,3460,0.8
+Midtown East (10022),2019,3531,2.0
+Midtown East (10022),2020,3340,-5.4
+Midtown East (10022),2021,3288,-1.6
+Midtown East (10022),2022,4038,22.8
+Midtown East (10022),2023,4198,4.0
+Midtown East (10022),2024,4320,2.9
+Midtown East (10022),2025,4591,6.3
+Turtle Bay (10017),2010,,
+Turtle Bay (10017),2011,,
+Turtle Bay (10017),2012,,
+Turtle Bay (10017),2013,,
+Turtle Bay (10017),2014,,
+Turtle Bay (10017),2015,3157,
+Turtle Bay (10017),2016,3233,2.4
+Turtle Bay (10017),2017,3224,-0.3
+Turtle Bay (10017),2018,3216,-0.2
+Turtle Bay (10017),2019,3293,2.4
+Turtle Bay (10017),2020,3098,-5.9
+Turtle Bay (10017),2021,3140,1.4
+Turtle Bay (10017),2022,3838,22.2
+Turtle Bay (10017),2023,3974,3.6
+Turtle Bay (10017),2024,4090,2.9
+Turtle Bay (10017),2025,4295,5.0
+Murray Hill (10016),2010,,
+Murray Hill (10016),2011,,
+Murray Hill (10016),2012,,
+Murray Hill (10016),2013,,
+Murray Hill (10016),2014,,
+Murray Hill (10016),2015,3630,
+Murray Hill (10016),2016,3648,0.5
+Murray Hill (10016),2017,3633,-0.4
+Murray Hill (10016),2018,3678,1.2
+Murray Hill (10016),2019,3772,2.6
+Murray Hill (10016),2020,3519,-6.7
+Murray Hill (10016),2021,3565,1.3
+Murray Hill (10016),2022,4348,22.0
+Murray Hill (10016),2023,4449,2.3
+Murray Hill (10016),2024,4572,2.8
+Murray Hill (10016),2025,4806,5.1
+Garment District (10018),2010,,
+Garment District (10018),2011,,
+Garment District (10018),2012,,
+Garment District (10018),2013,,
+Garment District (10018),2014,,
+Garment District (10018),2015,3698,
+Garment District (10018),2016,3699,0.0
+Garment District (10018),2017,3692,-0.2
+Garment District (10018),2018,3738,1.2
+Garment District (10018),2019,3861,3.3
+Garment District (10018),2020,3579,-7.3
+Garment District (10018),2021,3697,3.3
+Garment District (10018),2022,4391,18.8
+Garment District (10018),2023,4502,2.5
+Garment District (10018),2024,4625,2.7
+Garment District (10018),2025,4803,3.8
+Chelsea North (10001),2010,,
+Chelsea North (10001),2011,,
+Chelsea North (10001),2012,,
+Chelsea North (10001),2013,,
+Chelsea North (10001),2014,,
+Chelsea North (10001),2015,4067,
+Chelsea North (10001),2016,4089,0.6
+Chelsea North (10001),2017,4008,-2.0
+Chelsea North (10001),2018,4063,1.4
+Chelsea North (10001),2019,4215,3.7
+Chelsea North (10001),2020,3890,-7.7
+Chelsea North (10001),2021,4099,5.4
+Chelsea North (10001),2022,4885,19.2
+Chelsea North (10001),2023,4994,2.2
+Chelsea North (10001),2024,5144,3.0
+Chelsea North (10001),2025,5392,4.8
+Flatiron (10010),2010,,
+Flatiron (10010),2011,,
+Flatiron (10010),2012,,
+Flatiron (10010),2013,,
+Flatiron (10010),2014,,
+Flatiron (10010),2015,3677,
+Flatiron (10010),2016,3731,1.5
+Flatiron (10010),2017,3738,0.2
+Flatiron (10010),2018,3768,0.8
+Flatiron (10010),2019,3867,2.6
+Flatiron (10010),2020,3592,-7.1
+Flatiron (10010),2021,3657,1.8
+Flatiron (10010),2022,4408,20.5
+Flatiron (10010),2023,4571,3.7
+Flatiron (10010),2024,4722,3.3
+Flatiron (10010),2025,4992,5.7
+Chelsea (10011),2010,,
+Chelsea (10011),2011,,
+Chelsea (10011),2012,,
+Chelsea (10011),2013,,
+Chelsea (10011),2014,,
+Chelsea (10011),2015,3874,
+Chelsea (10011),2016,3932,1.5
+Chelsea (10011),2017,3937,0.1
+Chelsea (10011),2018,4006,1.8
+Chelsea (10011),2019,4102,2.4
+Chelsea (10011),2020,3888,-5.2
+Chelsea (10011),2021,3963,2.0
+Chelsea (10011),2022,4756,20.0
+Chelsea (10011),2023,4927,3.6
+Chelsea (10011),2024,5139,4.3
+Chelsea (10011),2025,5498,7.0
+West Village (10014),2010,,
+West Village (10014),2011,,
+West Village (10014),2012,,
+West Village (10014),2013,,
+West Village (10014),2014,,
+West Village (10014),2015,3603,
+West Village (10014),2016,3660,1.6
+West Village (10014),2017,3695,1.0
+West Village (10014),2018,3769,2.0
+West Village (10014),2019,3903,3.5
+West Village (10014),2020,3738,-4.2
+West Village (10014),2021,3843,2.8
+West Village (10014),2022,4685,21.9
+West Village (10014),2023,4879,4.1
+West Village (10014),2024,5149,5.5
+West Village (10014),2025,5570,8.2
+Greenwich Village (10003),2010,,
+Greenwich Village (10003),2011,,
+Greenwich Village (10003),2012,,
+Greenwich Village (10003),2013,,
+Greenwich Village (10003),2014,,
+Greenwich Village (10003),2015,3417,
+Greenwich Village (10003),2016,3480,1.9
+Greenwich Village (10003),2017,3509,0.8
+Greenwich Village (10003),2018,3566,1.6
+Greenwich Village (10003),2019,3658,2.6
+Greenwich Village (10003),2020,3437,-6.0
+Greenwich Village (10003),2021,3487,1.5
+Greenwich Village (10003),2022,4264,22.3
+Greenwich Village (10003),2023,4405,3.3
+Greenwich Village (10003),2024,4553,3.4
+Greenwich Village (10003),2025,4867,6.9
+East Village (10009),2010,,
+East Village (10009),2011,,
+East Village (10009),2012,,
+East Village (10009),2013,,
+East Village (10009),2014,,
+East Village (10009),2015,3211,
+East Village (10009),2016,3282,2.2
+East Village (10009),2017,3323,1.3
+East Village (10009),2018,3372,1.5
+East Village (10009),2019,3468,2.8
+East Village (10009),2020,3319,-4.3
+East Village (10009),2021,3287,-0.9
+East Village (10009),2022,4037,22.8
+East Village (10009),2023,4173,3.4
+East Village (10009),2024,4273,2.4
+East Village (10009),2025,4565,6.8
+Lower East Side (10002),2010,,
+Lower East Side (10002),2011,,
+Lower East Side (10002),2012,,
+Lower East Side (10002),2013,,
+Lower East Side (10002),2014,,
+Lower East Side (10002),2015,3268,
+Lower East Side (10002),2016,3326,1.8
+Lower East Side (10002),2017,3376,1.5
+Lower East Side (10002),2018,3446,2.1
+Lower East Side (10002),2019,3538,2.7
+Lower East Side (10002),2020,3325,-6.0
+Lower East Side (10002),2021,3363,1.1
+Lower East Side (10002),2022,4066,20.9
+Lower East Side (10002),2023,4132,1.6
+Lower East Side (10002),2024,4215,2.0
+Lower East Side (10002),2025,4448,5.5
+SoHo (10012),2010,,
+SoHo (10012),2011,,
+SoHo (10012),2012,,
+SoHo (10012),2013,,
+SoHo (10012),2014,,
+SoHo (10012),2015,3336,
+SoHo (10012),2016,3390,1.6
+SoHo (10012),2017,3400,0.3
+SoHo (10012),2018,3457,1.7
+SoHo (10012),2019,3571,3.3
+SoHo (10012),2020,3364,-5.8
+SoHo (10012),2021,3394,0.9
+SoHo (10012),2022,4157,22.5
+SoHo (10012),2023,4360,4.9
+SoHo (10012),2024,4533,4.0
+SoHo (10012),2025,4828,6.5
+Tribeca (10013),2010,,
+Tribeca (10013),2011,,
+Tribeca (10013),2012,,
+Tribeca (10013),2013,,
+Tribeca (10013),2014,,
+Tribeca (10013),2015,4159,
+Tribeca (10013),2016,4195,0.8
+Tribeca (10013),2017,4225,0.7
+Tribeca (10013),2018,4319,2.2
+Tribeca (10013),2019,4460,3.3
+Tribeca (10013),2020,4257,-4.6
+Tribeca (10013),2021,4372,2.7
+Tribeca (10013),2022,5218,19.3
+Tribeca (10013),2023,5392,3.3
+Tribeca (10013),2024,5626,4.3
+Tribeca (10013),2025,6057,7.7
+Financial District East (10005),2010,,
+Financial District East (10005),2011,,
+Financial District East (10005),2012,,
+Financial District East (10005),2013,,
+Financial District East (10005),2014,,
+Financial District East (10005),2015,3298,
+Financial District East (10005),2016,3302,0.1
+Financial District East (10005),2017,3280,-0.6
+Financial District East (10005),2018,3387,3.3
+Financial District East (10005),2019,3493,3.1
+Financial District East (10005),2020,3332,-4.6
+Financial District East (10005),2021,3373,1.2
+Financial District East (10005),2022,4029,19.4
+Financial District East (10005),2023,4146,2.9
+Financial District East (10005),2024,4272,3.0
+Financial District East (10005),2025,4431,3.7
+Civic Center (10038),2010,,
+Civic Center (10038),2011,,
+Civic Center (10038),2012,,
+Civic Center (10038),2013,,
+Civic Center (10038),2014,,
+Civic Center (10038),2015,3311,
+Civic Center (10038),2016,3290,-0.7
+Civic Center (10038),2017,3302,0.4
+Civic Center (10038),2018,3346,1.3
+Civic Center (10038),2019,3511,4.9
+Civic Center (10038),2020,3249,-7.4
+Civic Center (10038),2021,3357,3.3
+Civic Center (10038),2022,4139,23.3
+Civic Center (10038),2023,4267,3.1
+Civic Center (10038),2024,4417,3.5
+Civic Center (10038),2025,4595,4.0
+Tribeca South (10007),2010,,
+Tribeca South (10007),2011,,
+Tribeca South (10007),2012,,
+Tribeca South (10007),2013,,
+Tribeca South (10007),2014,,
+Tribeca South (10007),2015,,
+Tribeca South (10007),2016,,
+Tribeca South (10007),2017,5686,
+Tribeca South (10007),2018,5760,1.3
+Tribeca South (10007),2019,6027,4.6
+Tribeca South (10007),2020,5766,-4.3
+Tribeca South (10007),2021,6021,4.4
+Tribeca South (10007),2022,6944,15.3
+Tribeca South (10007),2023,7274,4.7
+Tribeca South (10007),2024,7582,4.2
+Tribeca South (10007),2025,8151,7.5
+World Trade Center (10006),2010,,
+World Trade Center (10006),2011,,
+World Trade Center (10006),2012,,
+World Trade Center (10006),2013,,
+World Trade Center (10006),2014,,
+World Trade Center (10006),2015,,
+World Trade Center (10006),2016,,
+World Trade Center (10006),2017,,
+World Trade Center (10006),2018,,
+World Trade Center (10006),2019,,
+World Trade Center (10006),2020,3265,
+World Trade Center (10006),2021,3386,3.7
+World Trade Center (10006),2022,4151,22.6
+World Trade Center (10006),2023,4274,2.9
+World Trade Center (10006),2024,4430,3.6
+World Trade Center (10006),2025,4579,3.4
+Financial District South (10004),2010,,
+Financial District South (10004),2011,,
+Financial District South (10004),2012,,
+Financial District South (10004),2013,,
+Financial District South (10004),2014,,
+Financial District South (10004),2015,,
+Financial District South (10004),2016,,
+Financial District South (10004),2017,3380,
+Financial District South (10004),2018,3411,0.9
+Financial District South (10004),2019,3535,3.6
+Financial District South (10004),2020,3243,-8.2
+Financial District South (10004),2021,3347,3.2
+Financial District South (10004),2022,4124,23.2
+Financial District South (10004),2023,4206,2.0
+Financial District South (10004),2024,4403,4.7
+Financial District South (10004),2025,4624,5.0
+Battery Park City (10280),2010,,
+Battery Park City (10280),2011,,
+Battery Park City (10280),2012,,
+Battery Park City (10280),2013,,
+Battery Park City (10280),2014,,
+Battery Park City (10280),2015,,
+Battery Park City (10280),2016,3485,
+Battery Park City (10280),2017,3449,-1.0
+Battery Park City (10280),2018,3546,2.8
+Battery Park City (10280),2019,3712,4.7
+Battery Park City (10280),2020,3496,-5.8
+Battery Park City (10280),2021,3666,4.9
+Battery Park City (10280),2022,4314,17.7
+Battery Park City (10280),2023,4498,4.3
+Battery Park City (10280),2024,4633,3.0
+Battery Park City (10280),2025,4928,6.4
+Battery Park City North (10282),2010,,
+Battery Park City North (10282),2011,,
+Battery Park City North (10282),2012,,
+Battery Park City North (10282),2013,,
+Battery Park City North (10282),2014,,
+Battery Park City North (10282),2015,,
+Battery Park City North (10282),2016,,
+Battery Park City North (10282),2017,,
+Battery Park City North (10282),2018,,
+Battery Park City North (10282),2019,,
+Battery Park City North (10282),2020,,
+Battery Park City North (10282),2021,5526,
+Battery Park City North (10282),2022,6129,10.9
+Battery Park City North (10282),2023,6531,6.6
+Battery Park City North (10282),2024,6832,4.6
+Battery Park City North (10282),2025,7275,6.5
