@@ -2,7 +2,7 @@
 
 **Rent as Terrain: Making Manhattan’s Housing Pressure Tangible** is Ci Song’s first-draft research website for Summer Colloquium 2026 at Columbia GSAPP.
 
-The project uses D3 to translate ZIP-level asking-rent estimates into a 64-cell Manhattan terrain. A cinematic chapter system, adapted from Ci Song’s earlier `Precendent-Study/iteration`, connects the same dataset to a vertical computational drawing, a kinetic material proposal (Plan A), and a projection-mapped alternative (Plan B).
+The project uses D3 to translate ZIP-level asking-rent estimates into a 64-cell Manhattan terrain. A simple, Apple-inspired scrolling layout presents the research foundation, a vertical computational drawing, a kinetic material proposal (Plan A), and a projection-mapped alternative (Plan B).
 
 ## Published website
 
@@ -35,7 +35,7 @@ node scripts/prepare-data.mjs /path/to/Zip_zori_uc_sfrcondomfr_sm_month.csv
 
 ## Technical structure
 
-The site is static HTML, CSS, SVG, JavaScript, and WebGL. D3 v7 drives the rent terrain; a local Three.js module drives the grayscale particle chapters. D3 loads from jsDelivr with `vendor/d3.v7.min.js` as a local fallback. All project paths are relative so the site works from the GitHub Pages repository subdirectory.
+The site is static HTML, CSS, and JavaScript. D3 v7 draws one lightweight 64-cell rent terrain from the project CSV; it loads from jsDelivr with `vendor/d3.v7.min.js` as a local fallback. There is no framework, build process, WebGL, or complex chapter engine. All project paths are relative so the site works from the GitHub Pages repository subdirectory.
 
 ## Material directions
 

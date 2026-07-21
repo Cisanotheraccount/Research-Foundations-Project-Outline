@@ -2,21 +2,18 @@
 
 ## Reuse strategy
 
-This website is a content-and-visual continuation of Ci Song’s earlier `Precendent-Study/iteration` website. The new project was copied into a separate directory and repository; the original project was not modified.
+The first visual draft explored Ci Song’s earlier `Precendent-Study/iteration` language. The current direction intentionally simplifies the site into a long-form, Apple-inspired product-page rhythm so the research content remains primary. The new project stays in a separate directory and repository; the original project is not modified.
 
-Reused design DNA and code include IBM Plex Mono + Inter, the cool-gray atmospheric field, fixed full-screen experience, WebGL particle simulation, glass scene cards, right-side chapter rail, scroll/touch/keyboard chapter transitions, loader, responsive breakpoints, and reduced-motion fallback.
+The current design uses system typography, large editorial headlines, generous white space, shallow navigation, rounded content panels, soft gradients, and light scroll reveals. It references Apple’s presentation rhythm without copying Apple branding, product content, or media.
 
-The rent data, scene content, chapter structure, particle target forms, D3 terrain, controls, and material proposals are new for this assignment.
+The rent data, research content, D3 terrain, drawing proposal, and material proposals are original to this assignment.
 
 ## Interaction notes
 
-- The main terrain uses D3 data joins across 64 SVG hexagonal prisms inside the cinematic WebGL experience.
-- Slider, Play/Pause, and left/right arrow keys move between 2010 and 2025.
-- Hover and keyboard focus expose neighborhood, year, rent, annual change, and physical height.
-- Missing observations are rendered gray and labeled `No data`.
-- Comparison mode places the unavailable 2010 condition beside the 2025 terrain.
-- Thirteen reversible chapters use the previous iteration’s particle-morph and right-rail interaction model.
-- The Intersecting Fields scene adds labeled particle nodes for housing, mapping, data, mechanics, projection, and computation.
+- The hero contains one lightweight D3 data join across 64 cells using the 2025 observations.
+- The page uses ordinary vertical scrolling and anchor navigation.
+- The Intersecting Fields diagram labels housing, mapping, data, mechanics, projection, and computation.
+- A small IntersectionObserver adds subtle entrance transitions and respects reduced-motion preferences.
 
 ## Current first-draft limits
 
@@ -28,4 +25,4 @@ The rent data, scene content, chapter structure, particle target forms, D3 terra
 
 ## QA target
 
-The site is checked at desktop and mobile widths through a local HTTP server, with WebGL initialization, console errors, data integrity, chapter controls, terrain controls, relative paths, fallback content, and the local D3 backup included in the test scope.
+The site is checked at desktop and mobile widths through a local HTTP server, with console errors, anchor links, data integrity, relative paths, responsive layout, and the local D3 backup included in the test scope.

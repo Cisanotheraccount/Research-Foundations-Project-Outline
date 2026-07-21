@@ -2,231 +2,365 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Rent as Terrain — a cinematic D3 research and material proposal that makes Manhattan's housing pressure tangible."
+      content="Rent as Terrain is a research proposal exploring how Manhattan asking-rent data can become a physical and spatial experience."
     />
     <title>Rent as Terrain — Research Foundations + Project Outline</title>
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="./style.css" />
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "./vendor/three.module.js"
-        }
-      }
-    </script>
   </head>
   <body>
-    <div id="experience" class="experience" aria-label="Interactive research project chapters">
-      <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-      <div class="atmosphere" aria-hidden="true">
-        <span class="atmosphere__line atmosphere__line--one"></span>
-        <span class="atmosphere__line atmosphere__line--two"></span>
-      </div>
-
-      <header class="site-header">
-        <a class="wordmark" href="#intro" data-scene-link="0" aria-label="Return to project introduction">
-          <span>RENT / TERRAIN</span>
-          <small>RESEARCH FOUNDATIONS / 2026</small>
+    <header class="global-nav">
+      <div class="global-nav__inner">
+        <a class="global-nav__mark" href="#top" aria-label="Rent as Terrain home">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 18h16M6 18V9l6-4 6 4v9M9 18v-5h6v5" />
+          </svg>
         </a>
-        <div class="site-header__meta">
-          <span>COLUMBIA GSAPP</span>
-          <span>CI SONG</span>
+        <span>Columbia GSAPP</span>
+        <span>Summer Colloquium 2026</span>
+        <span>Ci Song</span>
+      </div>
+    </header>
+
+    <nav class="local-nav" aria-label="Project navigation">
+      <div class="local-nav__inner">
+        <a class="local-nav__title" href="#top">Rent as Terrain</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="sr-only">Open navigation</span>
+          <i></i><i></i>
+        </button>
+        <div id="nav-links" class="local-nav__links">
+          <a href="#research">Research</a>
+          <a href="#context">Context</a>
+          <a href="#methods">Methods</a>
+          <a href="#experiments">Experiments</a>
+          <a href="#material">Plan A / B</a>
+          <a href="#drawing">Drawing</a>
+          <a href="#sources">Sources</a>
         </div>
-      </header>
+      </div>
+    </nav>
 
-      <section id="scene-layer" class="scene-layer" aria-label="Research project chapters"></section>
+    <main id="main">
+      <section id="top" class="hero section-shell">
+        <div class="hero__copy reveal">
+          <p class="eyebrow">Research Foundations + Project Outline · First Draft</p>
+          <h1>Rent as Terrain</h1>
+          <p class="hero__dek">Making Manhattan’s housing pressure tangible.</p>
+          <p class="hero__intro">
+            A research proposal translating asking-rent data into a digital terrain, a vertical drawing,
+            and two possible material forms.
+          </p>
+        </div>
 
-      <aside id="terrain-interface" class="terrain-interface" aria-label="Interactive Manhattan rent terrain">
-        <header class="terrain-interface__header">
-          <div>
-            <span>64-CELL D3 TERRAIN</span>
-            <strong id="terrain-year">2015</strong>
+        <div class="hero-visual reveal" aria-labelledby="terrain-title terrain-caption">
+          <div class="hero-visual__heading">
+            <div>
+              <p class="overline">Manhattan asking-rent terrain</p>
+              <h2 id="terrain-title">64 cells. One changing city.</h2>
+            </div>
+            <span class="year-pill">2025</span>
           </div>
-          <p id="terrain-summary" aria-live="polite">Loading rent data…</p>
-        </header>
-        <div class="terrain-interface__stage">
-          <svg
-            id="rent-terrain"
-            viewBox="0 0 520 590"
-            role="img"
-            aria-label="A stylized Manhattan terrain of 64 hexagonal columns whose height represents rent"
-          ></svg>
-          <div id="terrain-tooltip" class="terrain-tooltip" role="status"></div>
+          <div class="terrain-frame">
+            <div id="terrain-grid" class="terrain-grid" aria-hidden="true"></div>
+            <div class="terrain-glow" aria-hidden="true"></div>
+          </div>
+          <p id="terrain-caption" class="visual-caption">
+            Column height and color represent ZIP-level asking-rent estimates. The same values can drive
+            the website, drawing, kinetic model, and projection.
+          </p>
         </div>
-        <div class="terrain-interface__controls">
-          <button id="play-toggle" type="button" aria-label="Play timeline">PLAY</button>
-          <label for="year-slider">
-            <span>2010</span>
-            <input id="year-slider" type="range" min="2010" max="2025" step="1" value="2015" />
-            <span>2025</span>
-          </label>
-          <button id="compare-toggle" type="button" aria-pressed="false">2010 / 2025</button>
-        </div>
-        <div class="terrain-interface__legend">
-          <span>LOWER</span><i></i><span>HIGHER ASKING-RENT ESTIMATE</span><b></b><span>NO DATA</span>
-        </div>
-      </aside>
-
-      <aside id="comparison-overlay" class="comparison-overlay" aria-hidden="true">
-        <div><span>2010</span><strong>NO ZIP-LEVEL ZORI</strong></div>
-        <div><span>2025</span><strong id="comparison-change">LATEST STUDY YEAR</strong></div>
-        <p>Unavailable years remain empty rather than interpolated.</p>
-      </aside>
-
-      <nav class="chapter-rail" aria-label="Chapters">
-        <div class="chapter-rail__track" aria-hidden="true"><span id="rail-progress"></span></div>
-        <div id="chapter-links" class="chapter-rail__links"></div>
-      </nav>
-
-      <div class="scroll-cue" aria-hidden="true"><span>SCROLL TO ADVANCE</span><i></i></div>
-
-      <div class="scene-counter" aria-hidden="true">
-        <span id="scene-current">01</span><span>/</span><span id="scene-total">13</span>
-      </div>
-
-      <div id="loader" class="loader" role="status" aria-live="polite">
-        <div class="loader__copy">
-          <span class="loader__label">ASSEMBLING RENT AS TERRAIN</span>
-          <strong id="loader-progress">0%</strong>
-        </div>
-        <div class="loader__bar"><span id="loader-bar"></span></div>
-      </div>
-    </div>
-
-    <main id="fallback" class="fallback" hidden>
-      <header class="fallback__hero" id="fallback-intro">
-        <p>RESEARCH FOUNDATIONS + PROJECT OUTLINE / FIRST DRAFT</p>
-        <h1>Rent as Terrain: Making Manhattan’s Housing Pressure Tangible</h1>
-        <p>Ci Song · Columbia GSAPP · Summer Colloquium 2026</p>
-      </header>
-
-      <nav class="fallback__nav" aria-label="Static chapter navigation">
-        <a href="#fallback-questions">Research</a>
-        <a href="#fallback-context">Context</a>
-        <a href="#fallback-methods">Methods</a>
-        <a href="#fallback-experiments">Experiments</a>
-        <a href="#fallback-plan-a">Plan A</a>
-        <a href="#fallback-plan-b">Plan B</a>
-        <a href="#fallback-drawing">Drawing</a>
-        <a href="#fallback-sources">Sources</a>
-      </nav>
-
-      <section id="fallback-questions">
-        <p class="fallback__index">02 / RESEARCH QUESTIONS + KEYWORDS</p>
-        <h2>How can asking-rent data become a spatial and bodily experience?</h2>
-        <p>What becomes visible—and what disappears—when Manhattan is reduced to a changing terrain?</p>
-        <p>How can D3, fabrication, motion, and projection form a situated visualization practice?</p>
-        <p class="fallback__relation">HOUSING ↔ DATA PHYSICALIZATION ↔ CRITICAL CARTOGRAPHY ↔ TEMPORAL URBANISM ↔ TANGIBLE INTERACTION</p>
       </section>
 
-      <section id="fallback-context">
-        <p class="fallback__index">03–04 / LINEAGE + COMMUNITY + SITUATION</p>
-        <h2>Maps, data documents, physicalization, and tangible media form the project’s lineage.</h2>
-        <p>D3 and Observable, data physicalization research, NYC housing researchers, and public data institutions form its community of practice.</p>
-        <dl class="fallback__facts">
-          <div><dt>Scope</dt><dd>Manhattan concentrates extreme rent variation in a narrow recognizable geography.</dd></div>
-          <div><dt>Measure</dt><dd>ZORI estimates asking rents rather than reporting every signed lease.</dd></div>
-          <div><dt>Coverage</dt><dd>Platform data reflects listed units and may underrepresent unavailable housing.</dd></div>
-          <div><dt>Abstraction</dt><dd>Equal hex cells aid comparison while simplifying lived geography.</dd></div>
+      <section id="research" class="statement-section section-shell reveal">
+        <p class="eyebrow">Research question</p>
+        <h2>How can rent data become a spatial and bodily experience?</h2>
+        <div class="question-grid">
+          <article>
+            <span>01</span>
+            <p>What becomes visible when Manhattan is transformed from a map into a changing terrain?</p>
+          </article>
+          <article>
+            <span>02</span>
+            <p>What disappears when unequal neighborhoods are simplified into comparable cells?</p>
+          </article>
+          <article>
+            <span>03</span>
+            <p>How can computation, fabrication, movement, and projection form one situated practice?</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="keywords section-shell reveal" aria-labelledby="keywords-title">
+        <div class="section-heading">
+          <p class="eyebrow">Five keywords</p>
+          <h2 id="keywords-title">The project in five ideas.</h2>
+        </div>
+        <div class="keyword-list">
+          <span>Housing</span>
+          <span>Data Physicalization</span>
+          <span>Critical Cartography</span>
+          <span>Temporal Urbanism</span>
+          <span>Tangible Interaction</span>
+        </div>
+      </section>
+
+      <section class="fields section-shell reveal" aria-labelledby="fields-title">
+        <div class="section-heading">
+          <p class="eyebrow">Intersecting fields</p>
+          <h2 id="fields-title">A project between numbers and matter.</h2>
+        </div>
+        <div class="field-map" role="img" aria-label="Housing, mapping, data, mechanics, projection, and computation connected around the project">
+          <span class="field-map__center">Rent as<br />Terrain</span>
+          <span style="--x: 15%; --y: 22%">Housing</span>
+          <span style="--x: 80%; --y: 18%">Mapping</span>
+          <span style="--x: 87%; --y: 64%">Data</span>
+          <span style="--x: 62%; --y: 84%">Mechanics</span>
+          <span style="--x: 18%; --y: 78%">Projection</span>
+          <span style="--x: 8%; --y: 48%">Computation</span>
+        </div>
+      </section>
+
+      <section id="context" class="section-shell reveal">
+        <div class="section-heading section-heading--wide">
+          <p class="eyebrow">Historical lineage</p>
+          <h2>Maps learned to calculate, move, and take physical form.</h2>
+        </div>
+        <div class="lineage-row">
+          <article><span>01</span><h3>Statistical maps</h3><p>Urban conditions become measurable spatial patterns.</p></article>
+          <article><span>02</span><h3>Data documents</h3><p>D3 turns datasets into visual systems and interaction.</p></article>
+          <article><span>03</span><h3>Physicalization</h3><p>Numbers gain scale, weight, texture, and bodily presence.</p></article>
+          <article><span>04</span><h3>Tangible media</h3><p>MIT’s shape displays connect digital information to motion.</p></article>
+          <article><span>05</span><h3>Projection</h3><p>Light becomes a flexible layer across physical geometry.</p></article>
+        </div>
+      </section>
+
+      <section class="community section-shell reveal">
+        <div class="section-heading">
+          <p class="eyebrow">Community of practice</p>
+          <h2>Who this project learns with.</h2>
+        </div>
+        <div class="card-grid card-grid--four">
+          <article class="info-card">
+            <p class="card-label">Tools</p>
+            <h3>D3 + Observable</h3>
+            <p>Practitioners building transparent, expressive, and reusable data visualizations.</p>
+          </article>
+          <article class="info-card">
+            <p class="card-label">Research</p>
+            <h3>Data Physicalization</h3>
+            <p>Designers asking what data can communicate when it occupies physical space.</p>
+          </article>
+          <article class="info-card">
+            <p class="card-label">Urban knowledge</p>
+            <h3>NYC Housing Research</h3>
+            <p>Researchers connecting rent, policy, housing production, and displacement.</p>
+          </article>
+          <article class="info-card">
+            <p class="card-label">Public evidence</p>
+            <h3>Data Institutions</h3>
+            <p>Public agencies and housing platforms whose data defines what the project can see.</p>
+          </article>
+          <article class="info-card">
+            <p class="card-label">Position</p>
+            <h3>Beyond the precedent</h3>
+            <p>The earlier D3 study becomes a starting point: this project moves data from the screen into drawing, motion, and material.</p>
+          </article>
+          <article class="info-card">
+            <p class="card-label">Audience</p>
+            <h3>A public encounter</h3>
+            <p>The work is intended for an exhibition audience, including people who may never open a housing spreadsheet or visualization tool.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="situated section-shell reveal">
+        <div class="situated__lead">
+          <p class="eyebrow">Situated technology</p>
+          <h2>The map is not neutral.</h2>
+          <p>Manhattan offers a recognizable geography of extreme rent variation, but the dataset and the hexagonal grid are both partial views.</p>
+        </div>
+        <dl class="fact-list">
+          <div><dt>Scope</dt><dd>Manhattan concentrates extreme rent differences within a narrow and recognizable geography.</dd></div>
+          <div><dt>Measure</dt><dd>ZORI estimates asking rents. It does not represent every signed lease or every household’s burden.</dd></div>
+          <div><dt>Coverage</dt><dd>Platform data reflects listed units and can underrepresent housing that never appears online.</dd></div>
+          <div><dt>Abstraction</dt><dd>Equal hexagonal cells support comparison while simplifying lived neighborhood boundaries.</dd></div>
         </dl>
       </section>
 
-      <section id="fallback-methods">
-        <p class="fallback__index">05 / METHODS</p>
-        <h2>One dataset moves through multiple forms.</h2>
-        <p>Acquire → aggregate → map → translate → test.</p>
-        <p>Annual rent values bind to D3 marks, physical column height, printed drawing layers, and projected light.</p>
+      <section id="methods" class="methods section-shell reveal">
+        <div class="section-heading section-heading--wide">
+          <p class="eyebrow">Methods</p>
+          <h2>One dataset moves through multiple forms.</h2>
+        </div>
+        <ol class="process-list">
+          <li><span>1</span><div><h3>Acquire</h3><p>Collect public ZIP-level asking-rent estimates.</p></div></li>
+          <li><span>2</span><div><h3>Aggregate</h3><p>Convert monthly observations into annual values.</p></div></li>
+          <li><span>3</span><div><h3>Map</h3><p>Connect each value to one of 64 designed cells.</p></div></li>
+          <li><span>4</span><div><h3>Translate</h3><p>Map rent to color, digital height, and millimeters.</p></div></li>
+          <li><span>5</span><div><h3>Test</h3><p>Compare screen, drawing, mechanics, and projection.</p></div></li>
+        </ol>
+        <div class="method-tags" aria-label="Project methods">
+          <span>Quantitative data</span><span>D3.js</span><span>Critical mapping</span><span>3D printing</span><span>Mechanical testing</span><span>Projection calibration</span>
+        </div>
       </section>
 
-      <section id="fallback-experiments">
-        <p class="fallback__index">06 / COMPUTATIONAL DESIGN EXPERIMENTS</p>
-        <h2>64 cells become a temporal rent terrain.</h2>
-        <p>The interactive D3 prototype maps asking-rent estimates to height and color, supports 2010–2025 playback, exposes missing data, and provides neighborhood tooltips.</p>
-        <p>Color, height, line, and warm-white material create one visual language across the website, drawing, and object.</p>
+      <section id="experiments" class="experiments section-shell reveal">
+        <div class="experiment-panel">
+          <div class="experiment-panel__copy">
+            <p class="eyebrow">Computational design experiments</p>
+            <h2>64 cells become a temporal rent terrain.</h2>
+            <p>D3 joins every cell to its annual rent estimate, then converts one value into color, height, drawing geometry, and fabrication instructions.</p>
+            <ul class="check-list">
+              <li>2010–2025 timeline</li>
+              <li>Neighborhood and rent labels</li>
+              <li>Visible missing-data states</li>
+              <li>One dataset across every output</li>
+            </ul>
+          </div>
+          <div class="data-card" aria-label="Rent data translation diagram">
+            <div class="data-card__value"><span>ASKING RENT</span><strong>$4,624</strong><small>example · 2025</small></div>
+            <div class="data-card__arrow">↓</div>
+            <div class="translation-grid">
+              <span>Color<strong>Orange</strong></span>
+              <span>Screen<strong>High</strong></span>
+              <span>Object<strong>35.4 mm</strong></span>
+              <span>Drawing<strong>Layer 04</strong></span>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section>
-        <p class="fallback__index">07 / RHETORICAL ARGUMENT</p>
-        <h2>Rent is not an isolated number.</h2>
-        <p>It accumulates unevenly as spatial pressure.</p>
+      <section class="argument section-shell reveal">
+        <div class="argument__visual" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="argument__copy">
+          <p class="eyebrow">Visual representation + rhetorical argument</p>
+          <h2>Rent is not an isolated number.</h2>
+          <p class="argument__statement">It accumulates unevenly as spatial pressure.</p>
+          <p>Color shows intensity. Height makes pressure bodily. Line carries time. Warm-white material receives movement and light.</p>
+        </div>
       </section>
 
-      <section id="fallback-plan-a">
-        <p class="fallback__index">08 / PRIMARY MATERIAL DIRECTION</p>
-        <h2>Plan A: a 64-cell kinetic rent terrain.</h2>
-        <p>All 64 printed hexagonal columns create the physical Manhattan field; an eight-column prototype first tests friction, synchronization, repeatability, tolerances, and motor load.</p>
+      <section id="material" class="material section-shell reveal">
+        <div class="section-heading section-heading--wide">
+          <p class="eyebrow">Material explorations</p>
+          <h2>One research question. Two material strategies.</h2>
+        </div>
+        <div class="plan-grid">
+          <article class="plan-card plan-card--primary">
+            <div class="plan-card__top">
+              <span class="status-pill">Primary Material Direction</span>
+              <span class="plan-letter">A</span>
+            </div>
+            <h3>64-cell kinetic rent terrain</h3>
+            <p>Sixty-four 3D-printed hexagonal columns form a physical Manhattan. The full digital simulation moves first; an eight-column mechanism tests whether the physical system can scale.</p>
+            <div class="mini-columns" aria-hidden="true">
+              <i style="--h: 38%"></i><i style="--h: 56%"></i><i style="--h: 72%"></i><i style="--h: 45%"></i><i style="--h: 88%"></i><i style="--h: 62%"></i><i style="--h: 76%"></i><i style="--h: 51%"></i>
+            </div>
+            <h4>Prototype tests</h4>
+            <ul><li>Friction</li><li>Synchronization</li><li>Repeatability</li><li>Fabrication tolerances</li><li>Motor load</li></ul>
+          </article>
+
+          <article class="plan-card plan-card--alternative">
+            <div class="plan-card__top">
+              <span class="status-pill">Alternative Material Strategy</span>
+              <span class="plan-letter">B</span>
+            </div>
+            <h3>Projection-mapped Manhattan</h3>
+            <p>A simplified white 3D-printed Manhattan receives the same rent timeline as projected color, labels, and motion. A calibration mode aligns the image to the model.</p>
+            <div class="projection-diagram" aria-hidden="true">
+              <span class="projector"></span><span class="beam"></span><span class="city"></span>
+            </div>
+            <h4>System tests</h4>
+            <ul><li>Model simplification</li><li>Projection alignment</li><li>Ambient light</li><li>Color readability</li><li>Playback output</li></ul>
+          </article>
+        </div>
+        <p class="plan-note">
+          Plan A is the primary direction, but its feasibility depends on whether a 64-column mechanism can move reliably at this scale. Plan B preserves the same question and dataset if the mechanical system is not yet dependable.
+        </p>
       </section>
 
-      <section id="fallback-plan-b">
-        <p class="fallback__index">09 / ALTERNATIVE MATERIAL STRATEGY</p>
-        <h2>Plan B: projection-mapped Manhattan.</h2>
-        <p>A simplified white 3D-printed model receives the same rent timeline as projected color and motion.</p>
-        <p>Plan B preserves the research question and dataset if the 64-column mechanism cannot yet move reliably.</p>
+      <section id="drawing" class="drawing reveal">
+        <div class="section-shell drawing__inner">
+          <div class="drawing__copy">
+            <p class="eyebrow">Drawing proposal</p>
+            <h2>Vertical Computational Datascape</h2>
+            <p class="drawing__type">Exploded axonometric drawing · 36 × 72 inches</p>
+            <p>A suspended vertical field connects the digital rent terrain to time, material, mechanism, projection, and source notes.</p>
+            <ul>
+              <li>Large central Manhattan terrain</li>
+              <li>2010, 2015, 2020, and 2025 overlays</li>
+              <li>Rent timeline below the main drawing</li>
+              <li>Plan A mechanical section</li>
+              <li>Plan B projection geometry</li>
+            </ul>
+          </div>
+          <div class="poster" role="img" aria-label="Schematic of the proposed 36 by 72 inch vertical computational datascape">
+            <header><span>RENT AS TERRAIN</span><span>36 × 72 IN</span></header>
+            <div class="poster__terrain"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="poster__years"><span>2010</span><span>2015</span><span>2020</span><span>2025</span></div>
+            <div class="poster__details"><span>MECHANICAL SECTION</span><span>PROJECTION GEOMETRY</span></div>
+          </div>
+        </div>
       </section>
 
-      <section id="fallback-drawing">
-        <p class="fallback__index">10 / DRAWING PROPOSAL</p>
-        <h2>Vertical Computational Datascape / Exploded Axonometric Drawing</h2>
-        <p>36 × 72 inches, with a central Manhattan terrain, 2010/2015/2020/2025 overlays, a time series, Plan A mechanical sections, Plan B projection geometry, and visible data notes.</p>
+      <section class="future section-shell reveal">
+        <div class="future__lead">
+          <p class="eyebrow">Potential capstone direction</p>
+          <h2>From rent terrain to a housing pressure atlas.</h2>
+          <p>The project may grow beyond Manhattan by connecting spatial rent change to income, policy, housing production, and renter testimony.</p>
+        </div>
+        <div class="future-grid">
+          <span>Five boroughs</span><span>Rent-to-income</span><span>Policy change</span><span>Housing production</span><span>Renter testimony</span>
+        </div>
       </section>
 
-      <section>
-        <p class="fallback__index">11 / POTENTIAL CAPSTONE</p>
-        <h2>From rent terrain to a housing pressure atlas.</h2>
-        <p>The project may expand to five boroughs, rent-to-income, policy time, housing production, and renter testimony.</p>
+      <section class="challenges section-shell reveal">
+        <div class="section-heading section-heading--wide">
+          <p class="eyebrow">The challenge</p>
+          <h2>Accuracy must survive translation.</h2>
+        </div>
+        <div class="challenge-grid">
+          <article><span>Data</span><h3>Coverage</h3><p>Asking-rent platforms do not represent every home or every renter.</p></article>
+          <article><span>Mechanical</span><h3>Reliability</h3><p>Sixty-four columns introduce friction, load, noise, and synchronization problems.</p></article>
+          <article><span>Projection</span><h3>Registration</h3><p>Light must remain aligned with a small physical model in exhibition conditions.</p></article>
+          <article><span>Representation</span><h3>Spectacle</h3><p>The visual experience must support the housing argument rather than overwhelm it.</p></article>
+        </div>
       </section>
 
-      <section>
-        <p class="fallback__index">12 / THE CHALLENGE</p>
-        <h2>Accuracy must survive translation.</h2>
-        <p>Data coverage, mechanical friction, projection registration, and visual spectacle can each distort the project’s argument.</p>
-      </section>
-
-      <section id="fallback-sources">
-        <p class="fallback__index">13 / SOURCES + LOOP</p>
-        <h2>Data, theory, precedent, and technical sources</h2>
-        <ul>
-          <li><a href="https://www.zillow.com/research/data/">Zillow Research · ZORI</a></li>
-          <li><a href="https://streeteasy.com/blog/data-dashboard/">StreetEasy Data Dashboard</a></li>
-          <li><a href="https://d3js.org/">D3.js</a></li>
-          <li><a href="https://tangible.media.mit.edu/project/inform/">MIT Tangible Media Group · inFORM</a></li>
-          <li><a href="https://dataphys.org/list/">Data Physicalization Archive</a></li>
-          <li><a href="https://www.nyc.gov/content/planning/pages/resources/datasets/nyc-3d-model">NYC Department of City Planning · NYC 3D Model</a></li>
-          <li><a href="https://mitpress.mit.edu/9780262536530/data-feminism/">D’Ignazio + Klein · Data Feminism</a></li>
-        </ul>
-        <p>2015–2025 values are annual averages from Zillow’s ZORI smoothed ZIP-level asking-rent estimates; 2010–2014 remain blank rather than interpolated.</p>
+      <section id="sources" class="sources section-shell reveal">
+        <div class="section-heading section-heading--wide">
+          <p class="eyebrow">Sources</p>
+          <h2>Data, theory, precedent, and tools.</h2>
+        </div>
+        <div class="source-list">
+          <a href="https://www.zillow.com/research/data/" target="_blank" rel="noreferrer"><span>Data</span><strong>Zillow Observed Rent Index (ZORI)</strong><i>↗</i></a>
+          <a href="https://streeteasy.com/blog/data-dashboard/" target="_blank" rel="noreferrer"><span>Data</span><strong>StreetEasy Data Dashboard</strong><i>↗</i></a>
+          <a href="https://d3js.org/" target="_blank" rel="noreferrer"><span>Tool</span><strong>D3.js</strong><i>↗</i></a>
+          <a href="https://tangible.media.mit.edu/project/inform/" target="_blank" rel="noreferrer"><span>Precedent</span><strong>MIT Tangible Media Group · inFORM</strong><i>↗</i></a>
+          <a href="https://dataphys.org/list/" target="_blank" rel="noreferrer"><span>Archive</span><strong>Data Physicalization Archive</strong><i>↗</i></a>
+          <a href="https://www.nyc.gov/content/planning/pages/resources/datasets/nyc-3d-model" target="_blank" rel="noreferrer"><span>Model</span><strong>NYC Department of City Planning · NYC 3D Model</strong><i>↗</i></a>
+          <a href="https://mitpress.mit.edu/9780262536530/data-feminism/" target="_blank" rel="noreferrer"><span>Theory</span><strong>D’Ignazio + Klein · Data Feminism</strong><i>↗</i></a>
+        </div>
+        <p class="data-note">Data note: 2015–2025 values are annual averages from Zillow’s smoothed ZIP-level asking-rent estimates. Years without source data remain blank rather than interpolated.</p>
       </section>
     </main>
 
-    <noscript>
-      <p class="noscript">This experience requires JavaScript. Please enable it to view the spatial narrative.</p>
-    </noscript>
+    <footer>
+      <div class="section-shell footer__inner">
+        <p><strong>Rent as Terrain</strong><br />Research Foundations + Project Outline</p>
+        <p>Ci Song · Columbia GSAPP<br />Summer Colloquium 2026</p>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
 
-    <script>
-      window.setTimeout(() => {
-        const loader = document.querySelector("#loader");
-        const fallback = document.querySelector("#fallback");
-        if (loader && !loader.classList.contains("is-complete") && fallback?.hidden) {
-          document.documentElement.classList.add("fallback-mode");
-          document.querySelector("#experience").hidden = true;
-          fallback.hidden = false;
-        }
-      }, 12000);
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <script>
-      if (!window.d3) document.write('<script src="./vendor/d3.v7.min.js"><\\/script>');
-    </script>
-    <script type="module" src="./script.js"></script>
+    <script>if (!window.d3) document.write('<script src="./vendor/d3.v7.min.js"><\\/script>');</script>
+    <script src="./script.js"></script>
   </body>
 </html>

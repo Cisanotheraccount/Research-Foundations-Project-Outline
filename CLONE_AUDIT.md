@@ -1,42 +1,32 @@
-# Clone / Reuse Audit
+# Visual Reference Audit
 
-## Source
+## Reference mode
 
-- Local source: `../Precendent-Study/iteration`
-- Ownership context: the earlier website belongs to the same author and is intentionally reused as the visual foundation for a new course draft.
+- Reference: Apple product-page presentation rhythm, especially the current MacBook Air page.
+- Mode: visual inspiration and content replacement, not a source-code or asset clone.
+- Apple branding, product text, photography, icons, scripts, fonts, and proprietary media are not copied.
 
-## Preserved
+## Referenced design language
 
-- IBM Plex Mono + Inter typography
-- Cool-gray atmospheric background and square dot matrix
-- Full-screen fixed experience and loader
-- WebGL particle field, GPU state, morphing layouts, and pointer response
-- Translucent scene cards with restrained orange indicators
-- Right-side chapter rail, counter, scroll cue, and reversible chapter navigation
-- Responsive mobile scene cards and reduced-motion static fallback
+- System typography with large, tightly spaced headlines
+- Clear hierarchy and generous white space
+- Sticky global and local navigation
+- Light-gray page sections and rounded feature panels
+- Restrained gradients, compact labels, and short explanatory sentences
+- Straightforward vertical scrolling and responsive single-column mobile layout
 
-## Replaced
+## Original project content
 
-- D3 precedent-study text, brand title, and chapter labels
-- D3 logo, Stanford mark, retro-computer form, and other precedent-specific particle layouts
-- Original sources and ontology labels
-- Old repository links and project naming
-- Visualization content and dataset
-
-## Added
-
-- Thirteen research and project-outline chapters
-- 64-cell time-based D3 rent terrain layered into the particle experience
-- Timeline, playback, tooltip, comparison, missing-data state, and keyboard controls
-- New particle targets for rent terrain, kinetic columns, projection mapping, and vertical drawing
-- Research context, methods, experiments, Plan A / B, drawing, capstone direction, challenges, and sources
-- Transparent data-preparation script and data caveats
+- Research questions, keywords, intersecting fields, lineage, community, and situated-technology notes
+- 64-cell D3 asking-rent terrain using the project dataset
+- Methods and computational design experiment
+- Visual and rhetorical argument
+- Plan A kinetic material direction and Plan B projection strategy
+- Vertical drawing proposal, potential capstone direction, challenges, and sources
 
 ## External calls
 
-- Google Fonts (IBM Plex Mono + Inter)
-- jsDelivr (D3 v7), with a committed local fallback
-- Committed local Three.js module and license
-- Source links opened only when a visitor chooses them
+- jsDelivr for D3 v7, with a committed local fallback
+- Source links open only when a visitor chooses them
 
-No analytics, trackers, form submissions, private API keys, or copied third-party brand assets are included.
+No analytics, trackers, form submissions, private API keys, third-party product images, or copied Apple assets are included.
