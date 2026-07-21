@@ -56,6 +56,8 @@ Iteration 1: replaced the flat Hero grid with a responsive Canvas scene using a 
 
 Iteration 2: desktop section review confirmed aligned cards and diagrams without horizontal overflow. Mobile review found the Hero caption overlapping the bottom of the terrain frame; the frame was shortened and the card extended so the visualization and caption occupy separate regions. The mobile navigation label now reports both open and close states.
 
+Iteration 3: the user clarified that Plan A is not a field of separated vertical bars. It is a Manhattan-shaped, edge-to-edge honeycomb of 64 hexagonal modules that can each move vertically. The Hero and Plan A diagram were rebuilt from the same connected-cell geometry. Selected Plan A cells now carry vertical motion arrows, and the copy explicitly describes independent movement. The unexplained 2025 badge and other user-facing numeric year labels were removed in favor of temporal wording.
+
 ## Final evidence
 
 - Reference + Hero in one comparison surface: `RECON/screenshots/hero-reference-comparison-1440.png`
@@ -66,14 +68,17 @@ Iteration 2: desktop section review confirmed aligned cards and diagrams without
 - Desktop drawing proposal: `RECON/screenshots/audit-after-drawing-1440.png`
 - Final mobile Hero: `RECON/screenshots/audit-after-mobile-hero-detail-final-390.png`
 - Mobile field map, argument, Plan A, Plan B, and drawing: `RECON/screenshots/audit-after-mobile-fields-390.png`, `audit-after-mobile-argument-390.png`, `audit-after-mobile-plan-a-390.png`, `audit-after-mobile-plan-b-390.png`, and `audit-after-mobile-drawing-390.png`
+- Honeycomb source / previous / corrected comparison: `RECON/screenshots/honeycomb-comparison-1440.png`
+- Corrected desktop Hero: `RECON/screenshots/honeycomb-hero-final-1440.png`
+- Corrected mobile Hero and Plan A: `RECON/screenshots/honeycomb-hero-final-390.png` and `RECON/screenshots/honeycomb-plan-a-final-390.png`
 
 ## Required fidelity surfaces — final
 
 - Fonts and typography: passed. System typography stays consistent across desktop and mobile.
 - Spacing and layout rhythm: passed. Diagrams stay inside their cards and the 390 px page has no horizontal overflow.
 - Colors and visual tokens: passed. The Hero now uses the requested black, white, and orange hierarchy while the rest of the site retains the Apple-like neutral system.
-- Image quality and asset fidelity: passed. The reference comparison confirms oblique depth, a light ground plane, and vertical orange extrusion; technical diagrams now have stable geometry at both viewports.
-- Copy and content: passed. No research content was removed during the repair.
+- Image quality and asset fidelity: passed. The combined comparison confirms oblique depth, a light Manhattan ground plane, 64 edge-to-edge hexagonal cells, and vertical orange extrusion; technical diagrams now have stable geometry at both viewports.
+- Copy and content: passed. Plan A now accurately describes the connected kinetic honeycomb, and no unexplained numeric year label remains visible.
 - Interaction: passed. Sticky navigation, anchors, mobile menu states, Canvas resizing, and CSV-backed Hero data load without browser warnings or errors.
 
 No actionable P0, P1, or P2 findings remain.
