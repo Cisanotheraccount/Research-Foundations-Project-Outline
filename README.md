@@ -1,12 +1,24 @@
-# Research Foundations + Project Outline
+# Research Foundations + Project Outline — Second Draft
 
-**Rent as Terrain: Making Manhattan’s Housing Pressure Tangible** is Ci Song’s first-draft research website for Summer Colloquium 2026 at Columbia GSAPP.
+**From Images to Places: What New Possibilities Does Gaussian Splatting Create?** is Ci Song's second-draft research website for Summer Colloquium 2026 at Columbia GSAPP.
 
-The project uses D3 to translate ZIP-level asking-rent estimates into a 64-cell Manhattan terrain. A simple, Apple-inspired scrolling layout presents the research foundation, a vertical computational drawing, a kinetic material proposal (Plan A), and a projection-mapped alternative (Plan B).
+The project asks how ordinary video can become a spatial record that people can revisit, share, compare, and question. Its core concept prototype connects a captured apartment interior to floor, viewpoint, window direction, city context, and visible evidence status.
 
 ## Published website
 
 https://cisanotheraccount.github.io/Research-Foundations-Project-Outline/
+
+## Assignment confirmations
+
+- **Drawing type:** Exploded Spatial Evidence Section
+- **Final print:** 36 × 72 inches, portrait, matte plot
+- **Proof sequence:** 11 × 17 proof, half-scale review, full-size print
+- **Material gesture:** A browser-based spatial record viewed through a simple physical window frame
+- **Setup:** Laptop, web viewer, monitor or short-throw projection, physical frame, one input control, and the printed drawing
+
+The WIP drawing is stored in `assets/drawing/` as SVG, HTML, and PDF. The uploaded
+[Google Drive copy](https://drive.google.com/file/d/14orwlnLF13xBEfLNPoCNzqlTcwalP2VG/view?usp=sharing)
+has read-only access enabled for the Columbia domain; the published website also hosts the same PDF publicly.
 
 ## Run locally
 
@@ -18,32 +30,20 @@ python3 -m http.server 8000
 
 Then open `http://localhost:8000/`.
 
-## Data
-
-- `data/neighborhood_year.csv` contains annual neighborhood/ZIP observations.
-- `data/hex_cell_year.csv` connects 64 physical/digital cells to the same annual values.
-- `data/manhattan_boundaries.geojson` is a simplified contextual outline and is not intended for parcel analysis.
-- 2015–2025 values are annual averages computed from Zillow’s public ZORI smoothed ZIP-level monthly rent estimates.
-- 2010–2014 remain blank because the selected ZIP-level series does not publish those years; the project does not interpolate them.
-- ZORI represents an asking-rent estimate, not every executed lease or every renter’s housing burden.
-
-To regenerate the derived CSV files after downloading Zillow’s ZIP-level ZORI CSV:
-
-```bash
-node scripts/prepare-data.mjs /path/to/Zip_zori_uc_sfrcondomfr_sm_month.csv
-```
-
 ## Technical structure
 
-The site is static HTML, CSS, and JavaScript. D3 v7 draws one lightweight 64-cell rent terrain from the project CSV; it loads from jsDelivr with `vendor/d3.v7.min.js` as a local fallback. There is no framework, build process, WebGL, or complex chapter engine. All project paths are relative so the site works from the GitHub Pages repository subdirectory.
+The site is static HTML, CSS, and JavaScript. The second draft intentionally uses lightweight diagrams and one concept interaction rather than a heavy 3D viewer. A real Gaussian Splat scene will only be connected after a legally usable capture has been obtained and tested.
 
-## Material directions
+## Evidence boundary
 
-- **Plan A — Primary Material Direction:** a 64-column kinetic rent terrain, preceded by an eight-column functional prototype.
-- **Plan B — Alternative Material Strategy:** projection mapping the same data and timeline onto a simplified white Manhattan model.
+- `Captured` means actual footage or scanning.
+- `Registered` means position, direction, and height have been aligned.
+- `Modeled` means the content comes from project-owned or legally loaded geometry.
+- `Inferred` means the content is estimated from related evidence.
+- `Unverified` means it has not been checked against the real place.
 
-Plan B changes the material strategy only; the research question, data, drawing language, and rhetorical argument remain the same.
+The current apartment interface is a concept response. It does not claim that a public apartment splat, full-city registered model, or verified window-view calculation has already been completed.
 
-## Sources
+## Previous draft
 
-Primary source links and methodological caveats are listed in the website’s Sources section.
+The first-draft **Rent as Terrain** website remains preserved in Git history through commit `a8e26a9`.

@@ -1,28 +1,38 @@
-# Implementation Notes
+# Second Draft Implementation Notes
 
-## Reuse strategy
+## Research shift
 
-The first visual draft explored Ci Song’s earlier `Precendent-Study/iteration` language. The current direction intentionally simplifies the site into a long-form, Apple-inspired product-page rhythm so the research content remains primary. The new project stays in a separate directory and repository; the original project is not modified.
+The first draft explored rent data as a kinetic and projected Manhattan terrain. The second draft shifts the research medium from data visualization to Gaussian Splatting while retaining the broader interest in apartments, cities, evidence, and public spatial understanding.
 
-The current design uses system typography, large editorial headlines, generous white space, shallow navigation, rounded content panels, soft gradients, and light scroll reveals. It references Apple’s presentation rhythm without copying Apple branding, product content, or media.
+The central proposition is:
 
-The rent data, research content, D3 terrain, drawing proposal, and material proposals are original to this assignment.
+> A photograph preserves a view. A video preserves a path. A splat preserves a place to re-enter.
 
-## Interaction notes
+## Scope
 
-- The hero contains one lightweight D3 data join across 64 cells using the 2025 observations.
-- The page uses ordinary vertical scrolling and anchor navigation.
-- The Intersecting Fields diagram labels housing, mapping, data, mechanics, projection, and computation.
-- A small IntersectionObserver adds subtle entrance transitions and respects reduced-motion preferences.
+This draft prioritizes the assignment's communication requirements:
 
-## Current first-draft limits
+1. A concise visual explanation of the research idea.
+2. A confirmed drawing type and printing plan with a WIP drawing.
+3. A confirmed material gesture and exhibition setup.
 
-- Hex cells are a designed spatial sample rather than official neighborhood polygons.
-- The lightweight GeoJSON boundary is contextual and intentionally simplified.
-- ZIP-level ZORI is used for reproducible first-draft data; the next research pass can compare it with StreetEasy neighborhood-level median asking rent.
-- Plan A has not yet passed the eight-column physical feasibility test.
-- Plan B calibration is represented as a proposal, not a completed installation test.
+The page does not embed a third-party splat or imply that an apartment capture has already been verified.
 
-## QA target
+## Drawing
 
-The site is checked at desktop and mobile widths through a local HTTP server, with console errors, anchor links, data integrity, relative paths, responsive layout, and the local D3 backup included in the test scope.
+- Type: Exploded Spatial Evidence Section
+- Final size: 36 × 72 inches, portrait
+- WIP PDF size: 18 × 36 inches, half-scale
+- Proof sequence: 11 × 17, half-scale, full-size matte plot
+
+## Material gesture
+
+A freestanding physical window frame turns a monitor or short-throw projection into a portal between a captured apartment and its urban view. The interaction focuses on floor, observer position, and evidence status.
+
+## Current limitations
+
+- No legally reusable apartment splat is connected.
+- Floor and viewpoint outputs are illustrative categories, not measured values.
+- City registration and real window-view verification remain proposed tests.
+- Gaussian Splatting is treated as an appearance representation, not survey-grade geometry.
+- Residential privacy, consent, ownership, and withdrawal remain required design constraints.
