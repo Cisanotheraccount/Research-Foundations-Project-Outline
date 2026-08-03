@@ -277,9 +277,11 @@ function buildRepresentations(room: THREE.Group) {
 
 export function OpeningExperience() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const openingRef = useRef<HTMLElement>(null);
   const advanceRef = useRef<() => void>(() => undefined);
   const [step, setStep] = useState(0);
   const [motion, setMotion] = useState<Motion>("idle");
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
   const [run, setRun] = useState(0);
@@ -293,6 +295,8 @@ export function OpeningExperience() {
     let currentStep = 0;
     let animationLocked = false;
     let idleCamera = true;
+    let wheelAccumulator = 0;
+    let wheelLockedUntil = 0;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
@@ -309,6 +313,8 @@ export function OpeningExperience() {
     const roomTarget = new THREE.Vector3(0, 2.05, -4.15);
     const initialCamera = new THREE.Vector3(7.5, 3.85, 7.6);
     const frontCamera = new THREE.Vector3(0, 2.75, 8.35);
+    const unfoldedCamera = new THREE.Vector3(5.6, 3.35, 7.05);
+    const comparedCamera = new THREE.Vector3(-4.7, 3.2, 7.45);
     camera.position.copy(initialCamera);
     camera.lookAt(roomTarget);
 
@@ -421,6 +427,33 @@ export function OpeningExperience() {
       lookFrom(frontCamera);
     };
 
+    const unflattenRoom = async () => {
+      const side = new THREE.Vector3(9.6, 3.05, -2.75);
+      const orbit = new THREE.Vector3(9.2, 3.5, 4.2);
+      photoPlane.visible = true;
+      photoMaterial.opacity = 1;
+      room.visible = true;
+      room.scale.z = 0.018;
+      setMaterialOpacity(solidMaterials, 0);
+      lookFrom(frontCamera);
+
+      await animate(820, (eased) => {
+        photoMaterial.opacity = 1 - eased;
+        setMaterialOpacity(solidMaterials, eased);
+        lookFrom(new THREE.Vector3().lerpVectors(frontCamera, side, eased));
+      });
+      photoPlane.visible = false;
+      await animate(1280, (eased) => {
+        room.scale.z = THREE.MathUtils.lerp(0.018, 1, eased);
+        lookFrom(new THREE.Vector3().lerpVectors(side, orbit, eased));
+      });
+      await animate(650, (eased) => lookFrom(new THREE.Vector3().lerpVectors(orbit, initialCamera, easeOutQuart(eased))));
+      room.scale.z = 1;
+      setMaterialOpacity(solidMaterials, 1);
+      lookFrom(initialCamera);
+      idleCamera = true;
+    };
+
     const unfoldRoom = async () => {
       const revealPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -6.1);
       solidMaterials.forEach((material) => {
@@ -432,8 +465,6 @@ export function OpeningExperience() {
       setMaterialOpacity(solidMaterials, 0.08);
       representations.splatGroup.visible = true;
       setRepresentationOpacity(representations.splatMaterials, 0);
-      const destination = new THREE.Vector3(5.6, 3.35, 7.05);
-
       await animate(3000, (eased, linear) => {
         revealPlane.constant = THREE.MathUtils.lerp(-6.1, 6.2, eased);
         room.scale.z = THREE.MathUtils.lerp(0.018, 1, eased);
@@ -441,7 +472,7 @@ export function OpeningExperience() {
         photoMaterial.opacity = 1 - Math.min(1, linear * 1.35);
         const splatOpacity = Math.sin(Math.PI * linear) * 0.48;
         setRepresentationOpacity(representations.splatMaterials, splatOpacity);
-        lookFrom(new THREE.Vector3().lerpVectors(frontCamera, destination, eased));
+        lookFrom(new THREE.Vector3().lerpVectors(frontCamera, unfoldedCamera, eased));
       });
       solidMaterials.forEach((material) => {
         material.clippingPlanes = [];
@@ -450,12 +481,72 @@ export function OpeningExperience() {
       photoPlane.visible = false;
       room.scale.z = 1;
       setMaterialOpacity(solidMaterials, 1);
-      lookFrom(destination);
+      lookFrom(unfoldedCamera);
+    };
+
+    const foldRoom = async () => {
+      renderSnapshot();
+      const revealPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 6.2);
+      solidMaterials.forEach((material) => {
+        material.clippingPlanes = [revealPlane];
+        material.clipShadows = true;
+      });
+      room.visible = true;
+      room.scale.z = 1;
+      setMaterialOpacity(solidMaterials, 1);
+      photoPlane.visible = true;
+      photoMaterial.opacity = 0;
+      representations.splatGroup.visible = true;
+      setRepresentationOpacity(representations.splatMaterials, 0);
+
+      await animate(2600, (eased, linear) => {
+        revealPlane.constant = THREE.MathUtils.lerp(6.2, -6.1, eased);
+        room.scale.z = THREE.MathUtils.lerp(1, 0.018, eased);
+        setMaterialOpacity(solidMaterials, THREE.MathUtils.lerp(1, 0.08, eased));
+        photoMaterial.opacity = Math.min(1, linear * 1.3);
+        setRepresentationOpacity(representations.splatMaterials, Math.sin(Math.PI * linear) * 0.48);
+        lookFrom(new THREE.Vector3().lerpVectors(unfoldedCamera, frontCamera, eased));
+      });
+      solidMaterials.forEach((material) => {
+        material.clippingPlanes = [];
+      });
+      representations.splatGroup.visible = false;
+      room.visible = false;
+      photoPlane.visible = true;
+      photoMaterial.opacity = 1;
+      lookFrom(frontCamera);
+    };
+
+    const applyRepresentationTimeline = (linear: number) => {
+      if (linear < 0.175) {
+        const phase = easeOutQuart(linear / 0.175);
+        setMaterialOpacity(solidMaterials, 1 - phase);
+        setRepresentationOpacity([representations.pointsMaterial], phase);
+        setRepresentationOpacity([representations.wireMaterial], 0);
+        setRepresentationOpacity(representations.splatMaterials, 0);
+      } else if (linear < 0.35) {
+        const phase = easeOutQuart((linear - 0.175) / 0.175);
+        setMaterialOpacity(solidMaterials, 0);
+        setRepresentationOpacity([representations.pointsMaterial], 1 - phase);
+        setRepresentationOpacity([representations.wireMaterial], phase);
+        setRepresentationOpacity(representations.splatMaterials, 0);
+      } else if (linear < 0.7) {
+        const phase = easeOutQuart((linear - 0.35) / 0.35);
+        setRepresentationOpacity([representations.pointsMaterial], 0);
+        setRepresentationOpacity([representations.wireMaterial], 1 - phase);
+        setRepresentationOpacity(representations.splatMaterials, phase);
+        setMaterialOpacity(solidMaterials, phase * 0.12);
+      } else {
+        const phase = easeOutQuart((linear - 0.7) / 0.3);
+        setRepresentationOpacity([representations.pointsMaterial], 0);
+        setRepresentationOpacity([representations.wireMaterial], 0);
+        setRepresentationOpacity(representations.splatMaterials, 1 - phase);
+        setMaterialOpacity(solidMaterials, THREE.MathUtils.lerp(0.12, 1, phase));
+      }
     };
 
     const compareRepresentations = async () => {
       const start = camera.position.clone();
-      const end = new THREE.Vector3(-4.7, 3.2, 7.45);
       representations.pointsGroup.visible = true;
       representations.wireGroup.visible = true;
       representations.splatGroup.visible = true;
@@ -464,61 +555,92 @@ export function OpeningExperience() {
       setRepresentationOpacity(representations.splatMaterials, 0);
 
       await animate(4000, (_eased, linear) => {
-        if (linear < 0.175) {
-          const phase = easeOutQuart(linear / 0.175);
-          setMaterialOpacity(solidMaterials, 1 - phase);
-          setRepresentationOpacity([representations.pointsMaterial], phase);
-        } else if (linear < 0.35) {
-          const phase = easeOutQuart((linear - 0.175) / 0.175);
-          setRepresentationOpacity([representations.pointsMaterial], 1 - phase);
-          setRepresentationOpacity([representations.wireMaterial], phase);
-        } else if (linear < 0.7) {
-          const phase = easeOutQuart((linear - 0.35) / 0.35);
-          setRepresentationOpacity([representations.wireMaterial], 1 - phase);
-          setRepresentationOpacity(representations.splatMaterials, phase);
-          setMaterialOpacity(solidMaterials, phase * 0.12);
-        } else {
-          const phase = easeOutQuart((linear - 0.7) / 0.3);
-          setRepresentationOpacity(representations.splatMaterials, 1 - phase);
-          setMaterialOpacity(solidMaterials, THREE.MathUtils.lerp(0.12, 1, phase));
-        }
+        applyRepresentationTimeline(linear);
         const cameraEase = easeInOutQuint(linear);
-        lookFrom(new THREE.Vector3().lerpVectors(start, end, cameraEase));
+        lookFrom(new THREE.Vector3().lerpVectors(start, comparedCamera, cameraEase));
       });
       representations.pointsGroup.visible = false;
       representations.wireGroup.visible = false;
       representations.splatGroup.visible = false;
       setMaterialOpacity(solidMaterials, 1);
-      lookFrom(end);
+      lookFrom(comparedCamera);
     };
 
-    const advance = async () => {
-      if (animationLocked || currentStep >= 3) return;
+    const rewindRepresentations = async () => {
+      representations.pointsGroup.visible = true;
+      representations.wireGroup.visible = true;
+      representations.splatGroup.visible = true;
+      await animate(3400, (eased, linear) => {
+        applyRepresentationTimeline(1 - linear);
+        lookFrom(new THREE.Vector3().lerpVectors(comparedCamera, unfoldedCamera, eased));
+      });
+      representations.pointsGroup.visible = false;
+      representations.wireGroup.visible = false;
+      representations.splatGroup.visible = false;
+      setMaterialOpacity(solidMaterials, 1);
+      lookFrom(unfoldedCamera);
+    };
+
+    const transition = async (nextDirection: 1 | -1) => {
+      const targetStep = currentStep + nextDirection;
+      if (animationLocked || targetStep < 0 || targetStep > 3) return;
       animationLocked = true;
       idleCamera = false;
       setBusy(true);
-      const nextMotion: Motion = currentStep === 0 ? "flatten" : currentStep === 1 ? "unfold" : "compare";
+      setDirection(nextDirection);
+      const transitionIndex = nextDirection === 1 ? currentStep : targetStep;
+      const nextMotion: Motion = transitionIndex === 0 ? "flatten" : transitionIndex === 1 ? "unfold" : "compare";
       setMotion(nextMotion);
-      if (currentStep === 0) await flattenRoom();
-      if (currentStep === 1) await unfoldRoom();
-      if (currentStep === 2) await compareRepresentations();
-      currentStep += 1;
+      if (nextDirection === 1 && currentStep === 0) await flattenRoom();
+      if (nextDirection === 1 && currentStep === 1) await unfoldRoom();
+      if (nextDirection === 1 && currentStep === 2) await compareRepresentations();
+      if (nextDirection === -1 && currentStep === 1) await unflattenRoom();
+      if (nextDirection === -1 && currentStep === 2) await foldRoom();
+      if (nextDirection === -1 && currentStep === 3) await rewindRepresentations();
+      currentStep = targetStep;
       setStep(currentStep);
       setMotion("idle");
       setBusy(false);
       animationLocked = false;
+      wheelAccumulator = 0;
+      wheelLockedUntil = performance.now() + 320;
     };
-    advanceRef.current = () => void advance();
+    advanceRef.current = () => void transition(1);
+
+    const openingIsActive = () => {
+      const bounds = openingRef.current?.getBoundingClientRect();
+      return Boolean(
+        bounds
+        && bounds.top < window.innerHeight * 0.35
+        && bounds.bottom > window.innerHeight * 0.65,
+      );
+    };
 
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target?.matches("button, input, textarea, select, [contenteditable='true']")) return;
-      if (event.key === " ") {
+      if (event.key === " " && openingIsActive() && currentStep < 3) {
         event.preventDefault();
-        void advance();
+        if (!animationLocked) void transition(1);
       }
     };
+
+    const onWheel = (event: WheelEvent) => {
+      if (!openingIsActive() || event.deltaY === 0) return;
+      const nextDirection: 1 | -1 = event.deltaY > 0 ? 1 : -1;
+      const canMove = nextDirection === 1 ? currentStep < 3 : currentStep > 0;
+      if (!canMove) return;
+
+      event.preventDefault();
+      if (animationLocked || performance.now() < wheelLockedUntil) return;
+      if (Math.sign(wheelAccumulator) !== Math.sign(event.deltaY)) wheelAccumulator = 0;
+      wheelAccumulator += event.deltaY;
+      if (Math.abs(wheelAccumulator) < 44) return;
+      wheelAccumulator = 0;
+      void transition(nextDirection);
+    };
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("wheel", onWheel, { passive: false });
 
     const render = (time: number) => {
       if (disposed) return;
@@ -539,6 +661,7 @@ export function OpeningExperience() {
       cancelAnimationFrame(animationFrame);
       window.removeEventListener("resize", resize);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("wheel", onWheel);
       renderTarget.dispose();
       photoPlane.geometry.dispose();
       photoMaterial.dispose();
@@ -562,12 +685,12 @@ export function OpeningExperience() {
   }, [run]);
 
   const instruction = busy
-    ? motion === "flatten" ? "Compressing spatial depth…" : motion === "unfold" ? "Restoring the field…" : "Changing representation…"
-    : step === 0 ? "Press Space to compress the room" : step === 1 ? "Press Space to restore depth" : step === 2 ? "Press Space to compare methods" : "Opening sequence complete";
+    ? direction === -1 ? "Reversing the spatial transition…" : motion === "flatten" ? "Compressing spatial depth…" : motion === "unfold" ? "Restoring the field…" : "Changing representation…"
+    : step === 0 ? "Space or scroll ↓ to compress" : step === 1 ? "Space / scroll ↓ · scroll ↑ to rewind" : step === 2 ? "Space / scroll ↓ · scroll ↑ to rewind" : "Scroll ↓ to continue · scroll ↑ to rewind";
 
   return (
     <main className="opening-page">
-      <section className="opening-stage" data-motion={motion} data-step={step}>
+      <section className="opening-stage" data-motion={motion} data-step={step} ref={openingRef}>
         <header className="site-header">
           <span>From Images to Places</span>
           <span>A spatial record · Columbia GSAPP</span>
@@ -609,7 +732,45 @@ export function OpeningExperience() {
             Replay
           </button>
         </footer>
+
+        <a className="scroll-cue" href="#story" aria-label="Scroll to the next chapter">
+          <span>Scroll to continue</span><i aria-hidden="true" />
+        </a>
       </section>
+
+      <section className="story-continuation" id="story" aria-labelledby="story-heading">
+        <div className="continuation-intro">
+          <p>Opening complete · The website continues</p>
+          <h2 id="story-heading">The image was only the beginning.</h2>
+          <span>
+            Continue through the history, mechanics, speed and future of spatial recording.
+            This opening is the first chapter—not the whole website.
+          </span>
+        </div>
+
+        <nav className="chapter-index" aria-label="Following chapters">
+          <a href="#before-3dgs"><b>01</b><span>Before 3DGS</span><small>Point clouds · Photogrammetry · NeRF</small></a>
+          <a href="#what-is-3dgs"><b>02</b><span>What is 3DGS?</span><small>Position · Scale · Rotation · Color · Opacity</small></a>
+          <a href="#how-it-works"><b>03</b><span>How it works</span><small>Images → Cameras → Optimization</small></a>
+          <a href="#why-it-is-fast"><b>04</b><span>Why it is fast</span><small>Projection instead of ray sampling</small></a>
+          <a href="#where-it-is-going"><b>05</b><span>Where it is going</span><small>Mobile · Web · 4D · Large scenes</small></a>
+        </nav>
+      </section>
+
+      <section className="next-chapter" id="before-3dgs" aria-labelledby="before-heading">
+        <div>
+          <p>Chapter 01 · Before 3DGS</p>
+          <h2 id="before-heading">Before space could feel present, it had to be measured.</h2>
+        </div>
+        <p>
+          Point clouds described samples. Photogrammetry rebuilt surfaces. NeRF learned convincing
+          views—but training and rendering still made spatial capture feel like a specialist process.
+        </p>
+      </section>
+
+      <div className="chapter-anchors" aria-hidden="true">
+        <span id="what-is-3dgs" /><span id="how-it-works" /><span id="why-it-is-fast" /><span id="where-it-is-going" />
+      </div>
     </main>
   );
 }

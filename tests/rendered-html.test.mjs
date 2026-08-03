@@ -26,6 +26,10 @@ test("server-renders the rebuilt cinematic opening", async () => {
   assert.match(html, /Live WebGL geometry/);
   assert.match(html, /Space/);
   assert.match(html, /Replay/);
+  assert.match(html, /Opening complete · The website continues/);
+  assert.match(html, /Before 3DGS/);
+  assert.match(html, /What is 3DGS/);
+  assert.match(html, /Why it is fast/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -43,11 +47,19 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(component, /THREE\.WireframeGeometry/);
   assert.match(component, /THREE\.Sprite/);
   assert.match(component, /event\.key === " "/);
+  assert.match(component, /getBoundingClientRect/);
+  assert.match(component, /openingIsActive\(\) && currentStep < 3/);
+  assert.match(component, /addEventListener\("wheel", onWheel, \{ passive: false \}\)/);
+  assert.match(component, /nextDirection === 1 \? currentStep < 3 : currentStep > 0/);
+  assert.match(component, /unflattenRoom/);
+  assert.match(component, /foldRoom/);
+  assert.match(component, /rewindRepresentations/);
   assert.match(component, /setRun/);
   assert.match(component, /await animate\(3000/);
   assert.match(component, /await animate\(4000/);
   assert.match(css, /@keyframes phoneScan/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.doesNotMatch(css, /scroll-snap|rotateX\(5\.5deg\)/);
+  assert.match(css, /\.story-continuation/);
   await access(new URL("../app/OpeningExperience.tsx", import.meta.url));
 });
