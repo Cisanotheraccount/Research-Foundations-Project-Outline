@@ -19,27 +19,35 @@ test("server-renders the rebuilt cinematic opening", async () => {
   const html = await response.text();
   assert.match(html, /<title>From Images to Places — Opening Study<\/title>/i);
   assert.match(html, /We live in 3D/);
-  assert.match(html, /capture/);
-  assert.match(html, /Not a virtual world/);
-  assert.match(html, /Pause/);
+  assert.match(html, /The room in front of you is real geometry/);
+  assert.match(html, /LiDAR samples/);
+  assert.match(html, /Photogrammetry mesh/);
+  assert.match(html, /Gaussian field/);
+  assert.match(html, /Live WebGL geometry/);
+  assert.match(html, /Space/);
   assert.match(html, /Replay/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
-test("keeps the opening continuous, automatic and accessible", async () => {
+test("keeps the opening continuous, user-controlled and accessible", async () => {
   const [component, css] = await Promise.all([
     readFile(new URL("../app/OpeningExperience.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(component, /mode-lidar/);
-  assert.match(component, /mode-mesh/);
-  assert.match(component, /mode-gaussian/);
+  assert.match(component, /new THREE\.WebGLRenderer/);
+  assert.match(component, /RoundedBoxGeometry/);
+  assert.match(component, /real-three-dimensional-room/);
+  assert.match(component, /new THREE\.WebGLRenderTarget/);
+  assert.match(component, /buildRepresentations/);
+  assert.match(component, /THREE\.Points/);
+  assert.match(component, /THREE\.WireframeGeometry/);
+  assert.match(component, /THREE\.Sprite/);
+  assert.match(component, /event\.key === " "/);
   assert.match(component, /setRun/);
-  assert.match(css, /--duration:\s*12s/);
-  assert.match(css, /@keyframes spatialSequence/);
-  assert.match(css, /@keyframes phoneSequence/);
-  assert.match(css, /@keyframes lidarSequence/);
+  assert.match(component, /await animate\(3000/);
+  assert.match(component, /await animate\(4000/);
+  assert.match(css, /@keyframes phoneScan/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.doesNotMatch(css, /scroll-snap|rotateX\(5\.5deg\)/);
-  await access(new URL("../public/room.webp", import.meta.url));
+  await access(new URL("../app/OpeningExperience.tsx", import.meta.url));
 });
