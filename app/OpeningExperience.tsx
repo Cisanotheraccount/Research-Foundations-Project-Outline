@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { RecordEvolution } from "./RecordEvolution";
 
 type Motion = "idle" | "flatten" | "unfold" | "compare";
 
@@ -29,9 +30,9 @@ const copy = [
     detail: "Depth returns behind the moving camera path.",
   },
   {
-    eyebrow: "From measurement to presence",
-    title: <>Not a virtual world.<br />A captured one.</>,
-    detail: "LiDAR samples → photogrammetry mesh → Gaussian field.",
+    eyebrow: "A spatial field",
+    title: <>Gaussian<br />Splatting</>,
+    detail: "Not a virtual world. A captured one.",
   },
 ] as const;
 
@@ -221,27 +222,25 @@ function buildRepresentations(room: THREE.Group) {
   room.updateMatrixWorld(true);
   const pointsGroup = new THREE.Group();
   const wireGroup = new THREE.Group();
-  const splatGroup = new THREE.Group();
   const pointsMaterial = new THREE.PointsMaterial({ color: 0xd8dce0, size: 0.038, transparent: true, opacity: 0, sizeAttenuation: true });
   const wireMaterial = new THREE.LineBasicMaterial({ color: 0xbfc3c7, transparent: true, opacity: 0 });
-
-  const splatCanvas = document.createElement("canvas");
-  splatCanvas.width = 128;
-  splatCanvas.height = 128;
-  const context = splatCanvas.getContext("2d");
-  if (context) {
-    const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
-    gradient.addColorStop(0, "rgba(255,255,255,.95)");
-    gradient.addColorStop(0.35, "rgba(255,255,255,.52)");
-    gradient.addColorStop(0.72, "rgba(255,255,255,.13)");
-    gradient.addColorStop(1, "rgba(255,255,255,0)");
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, 128, 128);
-  }
-  const splatTexture = new THREE.CanvasTexture(splatCanvas);
-  const palette = [0xb9b2a8, 0x85817a, 0x5f5d59, 0xd1ccc4, 0x4f5951, 0x3a3b3d];
-  const splatMaterials = palette.map((color) => new THREE.SpriteMaterial({ map: splatTexture, color, transparent: true, opacity: 0, depthWrite: false, blending: THREE.NormalBlending }));
-  let meshIndex = 0;
+  const centers: number[] = [];
+  const scales: number[] = [];
+  const rotations: number[] = [];
+  const colors: number[] = [];
+  const opacities: number[] = [];
+  let seed = 0x4d595df4;
+  const random = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  const a = new THREE.Vector3();
+  const b = new THREE.Vector3();
+  const c = new THREE.Vector3();
+  const edgeAB = new THREE.Vector3();
+  const edgeAC = new THREE.Vector3();
+  const cross = new THREE.Vector3();
+  const sampled = new THREE.Vector3();
 
   room.traverse((object) => {
     if (!(object instanceof THREE.Mesh) || !(object.geometry instanceof THREE.BufferGeometry)) return;
@@ -255,24 +254,170 @@ function buildRepresentations(room: THREE.Group) {
     const wire = new THREE.LineSegments(new THREE.WireframeGeometry(transformed), wireMaterial);
     wireGroup.add(wire);
 
-    const samples = Math.min(9, Math.max(3, Math.floor(position.count / 80)));
-    for (let index = 0; index < samples; index += 1) {
-      const vertexIndex = Math.floor((index / samples) * Math.max(1, position.count - 1));
-      const sprite = new THREE.Sprite(splatMaterials[(meshIndex + index) % splatMaterials.length]);
-      sprite.position.fromBufferAttribute(position as THREE.BufferAttribute, vertexIndex);
-      const width = 0.11 + ((meshIndex * 13 + index * 7) % 18) / 100;
-      sprite.scale.set(width * (1.6 + (index % 4) * 0.42), width, 1);
-      sprite.material.rotation = ((meshIndex * 29 + index * 41) % 180) * Math.PI / 180;
-      splatGroup.add(sprite);
+    const indexAttribute = transformed.getIndex();
+    const triangleCount = Math.max(1, Math.floor((indexAttribute?.count ?? position.count) / 3));
+    const triangleAreas: number[] = [];
+    let totalArea = 0;
+    for (let triangleIndex = 0; triangleIndex < triangleCount; triangleIndex += 1) {
+      const getVertex = (corner: number) => indexAttribute
+        ? indexAttribute.getX(triangleIndex * 3 + corner)
+        : triangleIndex * 3 + corner;
+      a.fromBufferAttribute(position as THREE.BufferAttribute, getVertex(0));
+      b.fromBufferAttribute(position as THREE.BufferAttribute, getVertex(1));
+      c.fromBufferAttribute(position as THREE.BufferAttribute, getVertex(2));
+      edgeAB.copy(b).sub(a);
+      edgeAC.copy(c).sub(a);
+      totalArea += cross.crossVectors(edgeAB, edgeAC).length() * 0.5;
+      triangleAreas.push(totalArea);
+    }
+    const sampleCount = Math.min(2200, Math.max(36, Math.ceil(totalArea * 60)));
+    const footprint = THREE.MathUtils.clamp(Math.sqrt(Math.max(0.0001, totalArea / sampleCount)) * 0.58, 0.022, 0.092);
+    const meshMaterial = Array.isArray(object.material) ? object.material[0] : object.material;
+    const baseColor = meshMaterial && "color" in meshMaterial && meshMaterial.color instanceof THREE.Color
+      ? meshMaterial.color
+      : new THREE.Color(0xaaa7a2);
+
+    for (let sampleIndex = 0; sampleIndex < sampleCount; sampleIndex += 1) {
+      const targetArea = random() * totalArea;
+      let low = 0;
+      let high = triangleAreas.length - 1;
+      while (low < high) {
+        const middle = Math.floor((low + high) / 2);
+        if (triangleAreas[middle] < targetArea) low = middle + 1;
+        else high = middle;
+      }
+      const triangleIndex = low;
+      const getVertex = (corner: number) => indexAttribute
+        ? indexAttribute.getX(triangleIndex * 3 + corner)
+        : triangleIndex * 3 + corner;
+      a.fromBufferAttribute(position as THREE.BufferAttribute, getVertex(0));
+      b.fromBufferAttribute(position as THREE.BufferAttribute, getVertex(1));
+      c.fromBufferAttribute(position as THREE.BufferAttribute, getVertex(2));
+      let u = random();
+      let v = random();
+      if (u + v > 1) {
+        u = 1 - u;
+        v = 1 - v;
+      }
+      edgeAB.copy(b).sub(a);
+      edgeAC.copy(c).sub(a);
+      sampled.copy(a).addScaledVector(edgeAB, u).addScaledVector(edgeAC, v);
+      centers.push(sampled.x, sampled.y, sampled.z);
+      const size = footprint * (0.82 + random() * 0.38);
+      scales.push(size * (1.04 + random() * 0.68), size * (0.74 + random() * 0.46));
+      rotations.push(random() * Math.PI * 2);
+      const variation = 0.9 + random() * 0.2;
+      colors.push(
+        Math.min(1, baseColor.r * variation),
+        Math.min(1, baseColor.g * variation),
+        Math.min(1, baseColor.b * variation),
+      );
+      opacities.push(0.42 + random() * 0.28);
     }
     transformed.dispose();
-    meshIndex += 1;
   });
+
+  // Gaussian splats need an approximate back-to-front order for natural alpha
+  // compositing. The final chapter camera is stable, so a single static sort is
+  // both inexpensive and materially closer to a real splat renderer than mesh
+  // traversal order.
+  const finalCamera = new THREE.Vector3(-4.7, 3.2, 7.45);
+  const order = Array.from({ length: opacities.length }, (_, index) => index)
+    .sort((left, right) => {
+      const leftOffset = left * 3;
+      const rightOffset = right * 3;
+      const leftX = centers[leftOffset] - finalCamera.x;
+      const leftY = centers[leftOffset + 1] - finalCamera.y;
+      const leftZ = centers[leftOffset + 2] - finalCamera.z;
+      const rightX = centers[rightOffset] - finalCamera.x;
+      const rightY = centers[rightOffset + 1] - finalCamera.y;
+      const rightZ = centers[rightOffset + 2] - finalCamera.z;
+      const leftDistance = leftX * leftX + leftY * leftY + leftZ * leftZ;
+      const rightDistance = rightX * rightX + rightY * rightY + rightZ * rightZ;
+      return rightDistance - leftDistance;
+    });
+  const sortedCenters: number[] = [];
+  const sortedScales: number[] = [];
+  const sortedRotations: number[] = [];
+  const sortedColors: number[] = [];
+  const sortedOpacities: number[] = [];
+  order.forEach((index) => {
+    sortedCenters.push(centers[index * 3], centers[index * 3 + 1], centers[index * 3 + 2]);
+    sortedScales.push(scales[index * 2], scales[index * 2 + 1]);
+    sortedRotations.push(rotations[index]);
+    sortedColors.push(colors[index * 3], colors[index * 3 + 1], colors[index * 3 + 2]);
+    sortedOpacities.push(opacities[index]);
+  });
+
+  const gaussianGeometry = new THREE.InstancedBufferGeometry();
+  gaussianGeometry.setIndex([0, 1, 2, 0, 2, 3]);
+  gaussianGeometry.setAttribute("position", new THREE.Float32BufferAttribute([
+    -0.5, -0.5, 0,
+    0.5, -0.5, 0,
+    0.5, 0.5, 0,
+    -0.5, 0.5, 0,
+  ], 3));
+  gaussianGeometry.setAttribute("instanceCenter", new THREE.InstancedBufferAttribute(new Float32Array(sortedCenters), 3));
+  gaussianGeometry.setAttribute("instanceScale", new THREE.InstancedBufferAttribute(new Float32Array(sortedScales), 2));
+  gaussianGeometry.setAttribute("instanceRotation", new THREE.InstancedBufferAttribute(new Float32Array(sortedRotations), 1));
+  gaussianGeometry.setAttribute("instanceColor", new THREE.InstancedBufferAttribute(new Float32Array(sortedColors), 3));
+  gaussianGeometry.setAttribute("instanceOpacity", new THREE.InstancedBufferAttribute(new Float32Array(sortedOpacities), 1));
+  gaussianGeometry.instanceCount = sortedOpacities.length;
+
+  const gaussianMaterial = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    depthTest: true,
+    blending: THREE.NormalBlending,
+    uniforms: { uOpacity: { value: 0 } },
+    vertexShader: `
+      attribute vec3 instanceCenter;
+      attribute vec2 instanceScale;
+      attribute float instanceRotation;
+      attribute vec3 instanceColor;
+      attribute float instanceOpacity;
+      varying vec2 vGaussianPosition;
+      varying vec3 vColor;
+      varying float vOpacity;
+
+      void main() {
+        vec4 center = modelViewMatrix * vec4(instanceCenter, 1.0);
+        float cosine = cos(instanceRotation);
+        float sine = sin(instanceRotation);
+        vec2 local = position.xy * 2.0;
+        vec2 rotated = vec2(
+          local.x * cosine - local.y * sine,
+          local.x * sine + local.y * cosine
+        );
+        center.xy += rotated * instanceScale;
+        gl_Position = projectionMatrix * center;
+        vGaussianPosition = local;
+        vColor = instanceColor;
+        vOpacity = instanceOpacity;
+      }
+    `,
+    fragmentShader: `
+      uniform float uOpacity;
+      varying vec2 vGaussianPosition;
+      varying vec3 vColor;
+      varying float vOpacity;
+
+      void main() {
+        float radius = dot(vGaussianPosition, vGaussianPosition);
+        float alpha = exp(-2.75 * radius) * vOpacity * uOpacity;
+        if (alpha < 0.008) discard;
+        gl_FragColor = vec4(vColor, alpha);
+      }
+    `,
+  });
+  const gaussianField = new THREE.Mesh(gaussianGeometry, gaussianMaterial);
+  gaussianField.name = "anisotropic-gaussian-field";
+  gaussianField.frustumCulled = false;
+  gaussianField.visible = false;
 
   pointsGroup.visible = false;
   wireGroup.visible = false;
-  splatGroup.visible = false;
-  return { pointsGroup, wireGroup, splatGroup, pointsMaterial, wireMaterial, splatMaterials, splatTexture };
+  return { pointsGroup, wireGroup, gaussianField, pointsMaterial, wireMaterial, gaussianMaterial, gaussianGeometry };
 }
 
 export function OpeningExperience() {
@@ -346,7 +491,7 @@ export function OpeningExperience() {
     scene.add(room);
     room.updateMatrixWorld(true);
     const representations = buildRepresentations(room);
-    scene.add(representations.pointsGroup, representations.wireGroup, representations.splatGroup);
+    scene.add(representations.pointsGroup, representations.wireGroup, representations.gaussianField);
 
     const renderTarget = new THREE.WebGLRenderTarget(1600, 900, { colorSpace: THREE.SRGBColorSpace, samples: 4 });
     const photoMaterial = new THREE.MeshBasicMaterial({ map: renderTarget.texture, transparent: true, opacity: 0, toneMapped: false });
@@ -399,6 +544,11 @@ export function OpeningExperience() {
 
     const setRepresentationOpacity = (materials: THREE.Material[], opacity: number) => {
       setMaterialOpacity(materials, opacity);
+    };
+
+    const setGaussianOpacity = (opacity: number) => {
+      representations.gaussianMaterial.uniforms.uOpacity.value = opacity;
+      representations.gaussianField.visible = opacity > 0.001;
     };
 
     const flattenRoom = async () => {
@@ -463,21 +613,20 @@ export function OpeningExperience() {
       room.visible = true;
       room.scale.z = 0.018;
       setMaterialOpacity(solidMaterials, 0.08);
-      representations.splatGroup.visible = true;
-      setRepresentationOpacity(representations.splatMaterials, 0);
+      setGaussianOpacity(0);
       await animate(3000, (eased, linear) => {
         revealPlane.constant = THREE.MathUtils.lerp(-6.1, 6.2, eased);
         room.scale.z = THREE.MathUtils.lerp(0.018, 1, eased);
         setMaterialOpacity(solidMaterials, THREE.MathUtils.lerp(0.08, 1, eased));
         photoMaterial.opacity = 1 - Math.min(1, linear * 1.35);
         const splatOpacity = Math.sin(Math.PI * linear) * 0.48;
-        setRepresentationOpacity(representations.splatMaterials, splatOpacity);
+        setGaussianOpacity(splatOpacity);
         lookFrom(new THREE.Vector3().lerpVectors(frontCamera, unfoldedCamera, eased));
       });
       solidMaterials.forEach((material) => {
         material.clippingPlanes = [];
       });
-      representations.splatGroup.visible = false;
+      setGaussianOpacity(0);
       photoPlane.visible = false;
       room.scale.z = 1;
       setMaterialOpacity(solidMaterials, 1);
@@ -496,21 +645,20 @@ export function OpeningExperience() {
       setMaterialOpacity(solidMaterials, 1);
       photoPlane.visible = true;
       photoMaterial.opacity = 0;
-      representations.splatGroup.visible = true;
-      setRepresentationOpacity(representations.splatMaterials, 0);
+      setGaussianOpacity(0);
 
       await animate(2600, (eased, linear) => {
         revealPlane.constant = THREE.MathUtils.lerp(6.2, -6.1, eased);
         room.scale.z = THREE.MathUtils.lerp(1, 0.018, eased);
         setMaterialOpacity(solidMaterials, THREE.MathUtils.lerp(1, 0.08, eased));
         photoMaterial.opacity = Math.min(1, linear * 1.3);
-        setRepresentationOpacity(representations.splatMaterials, Math.sin(Math.PI * linear) * 0.48);
+        setGaussianOpacity(Math.sin(Math.PI * linear) * 0.48);
         lookFrom(new THREE.Vector3().lerpVectors(unfoldedCamera, frontCamera, eased));
       });
       solidMaterials.forEach((material) => {
         material.clippingPlanes = [];
       });
-      representations.splatGroup.visible = false;
+      setGaussianOpacity(0);
       room.visible = false;
       photoPlane.visible = true;
       photoMaterial.opacity = 1;
@@ -523,25 +671,24 @@ export function OpeningExperience() {
         setMaterialOpacity(solidMaterials, 1 - phase);
         setRepresentationOpacity([representations.pointsMaterial], phase);
         setRepresentationOpacity([representations.wireMaterial], 0);
-        setRepresentationOpacity(representations.splatMaterials, 0);
+        setGaussianOpacity(0);
       } else if (linear < 0.35) {
         const phase = easeOutQuart((linear - 0.175) / 0.175);
         setMaterialOpacity(solidMaterials, 0);
         setRepresentationOpacity([representations.pointsMaterial], 1 - phase);
         setRepresentationOpacity([representations.wireMaterial], phase);
-        setRepresentationOpacity(representations.splatMaterials, 0);
+        setGaussianOpacity(0);
       } else if (linear < 0.7) {
         const phase = easeOutQuart((linear - 0.35) / 0.35);
         setRepresentationOpacity([representations.pointsMaterial], 0);
         setRepresentationOpacity([representations.wireMaterial], 1 - phase);
-        setRepresentationOpacity(representations.splatMaterials, phase);
+        setGaussianOpacity(phase);
         setMaterialOpacity(solidMaterials, phase * 0.12);
       } else {
-        const phase = easeOutQuart((linear - 0.7) / 0.3);
         setRepresentationOpacity([representations.pointsMaterial], 0);
         setRepresentationOpacity([representations.wireMaterial], 0);
-        setRepresentationOpacity(representations.splatMaterials, 1 - phase);
-        setMaterialOpacity(solidMaterials, THREE.MathUtils.lerp(0.12, 1, phase));
+        setGaussianOpacity(1);
+        setMaterialOpacity(solidMaterials, 1);
       }
     };
 
@@ -549,10 +696,10 @@ export function OpeningExperience() {
       const start = camera.position.clone();
       representations.pointsGroup.visible = true;
       representations.wireGroup.visible = true;
-      representations.splatGroup.visible = true;
+      representations.gaussianField.visible = true;
       setRepresentationOpacity([representations.pointsMaterial], 0);
       setRepresentationOpacity([representations.wireMaterial], 0);
-      setRepresentationOpacity(representations.splatMaterials, 0);
+      setGaussianOpacity(0);
 
       await animate(4000, (_eased, linear) => {
         applyRepresentationTimeline(linear);
@@ -561,22 +708,22 @@ export function OpeningExperience() {
       });
       representations.pointsGroup.visible = false;
       representations.wireGroup.visible = false;
-      representations.splatGroup.visible = false;
       setMaterialOpacity(solidMaterials, 1);
+      setGaussianOpacity(1);
       lookFrom(comparedCamera);
     };
 
     const rewindRepresentations = async () => {
       representations.pointsGroup.visible = true;
       representations.wireGroup.visible = true;
-      representations.splatGroup.visible = true;
+      representations.gaussianField.visible = true;
       await animate(3400, (eased, linear) => {
         applyRepresentationTimeline(1 - linear);
         lookFrom(new THREE.Vector3().lerpVectors(comparedCamera, unfoldedCamera, eased));
       });
       representations.pointsGroup.visible = false;
       representations.wireGroup.visible = false;
-      representations.splatGroup.visible = false;
+      setGaussianOpacity(0);
       setMaterialOpacity(solidMaterials, 1);
       lookFrom(unfoldedCamera);
     };
@@ -605,7 +752,11 @@ export function OpeningExperience() {
       wheelAccumulator = 0;
       wheelLockedUntil = performance.now() + 320;
     };
-    advanceRef.current = () => void transition(1);
+    const continueToStory = () => document.getElementById("story")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    advanceRef.current = () => {
+      if (currentStep < 3) void transition(1);
+      else continueToStory();
+    };
 
     const openingIsActive = () => {
       const bounds = openingRef.current?.getBoundingClientRect();
@@ -619,9 +770,13 @@ export function OpeningExperience() {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target?.matches("button, input, textarea, select, [contenteditable='true']")) return;
-      if (event.key === " " && openingIsActive() && currentStep < 3) {
+      if (event.key === " " && openingIsActive()) {
         event.preventDefault();
-        if (!animationLocked) void transition(1);
+        if (currentStep < 3) {
+          if (!animationLocked) void transition(1);
+        } else {
+          continueToStory();
+        }
       }
     };
 
@@ -667,8 +822,8 @@ export function OpeningExperience() {
       photoMaterial.dispose();
       representations.pointsMaterial.dispose();
       representations.wireMaterial.dispose();
-      representations.splatMaterials.forEach((material) => material.dispose());
-      representations.splatTexture.dispose();
+      representations.gaussianMaterial.dispose();
+      representations.gaussianGeometry.dispose();
       environment.dispose();
       const geometries = new Set<THREE.BufferGeometry>();
       const materials = new Set<THREE.Material>();
@@ -700,11 +855,19 @@ export function OpeningExperience() {
           <p>{copy[step].eyebrow}</p>
           <h1>{copy[step].title}</h1>
           <span>{copy[step].detail}</span>
+          {step === 3 && (
+            <div className="gaussian-attributes" aria-label="A Gaussian splat records position, scale, rotation, color and opacity">
+              <i>Position</i><i>Scale</i><i>Rotation</i><i>Color</i><i>Opacity</i>
+            </div>
+          )}
         </div>
 
         <div className="canvas-stage">
           <canvas ref={canvasRef} aria-hidden="true" />
-          <div className="real-geometry-badge">Live WebGL geometry</div>
+          <video className="opening-official-result" muted loop autoPlay playsInline preload="metadata" poster="/media/record-evolution/s07-3dgs-playroom-front-1920.webp" aria-label="Official Inria 3D Gaussian Splatting playroom result">
+            <source src="/media/record-evolution/inria-3dgs-playroom.mp4" type="video/mp4" />
+          </video>
+          <div className="real-geometry-badge">{step === 3 ? "Official 3DGS result · Inria" : "Live WebGL geometry"}</div>
           <div className="phone-path" aria-hidden="true"><i /><span /></div>
           <div className="representation-cues" aria-hidden="true">
             <span>LiDAR samples</span><span>Photogrammetry mesh</span><span>Gaussian field</span>
@@ -715,7 +878,7 @@ export function OpeningExperience() {
           <div className="step-dots" aria-label={`Opening step ${step + 1} of 4`}>
             {[0, 1, 2, 3].map((index) => <i className={index <= step ? "is-complete" : ""} key={index} />)}
           </div>
-          <button type="button" className="space-control" onClick={() => advanceRef.current()} disabled={busy || step === 3 || !ready}>
+          <button type="button" className="space-control" onClick={() => advanceRef.current()} disabled={busy || !ready}>
             <kbd>Space</kbd><span>{instruction}</span>
           </button>
           <button
@@ -738,39 +901,7 @@ export function OpeningExperience() {
         </a>
       </section>
 
-      <section className="story-continuation" id="story" aria-labelledby="story-heading">
-        <div className="continuation-intro">
-          <p>Opening complete · The website continues</p>
-          <h2 id="story-heading">The image was only the beginning.</h2>
-          <span>
-            Continue through the history, mechanics, speed and future of spatial recording.
-            This opening is the first chapter—not the whole website.
-          </span>
-        </div>
-
-        <nav className="chapter-index" aria-label="Following chapters">
-          <a href="#before-3dgs"><b>01</b><span>Before 3DGS</span><small>Point clouds · Photogrammetry · NeRF</small></a>
-          <a href="#what-is-3dgs"><b>02</b><span>What is 3DGS?</span><small>Position · Scale · Rotation · Color · Opacity</small></a>
-          <a href="#how-it-works"><b>03</b><span>How it works</span><small>Images → Cameras → Optimization</small></a>
-          <a href="#why-it-is-fast"><b>04</b><span>Why it is fast</span><small>Projection instead of ray sampling</small></a>
-          <a href="#where-it-is-going"><b>05</b><span>Where it is going</span><small>Mobile · Web · 4D · Large scenes</small></a>
-        </nav>
-      </section>
-
-      <section className="next-chapter" id="before-3dgs" aria-labelledby="before-heading">
-        <div>
-          <p>Chapter 01 · Before 3DGS</p>
-          <h2 id="before-heading">Before space could feel present, it had to be measured.</h2>
-        </div>
-        <p>
-          Point clouds described samples. Photogrammetry rebuilt surfaces. NeRF learned convincing
-          views—but training and rendering still made spatial capture feel like a specialist process.
-        </p>
-      </section>
-
-      <div className="chapter-anchors" aria-hidden="true">
-        <span id="what-is-3dgs" /><span id="how-it-works" /><span id="why-it-is-fast" /><span id="where-it-is-going" />
-      </div>
+      <RecordEvolution />
     </main>
   );
 }
