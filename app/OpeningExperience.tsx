@@ -836,6 +836,7 @@ export function OpeningExperience() {
         animationLocked = false;
         wheelAccumulator = 0;
         wheelLockedUntil = performance.now() + 320;
+        scrollSyncFrame = requestAnimationFrame(syncOpeningStepFromViewport);
         return;
       }
 
@@ -869,6 +870,10 @@ export function OpeningExperience() {
       animationLocked = false;
       wheelAccumulator = 0;
       wheelLockedUntil = performance.now() + 320;
+      // A progress-dot click, touch scroll, or scrollbar drag may move the
+      // viewport while the transition lock is active. Reconcile once after
+      // unlocking so the rendered representation always matches the page.
+      scrollSyncFrame = requestAnimationFrame(syncOpeningStepFromViewport);
     };
     const continueToStory = () => document.getElementById("representations")?.scrollIntoView({ behavior: "smooth", block: "start" });
     advanceRef.current = () => {
