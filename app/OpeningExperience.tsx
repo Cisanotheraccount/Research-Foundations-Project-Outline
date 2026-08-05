@@ -1039,7 +1039,7 @@ export function OpeningExperience() {
     <main className="opening-page">
       <header className="site-header">
         <span>FROM PHOTOGRAPHS TO SPATIAL FIELDS</span>
-        <span>A spatial record · Columbia GSAPP</span>
+        <span>A spatial record</span>
       </header>
 
       <section className="opening-sequence" ref={openingRef} aria-label="Opening sequence">
