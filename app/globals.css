@@ -182,7 +182,7 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
 .application-copy small { display: block; margin-top: 9px; color: #5f5f64; font-size: 6px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
 .everyday-visual { display: grid; grid-template-columns: 38% 62%; gap: 1px; background: rgba(255,255,255,.16); transform-style: preserve-3d; }
 .everyday-visual figure { position: relative; min-width: 0; margin: 0; overflow: hidden; background: #111; transform-style: preserve-3d; }
-.everyday-city img { object-fit: cover; object-position: center 42%; filter: grayscale(.28) contrast(1.04) brightness(.76); }
+.everyday-city img { object-fit: cover; object-position: center 48%; filter: saturate(.64) contrast(1.08) brightness(.78); }
 .everyday-property img { filter: saturate(.48) contrast(1.08) brightness(.72); }
 .everyday-visual figcaption { position: absolute; z-index: 7; right: 12px; bottom: 10px; color: rgba(255,255,255,.72); font-size: 6px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; }
 .everyday-camera-path { position: absolute; z-index: 8; top: 16px; right: 16px; display: flex; align-items: center; gap: 7px; padding: 7px 9px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; background: rgba(0,0,0,.58); backdrop-filter: blur(12px); }

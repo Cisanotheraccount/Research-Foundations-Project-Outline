@@ -14,7 +14,7 @@ const applications = [
     label: "Everyday environments",
     title: "We already expect places to be explorable.",
     body: "City maps and property tours made navigable 3D familiar. Gaussian capture can make photoreal spatial records far easier to produce.",
-    source: "Apple Maps · Real property imagery",
+    source: "Apple Maps Enhanced Flyover · Real property imagery",
   },
   {
     label: "Volumetric performance",
@@ -52,7 +52,7 @@ function EverydayVisual() {
   return (
     <div className="application-visual everyday-visual">
       <figure className="everyday-city">
-        <img src="/media/applications/apple-maps-sf-3d.jpg" alt="Apple Maps three-dimensional view of San Francisco" />
+        <img src="/media/applications/apple-maps-enhanced-flyover.jpg" alt="Apple Maps Enhanced Flyover photorealistic three-dimensional view of Lower Manhattan" />
         <figcaption>City scale</figcaption>
       </figure>
       <figure className="everyday-property">

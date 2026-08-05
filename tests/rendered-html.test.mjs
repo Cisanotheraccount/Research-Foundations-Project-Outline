@@ -269,6 +269,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(css, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(applicationsFinale, /Autoplay on arrival/);
   assert.match(applicationsFinale, /timeline\.timeScale\(0\.82\)/);
+  assert.match(applicationsFinale, /apple-maps-enhanced-flyover\.jpg/);
   assert.match(applicationsFinale, /fastgs-counter/);
   assert.match(applicationsFinale, /cinema-stage-capture/);
   assert.match(applicationsFinale, /cinema-stage-final/);
@@ -329,7 +330,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   await access(new URL("../public/media/timeline/mariner4-hand-colored.jpg", import.meta.url));
   await access(new URL("../public/media/timeline/inria-bicycle-3dgs.jpg", import.meta.url));
   await access(new URL("../public/media/timeline/worldlabs-coit-tower.mp4", import.meta.url));
-  await access(new URL("../public/media/applications/apple-maps-sf-3d.jpg", import.meta.url));
+  await access(new URL("../public/media/applications/apple-maps-enhanced-flyover.jpg", import.meta.url));
   await access(new URL("../public/media/applications/superman-4dgs-capture.jpg", import.meta.url));
   await access(new URL("../public/media/applications/superman-4dgs-final.jpg", import.meta.url));
   await access(new URL("../public/media/applications/superman-4dgs-final-wide.jpg", import.meta.url));

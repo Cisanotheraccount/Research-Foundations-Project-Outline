@@ -1,6 +1,6 @@
 # Applications finale sources
 
-- `apple-maps-sf-3d.jpg`: official Apple Newsroom image showing the three-dimensional San Francisco experience in Apple Maps. Source: https://www.apple.com/newsroom/2021/09/apple-maps-introduces-new-ways-to-explore-major-cities-in-3d/ Credit: Apple.
+- `apple-maps-enhanced-flyover.jpg`: official Apple Newsroom image showing Enhanced Flyover over Lower Manhattan in Apple Maps. Apple describes the 2026 feature as combining aerial imagery with AI for a more detailed, lifelike 3D view. Source: https://www.apple.com/newsroom/2026/06/apple-unveils-innovative-features-and-intelligence-experiences-across-services/ Credit: Apple.
 - The property-scale image reuses the real New York video frame documented in `public/media/continuity/source-manifest.md`.
 - `superman-4dgs-capture.jpg`: cropped frame at 00:44 from Framestore's official `Gaussian Splatting in Superman` breakdown, showing Bradley Cooper and Angela Sarafyan performing inside Infinite Realities' 192-camera capture stage. Source: https://www.youtube.com/watch?v=Pxd-q3ECBPs Credit: Framestore / Infinite Realities / DC Studios / Warner Bros. Pictures. Crop only; classroom/local presentation use.
 - `superman-4dgs-final.jpg`: official Framestore still of the finished Fortress of Solitude hologram. Source: https://www.framestore.com/work/superman Credit: Framestore / DC Studios / Warner Bros. Pictures. Classroom/local presentation use.
