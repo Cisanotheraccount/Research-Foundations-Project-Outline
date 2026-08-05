@@ -1,6 +1,6 @@
 # FROM PHOTOGRAPHS TO SPATIAL FIELDS
 
-Version 1 of a presentation-ready, interactive website for the Columbia GSAPP Gaussian Splatting project.
+Version 2 working copy of a presentation-ready, interactive website for the Columbia GSAPP Gaussian Splatting project.
 
 The site follows one continuous vertical narrative:
 
@@ -10,12 +10,12 @@ It combines native page scrolling with presentation controls. Space, Arrow Up/Do
 
 ## Version
 
-- Stable snapshot: **Version 1**
-- Frozen: **August 5, 2026**
-- Git tag: `from-photographs-to-spatial-fields-v1`
-- GitHub branch: `from-photographs-to-spatial-fields-v1`
+- Working version: **Version 2**
+- Created from stable Version 1: **August 5, 2026**
+- Local working branch: `work/from-photographs-to-spatial-fields-v2`
+- Version 1 Git tag: `from-photographs-to-spatial-fields-v1`
 
-Future changes continue in the separate Version 2 working copy.
+Version 1 remains frozen; future design and content changes continue here.
 
 ## Controls
 
