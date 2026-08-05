@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { keyboardTargetIsInteractive, sectionOwnsViewportCenter, spatialKeyDirection } from "./spatialKeyboard";
 
 export function EndingQuestion() {
   const sectionRef = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(false);
   const restart = useCallback(() => {
     window.history.replaceState(null, "", "#opening-space");
     window.dispatchEvent(new CustomEvent("spatial:navigate", { detail: { id: "opening-space", index: 0 } }));
@@ -28,8 +29,18 @@ export function EndingQuestion() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [restart]);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      setActive(entry.isIntersecting && entry.intersectionRatio >= 0.45);
+    }, { threshold: [0, 0.45, 0.75] });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="ending-question" id="ending" ref={sectionRef} aria-labelledby="ending-question-title">
+    <section className="ending-question" id="ending" ref={sectionRef} data-active={active} aria-labelledby="ending-question-title">
       <div className="ending-spatial-field" aria-hidden="true">
         <i className="ending-plane ending-plane-back" />
         <i className="ending-plane ending-plane-mid" />

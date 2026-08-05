@@ -319,6 +319,11 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.ok(component.indexOf("<OriginsTimeline />") < component.indexOf("<ApplicationsFinale />"));
   assert.ok(component.indexOf("<ApplicationsFinale />") < component.indexOf("<EndingQuestion />"));
   assert.match(endingQuestion, /What there for us\?/);
+  assert.match(endingQuestion, /new IntersectionObserver/);
+  assert.match(endingQuestion, /data-active=\{active\}/);
+  assert.doesNotMatch(endingQuestion, /<b\s*\/>/);
+  assert.match(css, /endingGlowSweep/);
+  assert.match(css, /endingFieldDrift/);
   assert.doesNotMatch(endingQuestion, /As Gaussian Splatting turns ordinary places into explorable worlds|what could it change in our everyday lives|How might we remember/);
   assert.match(endingQuestion, /Return to the beginning/);
   assert.match(representationPrimer, /Photogrammetry/);
