@@ -51,7 +51,7 @@ test("server-renders the rebuilt cinematic opening", async () => {
   assert.match(html, /FastGS trained a benchmark scene in about 100 seconds/);
   assert.match(html, /Aerial photographs become an explorable 3DGS environment/);
   assert.match(html, /Pokémon GO players helped turn landmarks into machine-readable 3D maps/);
-  assert.match(html, /Fragile artifacts can remain explorable/);
+  assert.match(html, /A captured place becomes a playable level/);
   assert.match(html, /Potential application · inference/);
   assert.match(html, /Page 1 of 12/);
   assert.match(html, /What there for us\?/);
@@ -289,11 +289,13 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(applicationsFinale, /Crowdsourced spatial mapping/);
   assert.match(applicationsFinale, /optional PokéStop Scan tasks/);
   assert.match(applicationsFinale, /Lightship VPS/);
-  assert.match(applicationsFinale, /Cultural heritage/);
+  assert.match(applicationsFinale, /Playable environments/);
+  assert.match(applicationsFinale, /Postcard combines Gaussian splats/);
   assert.match(applicationsFinale, /vastgaussian-mill19-building\.mp4/);
   assert.match(applicationsFinale, /niantic-vps-workflow\.jpg/);
   assert.doesNotMatch(applicationsFinale, /Creative tools|painting-with-splats/);
-  assert.match(applicationsFinale, /gaussian-heritage\.jpg/);
+  assert.match(applicationsFinale, /postcard-gaussian-game\.jpg/);
+  assert.doesNotMatch(applicationsFinale, /Cultural heritage|gaussian-heritage/);
   assert.match(applicationsFinale, /document\.getElementById\("ending"\)/);
   assert.doesNotMatch(applicationsFinale, /cinema-camera-frame/);
   assert.match(applicationsFinale, /timeline\.reverse\(\)/);
@@ -351,7 +353,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   await access(new URL("../public/media/applications/vastgaussian-mill19-building.mp4", import.meta.url));
   await access(new URL("../public/media/applications/vastgaussian-mill19-building-poster.png", import.meta.url));
   await access(new URL("../public/media/applications/niantic-vps-workflow.jpg", import.meta.url));
-  await access(new URL("../public/media/applications/gaussian-heritage.jpg", import.meta.url));
+  await access(new URL("../public/media/applications/postcard-gaussian-game.jpg", import.meta.url));
   await access(new URL("../public/media/world-labs/ancient-stone-crypt-official.mp4", import.meta.url));
   await access(new URL("../public/media/world-labs/ancient-stone-crypt-thumbnail.webp", import.meta.url));
   await access(new URL("../public/media/continuity/nyc-window.mp4", import.meta.url));

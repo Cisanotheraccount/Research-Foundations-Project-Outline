@@ -41,10 +41,10 @@ const applications = [
     source: "Niantic · PokéStop Scanning 2020 · Lightship VPS 2022",
   },
   {
-    label: "Cultural heritage",
-    title: "Fragile artifacts can remain explorable.",
-    body: "Gaussian Heritage turns ordinary RGB photographs into segmented 3D replicas that preserve and share individual objects.",
-    source: "IIT PAVIS · ECCV 2024 VISART",
+    label: "Playable environments",
+    title: "A captured place becomes a playable level.",
+    body: "Postcard combines Gaussian splats for photoreal appearance with photogrammetric meshes for terrain, collision, and shadows—turning seven real locations into walkable third-person scenes.",
+    source: "Ludagon · Postcard · Steam 2026",
   },
 ] as const;
 
@@ -118,14 +118,14 @@ function NianticVpsVisual() {
   );
 }
 
-function HeritageVisual() {
+function GamingVisual() {
   return (
-    <div className="application-visual heritage-visual">
-      <img src="/media/applications/gaussian-heritage.jpg" alt="A cultural heritage sculpture reconstructed and separated into explorable Gaussian objects" />
-      <div className="heritage-sequence" aria-hidden="true">
-        <span>Photographs</span><i />
-        <span>3D replica</span><i />
-        <span>Object</span>
+    <div className="application-visual gaming-visual">
+      <img src="/media/applications/postcard-gaussian-game.jpg" alt="Postcard gameplay showing a third-person character standing inside a photoreal Gaussian-splat landscape" />
+      <div className="gaming-sequence" aria-hidden="true">
+        <span>Gaussian visuals</span><i />
+        <span>Mesh collision</span><i />
+        <span>Playable level</span>
       </div>
     </div>
   );
@@ -182,8 +182,8 @@ export function ApplicationsFinale() {
       gsap.set(".aerial-status", { opacity: 0, y: 10 });
       gsap.set(".niantic-vps-visual img", { scale: 1.08, filter: "brightness(.5) saturate(.55) blur(5px)" });
       gsap.set(".niantic-vps-sequence", { opacity: 0, y: 12 });
-      gsap.set(".heritage-visual img", { scale: 1.08, filter: "brightness(.48) saturate(.5) blur(5px)" });
-      gsap.set(".heritage-sequence", { opacity: 0, y: 10 });
+      gsap.set(".gaming-visual img", { scale: 1.08, filter: "brightness(.48) saturate(.5) blur(5px)" });
+      gsap.set(".gaming-sequence", { opacity: 0, y: 10 });
 
       timeline
         .to(cards[0], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 0.34)
@@ -208,8 +208,8 @@ export function ApplicationsFinale() {
         .to(".niantic-vps-visual img", { scale: 1, filter: "brightness(.88) saturate(.9) blur(0px)", duration: 0.86 }, 7.94)
         .to(".niantic-vps-sequence", { opacity: 1, y: 0, duration: 0.48 }, 8.34)
         .to(cards[5], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 9.28)
-        .to(".heritage-visual img", { scale: 1, filter: "brightness(.8) saturate(.72) blur(0px)", duration: 0.86 }, 9.44)
-        .to(".heritage-sequence", { opacity: 1, y: 0, duration: 0.5 }, 9.94)
+        .to(".gaming-visual img", { scale: 1, filter: "brightness(.84) saturate(.82) blur(0px)", duration: 0.86 }, 9.44)
+        .to(".gaming-sequence", { opacity: 1, y: 0, duration: 0.5 }, 9.94)
         .to(cards, { opacity: 1, scale: 1, duration: 0.46, stagger: 0.04 }, 10.62);
 
       animationRef.current = timeline;
@@ -336,7 +336,7 @@ export function ApplicationsFinale() {
             {index === 2 && <RapidFieldVisual videoRef={videoRef} />}
             {index === 3 && <AerialReconstructionVisual videoRef={aerialVideoRef} />}
             {index === 4 && <NianticVpsVisual />}
-            {index === 5 && <HeritageVisual />}
+            {index === 5 && <GamingVisual />}
             <div className="application-copy">
               <span>0{index + 1} · {application.label}</span>
               <h3>{application.title}</h3>
