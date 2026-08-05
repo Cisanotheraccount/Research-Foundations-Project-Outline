@@ -324,6 +324,10 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.doesNotMatch(endingQuestion, /<b\s*\/>/);
   assert.match(css, /endingGlowSweep/);
   assert.match(css, /endingFieldDrift/);
+  assert.match(css, /endingBackOrbit/);
+  assert.match(css, /endingMidOrbit/);
+  assert.match(css, /endingGridFlow/);
+  assert.match(css, /endingTitleBreath/);
   assert.doesNotMatch(endingQuestion, /As Gaussian Splatting turns ordinary places into explorable worlds|what could it change in our everyday lives|How might we remember/);
   assert.match(endingQuestion, /Return to the beginning/);
   assert.match(representationPrimer, /Photogrammetry/);
