@@ -21,8 +21,6 @@ export function EndingQuestion() {
       if (event.repeat) return;
       if (direction === -1) {
         document.getElementById("applications")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        restart();
       }
     };
 

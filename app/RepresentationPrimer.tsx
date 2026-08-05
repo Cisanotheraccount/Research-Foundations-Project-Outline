@@ -344,12 +344,12 @@ export function RepresentationPrimer() {
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      activeRef.current = entry.intersectionRatio >= 0.42;
+    const observer = new IntersectionObserver(() => {
+      activeRef.current = sectionOwnsViewportCenter(section);
       if (activeRef.current && currentStepRef.current === -1 && !transitionRef.current) {
         goToStep(0);
       }
-    }, { threshold: [0, 0.25, 0.42, 0.65, 0.85] });
+    }, { threshold: [0, 0.15, 0.3, 0.5, 0.75] });
     observer.observe(section);
     return () => observer.disconnect();
   }, [goToStep]);

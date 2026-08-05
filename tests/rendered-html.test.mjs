@@ -91,7 +91,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(component, /Gaussian<br \/>Splatting/);
   assert.match(component, /Not a flat image\. A field you can enter and explore\./);
   assert.match(component, /spatialKeyDirection/);
-  assert.match(component, /getBoundingClientRect/);
+  assert.match(component, /sectionOwnsViewportCenter/);
   assert.match(component, /keyboardTargetIsInteractive/);
   assert.match(component, /continueToStory/);
   assert.match(component, /ContinentalCameraPathHero/);
@@ -110,7 +110,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(linearProgress, /padStart\(2, "0"\)/);
   assert.match(linearProgress, /goToPage/);
   assert.match(linearProgress, /window\.scrollTo/);
-  assert.match(linearProgress, /openingSequence\.offsetTop \+ openingIndex \* window\.innerHeight/);
+  assert.match(linearProgress, /window\.scrollY \+ target\.getBoundingClientRect\(\)\.top/);
   assert.match(linearProgress, /history\.replaceState/);
   assert.match(linearProgress, /spatial:navigate/);
   assert.match(linearProgress, /aria-current/);
@@ -141,6 +141,13 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   }
   assert.match(component, /addEventListener\("wheel", onWheel, \{ passive: false \}\)/);
   assert.match(component, /nextDirection === 1 \? currentStep < 3 : currentStep > 0/);
+  assert.match(component, /wheelGestureLocked/);
+  assert.match(component, /wheelReleaseTimer/);
+  assert.match(component, /}, 280\)/);
+  assert.match(component, /applyCanonicalOpeningStep\(1\);\s*await scrollToOpeningStep\(targetStep, true\);\s*currentStep = targetStep;\s*setStep\(targetStep\);\s*setMotion\("unfold"\);\s*await unfoldRoom\(\);/);
+  assert.equal(component.match(/await unfoldRoom\(\)/g)?.length, 1);
+  assert.match(component, /targetStep === 1[\s\S]*room\.visible = false;[\s\S]*photoPlane\.visible = true;[\s\S]*photoMaterial\.opacity = 1;[\s\S]*setMaterialOpacity\(solidMaterials, 0\);[\s\S]*setGaussianOpacity\(0\);[\s\S]*lookFrom\(frontCamera\);/);
+  assert.match(component, /sourceStep === 2 \? "fold"/);
   assert.match(component, /unflattenRoom/);
   assert.match(component, /foldRoom/);
   assert.match(component, /rewindRepresentations/);

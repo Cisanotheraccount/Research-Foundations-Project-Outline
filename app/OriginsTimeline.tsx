@@ -233,7 +233,6 @@ export function OriginsTimeline() {
     if (hoverExitRef.current !== null) window.clearTimeout(hoverExitRef.current);
     hoverIntentRef.current = null;
     hoverExitRef.current = null;
-    setFocusedMilestone(null);
   }, [state]);
 
   const requestMilestoneFocus = (index: number) => {
@@ -273,7 +272,9 @@ export function OriginsTimeline() {
   }, []);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const playForward = () => {
+      if (reducedMotion) return false;
       const timeline = animationRef.current;
       if (!timeline || timeline.progress() >= 0.999) return false;
       setState("playing");
@@ -291,7 +292,7 @@ export function OriginsTimeline() {
       const boundarySection = direction === 1
         ? document.getElementById("applications")
         : document.getElementById("4dgs");
-      const canMove = direction === 1 ? progress < 0.999 : progress > 0.001;
+      const canMove = !reducedMotion && (direction === 1 ? progress < 0.999 : progress > 0.001);
       if (!canMove && !boundarySection) return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -307,7 +308,7 @@ export function OriginsTimeline() {
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (!activeRef.current || event.deltaY === 0) return;
+      if (reducedMotion || !activeRef.current || event.deltaY === 0) return;
       const timeline = animationRef.current;
       if (!timeline) return;
       const direction = event.deltaY > 0 ? 1 : -1;
@@ -347,6 +348,8 @@ export function OriginsTimeline() {
     }
   };
 
+  const visibleFocusedMilestone = state === "complete" ? focusedMilestone : null;
+
   return (
     <section className="history-timeline" id="timeline" ref={sectionRef} data-state={state} aria-label="Timeline from pixels to browser-based Gaussian worlds">
       <div className="timeline-heading">
@@ -361,12 +364,12 @@ export function OriginsTimeline() {
       </div>
 
       <div
-        className={`timeline-grid${focusedMilestone !== null ? " has-hover-focus" : ""}`}
+        className={`timeline-grid${visibleFocusedMilestone !== null ? " has-hover-focus" : ""}`}
         onPointerLeave={releaseMilestoneFocus}
       >
         {milestones.map((milestone, index) => (
           <article
-            className={`timeline-milestone${focusedMilestone === index ? " is-hovered" : ""}`}
+            className={`timeline-milestone${visibleFocusedMilestone === index ? " is-hovered" : ""}`}
             tabIndex={0}
             onPointerEnter={() => requestMilestoneFocus(index)}
             onPointerLeave={releaseMilestoneFocus}

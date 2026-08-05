@@ -251,7 +251,9 @@ export function ApplicationsFinale() {
   }, []);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const move = (direction: 1 | -1) => {
+      if (reducedMotion) return false;
       const timeline = animationRef.current;
       if (!timeline) return false;
       if (direction === 1 && timeline.progress() < 0.999) {
@@ -277,7 +279,7 @@ export function ApplicationsFinale() {
       const boundarySection = direction === 1
         ? document.getElementById("ending")
         : document.getElementById("timeline");
-      const canMove = direction === 1 ? progress < 0.999 : progress > 0.001;
+      const canMove = !reducedMotion && (direction === 1 ? progress < 0.999 : progress > 0.001);
       if (!canMove && !boundarySection) return;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -287,7 +289,7 @@ export function ApplicationsFinale() {
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (!activeRef.current || event.deltaY === 0) return;
+      if (reducedMotion || !activeRef.current || event.deltaY === 0) return;
       const timeline = animationRef.current;
       if (!timeline) return;
       const direction: 1 | -1 = event.deltaY > 0 ? 1 : -1;

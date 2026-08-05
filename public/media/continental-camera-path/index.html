@@ -344,6 +344,7 @@
     let poses = [];
     let playhead = 0;
     let playing = false;
+    let rendering = true;
     let lastTime = performance.now();
     let routeLine = null;
     let sampledFrustums = null;
@@ -478,6 +479,20 @@
       playButton.textContent = playing ? '❚❚' : '▶';
       playButton.setAttribute('aria-label', playing ? 'Pause camera path' : 'Play camera path');
       lastTime = performance.now();
+      if (embedded) setRendering(next);
+    }
+
+    function setRendering(next) {
+      if (rendering === next) return;
+      rendering = next;
+      if (rendering) {
+        lastTime = performance.now();
+        renderer.setAnimationLoop(renderFrame);
+      } else {
+        renderer.setAnimationLoop(null);
+        controls.update();
+        renderer.render(scene, camera);
+      }
     }
 
     function resetView() {
@@ -600,7 +615,7 @@
       renderer.setSize(innerWidth, innerHeight);
     });
 
-    renderer.setAnimationLoop(now => {
+    function renderFrame(now) {
       const delta = Math.min(0.1, (now - lastTime) / 1000);
       lastTime = now;
       if (playing && poses.length) {
@@ -610,7 +625,8 @@
       }
       controls.update();
       renderer.render(scene, camera);
-    });
+    }
+    renderer.setAnimationLoop(renderFrame);
   </script>
 </body>
 </html>

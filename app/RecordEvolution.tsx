@@ -356,10 +356,10 @@ export function RecordEvolution() {
   }, []);
 
   useEffect(() => {
-    if (reducedMotion) return;
     const activeTimeline = () => timelineRefs.current[activeRef.current];
 
     const move = (direction: 1 | -1) => {
+      if (reducedMotion) return false;
       const timeline = activeTimeline();
       if (!timeline) return false;
       const progress = timeline.progress();
@@ -377,7 +377,7 @@ export function RecordEvolution() {
     };
 
     const onWheel = (event: WheelEvent) => {
-      if (activeRef.current < 0 || event.deltaY === 0) return;
+      if (reducedMotion || activeRef.current < 0 || event.deltaY === 0) return;
       const direction: 1 | -1 = event.deltaY > 0 ? 1 : -1;
       const timeline = activeTimeline();
       if (!timeline) return;
@@ -400,7 +400,7 @@ export function RecordEvolution() {
       const timeline = activeTimeline();
       if (!timeline) return;
       const progress = timeline.progress();
-      const canMove = direction === 1 ? progress < 0.999 : progress > 0.001;
+      const canMove = !reducedMotion && (direction === 1 ? progress < 0.999 : progress > 0.001);
       const boundarySection = direction === 1
         ? sectionRefs.current[index + 1] ?? (index === chapters.length - 1 ? document.getElementById("timeline") : null)
         : sectionRefs.current[index - 1] ?? (index === 0 ? document.getElementById("representations") : null);

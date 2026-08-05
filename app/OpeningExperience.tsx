@@ -11,9 +11,9 @@ import { RecordEvolution } from "./RecordEvolution";
 import { LinearProgress } from "./LinearProgress";
 import { OriginsTimeline } from "./OriginsTimeline";
 import { RepresentationPrimer } from "./RepresentationPrimer";
-import { keyboardTargetIsInteractive, spatialKeyDirection } from "./spatialKeyboard";
+import { keyboardTargetIsInteractive, sectionOwnsViewportCenter, spatialKeyDirection } from "./spatialKeyboard";
 
-type Motion = "idle" | "flatten" | "unfold" | "compare";
+type Motion = "idle" | "flatten" | "unflatten" | "unfold" | "fold" | "compare" | "rewind";
 
 type RoomBuild = {
   group: THREE.Group;
@@ -439,6 +439,7 @@ export function OpeningExperience() {
   const [direction, setDirection] = useState<1 | -1>(1);
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [openingVisible, setOpeningVisible] = useState(true);
   const [run, setRun] = useState(0);
 
   useEffect(() => {
@@ -447,11 +448,19 @@ export function OpeningExperience() {
     let disposed = false;
     let renderFrame = 0;
     let animationFrame = 0;
+    let scrollFrame = 0;
+    let scrollSyncFrame = 0;
     let currentStep = 0;
     let animationLocked = false;
     let idleCamera = true;
     let wheelAccumulator = 0;
+    let wheelGestureLocked = false;
+    let wheelReleaseTimer = 0;
     let wheelLockedUntil = 0;
+    let scrollSyncLockedUntil = 0;
+    let openingRenderable = true;
+    let renderLoopRunning = false;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
@@ -534,6 +543,9 @@ export function OpeningExperience() {
       renderer.setRenderTarget(null);
       photoPlane.visible = previousVisible;
     };
+    // Prime the flat record once so page 02 also has a valid image when it is
+    // reached directly from the progress navigation instead of via page 01.
+    renderSnapshot();
 
     const animate = (duration: number, update: (eased: number, linear: number) => void) => new Promise<void>((resolve) => {
       const startedAt = performance.now();
@@ -739,51 +751,10 @@ export function OpeningExperience() {
       lookFrom(unfoldedCamera);
     };
 
-    const transition = async (nextDirection: 1 | -1) => {
-      const targetStep = currentStep + nextDirection;
-      if (animationLocked || targetStep < 0 || targetStep > 3) return;
-      const sourceStep = currentStep;
-      animationLocked = true;
-      idleCamera = false;
-      setBusy(true);
-      setDirection(nextDirection);
-      const transitionIndex = nextDirection === 1 ? sourceStep : targetStep;
-      const nextMotion: Motion = transitionIndex === 0 ? "flatten" : transitionIndex === 1 ? "unfold" : "compare";
-      currentStep = targetStep;
-      setStep(targetStep);
-      setMotion(nextMotion);
-      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-      window.scrollTo({
-        top: (openingRef.current?.offsetTop ?? 0) + targetStep * window.innerHeight,
-        behavior: "smooth",
+    const applyCanonicalOpeningStep = (targetStep: number) => {
+      solidMaterials.forEach((material) => {
+        material.clippingPlanes = [];
       });
-      if (nextDirection === 1 && sourceStep === 0) await flattenRoom();
-      if (nextDirection === 1 && sourceStep === 1) await unfoldRoom();
-      if (nextDirection === 1 && sourceStep === 2) await compareRepresentations();
-      if (nextDirection === -1 && sourceStep === 1) await unflattenRoom();
-      if (nextDirection === -1 && sourceStep === 2) await foldRoom();
-      if (nextDirection === -1 && sourceStep === 3) await rewindRepresentations();
-      setMotion("idle");
-      setBusy(false);
-      animationLocked = false;
-      wheelAccumulator = 0;
-      wheelLockedUntil = performance.now() + 320;
-    };
-    const continueToStory = () => document.getElementById("representations")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    advanceRef.current = () => {
-      if (currentStep < 3) void transition(1);
-      else continueToStory();
-    };
-
-    const onProgressNavigate = (event: Event) => {
-      const id = (event as CustomEvent<{ id?: string }>).detail?.id;
-      const targetStep = openingIds.findIndex((openingId) => openingId === id);
-      if (targetStep < 0 || animationLocked) return;
-
-      currentStep = targetStep;
-      setStep(targetStep);
-      setMotion("idle");
-      setBusy(false);
       representations.pointsGroup.visible = false;
       representations.wireGroup.visible = false;
       room.scale.z = 1;
@@ -824,14 +795,104 @@ export function OpeningExperience() {
       }
     };
 
-    const openingIsActive = () => {
-      const bounds = openingPanelRefs.current[currentStep]?.getBoundingClientRect();
-      return Boolean(
-        bounds
-        && bounds.top < window.innerHeight * 0.35
-        && bounds.bottom > window.innerHeight * 0.65,
-      );
+    const scrollToOpeningStep = (targetStep: number, waitForArrival = false) => {
+      const targetPanel = openingPanelRefs.current[targetStep];
+      const targetTop = targetPanel
+        ? window.scrollY + targetPanel.getBoundingClientRect().top
+        : (openingRef.current?.offsetTop ?? 0) + targetStep * window.innerHeight;
+      window.scrollTo({ top: targetTop, behavior: prefersReducedMotion ? "auto" : "smooth" });
+      if (!waitForArrival) return Promise.resolve();
+
+      return new Promise<void>((resolve) => {
+        const startedAt = performance.now();
+        const checkArrival = () => {
+          if (Math.abs(window.scrollY - targetTop) < 2 || performance.now() - startedAt > 1100) {
+            resolve();
+            return;
+          }
+          scrollFrame = requestAnimationFrame(checkArrival);
+        };
+        scrollFrame = requestAnimationFrame(checkArrival);
+      });
     };
+
+    const transition = async (nextDirection: 1 | -1) => {
+      const targetStep = currentStep + nextDirection;
+      if (animationLocked || targetStep < 0 || targetStep > 3) return;
+      const sourceStep = currentStep;
+      animationLocked = true;
+      idleCamera = false;
+      setBusy(true);
+      setDirection(nextDirection);
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+
+      if (prefersReducedMotion) {
+        currentStep = targetStep;
+        setStep(targetStep);
+        setMotion("idle");
+        applyCanonicalOpeningStep(targetStep);
+        await scrollToOpeningStep(targetStep);
+        setBusy(false);
+        animationLocked = false;
+        wheelAccumulator = 0;
+        wheelLockedUntil = performance.now() + 320;
+        return;
+      }
+
+      // Keep page 02 canonically flat throughout the page movement. The field
+      // only begins to unfold after page 03 owns the viewport.
+      if (nextDirection === 1 && sourceStep === 1) {
+        applyCanonicalOpeningStep(1);
+        await scrollToOpeningStep(targetStep, true);
+        currentStep = targetStep;
+        setStep(targetStep);
+        setMotion("unfold");
+        await unfoldRoom();
+      } else {
+        const nextMotion: Motion = nextDirection === 1
+          ? sourceStep === 0 ? "flatten" : "compare"
+          : sourceStep === 1 ? "unflatten" : sourceStep === 2 ? "fold" : "rewind";
+        currentStep = targetStep;
+        setStep(targetStep);
+        setMotion(nextMotion);
+        void scrollToOpeningStep(targetStep);
+        if (nextDirection === 1 && sourceStep === 0) await flattenRoom();
+        if (nextDirection === 1 && sourceStep === 2) await compareRepresentations();
+        if (nextDirection === -1 && sourceStep === 1) await unflattenRoom();
+        if (nextDirection === -1 && sourceStep === 2) await foldRoom();
+        if (nextDirection === -1 && sourceStep === 3) await rewindRepresentations();
+      }
+
+      applyCanonicalOpeningStep(targetStep);
+      setMotion("idle");
+      setBusy(false);
+      animationLocked = false;
+      wheelAccumulator = 0;
+      wheelLockedUntil = performance.now() + 320;
+    };
+    const continueToStory = () => document.getElementById("representations")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    advanceRef.current = () => {
+      if (currentStep < 3) void transition(1);
+      else continueToStory();
+    };
+
+    const onProgressNavigate = (event: Event) => {
+      const id = (event as CustomEvent<{ id?: string }>).detail?.id;
+      const targetStep = openingIds.findIndex((openingId) => openingId === id);
+      if (targetStep < 0 || animationLocked) return;
+
+      currentStep = targetStep;
+      setStep(targetStep);
+      setMotion("idle");
+      setBusy(false);
+      wheelAccumulator = 0;
+      wheelGestureLocked = false;
+      window.clearTimeout(wheelReleaseTimer);
+      scrollSyncLockedUntil = performance.now() + 1200;
+      applyCanonicalOpeningStep(targetStep);
+    };
+
+    const openingIsActive = () => sectionOwnsViewportCenter(openingRef.current);
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (keyboardTargetIsInteractive(event.target) || !openingIsActive()) return;
@@ -856,19 +917,48 @@ export function OpeningExperience() {
       if (!canMove) return;
 
       event.preventDefault();
-      if (animationLocked || performance.now() < wheelLockedUntil) return;
+      window.clearTimeout(wheelReleaseTimer);
+      wheelReleaseTimer = window.setTimeout(() => {
+        wheelGestureLocked = false;
+        wheelAccumulator = 0;
+      }, 280);
+      if (wheelGestureLocked || animationLocked || performance.now() < wheelLockedUntil) return;
       if (Math.sign(wheelAccumulator) !== Math.sign(event.deltaY)) wheelAccumulator = 0;
       wheelAccumulator += event.deltaY;
       if (Math.abs(wheelAccumulator) < 44) return;
       wheelAccumulator = 0;
+      wheelGestureLocked = true;
       void transition(nextDirection);
     };
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("spatial:navigate", onProgressNavigate);
 
+    const syncOpeningStepFromViewport = () => {
+      if (animationLocked || performance.now() < scrollSyncLockedUntil) return;
+      const viewportStep = openingPanelRefs.current.findIndex((panel) => sectionOwnsViewportCenter(panel));
+      if (viewportStep < 0 || viewportStep === currentStep) return;
+      currentStep = viewportStep;
+      setStep(viewportStep);
+      setMotion("idle");
+      applyCanonicalOpeningStep(viewportStep);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(scrollSyncFrame);
+      scrollSyncFrame = requestAnimationFrame(syncOpeningStepFromViewport);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    scrollSyncFrame = requestAnimationFrame(syncOpeningStepFromViewport);
+
     const render = (time: number) => {
-      if (disposed) return;
+      if (disposed) {
+        renderLoopRunning = false;
+        return;
+      }
+      if (!openingRenderable && !animationLocked) {
+        renderLoopRunning = false;
+        return;
+      }
       if (idleCamera && currentStep === 0) {
         const drift = Math.sin(time * 0.00028);
         const orbitPosition = initialCamera.clone().add(new THREE.Vector3(drift * 0.35, Math.cos(time * 0.00021) * 0.06, -drift * 0.22));
@@ -877,16 +967,31 @@ export function OpeningExperience() {
       renderer.render(scene, camera);
       renderFrame = requestAnimationFrame(render);
     };
-    renderFrame = requestAnimationFrame(render);
+    const ensureRenderLoop = () => {
+      if (renderLoopRunning || disposed) return;
+      renderLoopRunning = true;
+      renderFrame = requestAnimationFrame(render);
+    };
+    const renderObserver = new IntersectionObserver(([entry]) => {
+      openingRenderable = entry.isIntersecting;
+      if (openingRenderable) ensureRenderLoop();
+    }, { rootMargin: "180px 0px", threshold: 0 });
+    if (openingRef.current) renderObserver.observe(openingRef.current);
+    ensureRenderLoop();
     setReady(true);
 
     return () => {
       disposed = true;
       cancelAnimationFrame(renderFrame);
       cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(scrollFrame);
+      cancelAnimationFrame(scrollSyncFrame);
+      window.clearTimeout(wheelReleaseTimer);
+      renderObserver.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("spatial:navigate", onProgressNavigate);
       renderTarget.dispose();
       photoPlane.geometry.dispose();
@@ -910,6 +1015,17 @@ export function OpeningExperience() {
     };
   }, [run]);
 
+  useEffect(() => {
+    const section = openingRef.current;
+    if (!section) return;
+    const observer = new IntersectionObserver(([entry]) => setOpeningVisible(entry.isIntersecting), {
+      rootMargin: "80px 0px",
+      threshold: 0,
+    });
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const instruction = busy
     ? direction === -1 ? "Reversing the spatial transition…" : motion === "flatten" ? "Compressing spatial depth…" : motion === "unfold" ? "Restoring the field…" : "Changing representation…"
     : step === 0 ? "Space or scroll ↓ to compress" : step === 1 ? "Space / scroll ↓ · scroll ↑ to rewind" : step === 2 ? "Space / scroll ↓ · scroll ↑ to rewind" : "Scroll ↓ to continue · scroll ↑ to rewind";
@@ -926,7 +1042,10 @@ export function OpeningExperience() {
           <div className="canvas-stage">
             <canvas ref={canvasRef} aria-hidden="true" />
             <div className="opening-official-result">
-              <ContinentalCameraPathHero active={step === 3 && motion === "idle"} />
+              <ContinentalCameraPathHero
+                active={step === 3 && motion === "idle" && openingVisible}
+                shouldLoad={step >= 2}
+              />
             </div>
             <div className="real-geometry-badge">{step === 3 ? "Continental Rooftop · live Gaussian splat · 1,481 camera poses" : "Live WebGL geometry"}</div>
             <div className="phone-path" aria-hidden="true"><i /><span /></div>

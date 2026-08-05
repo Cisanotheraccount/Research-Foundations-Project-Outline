@@ -8,7 +8,7 @@ export function spatialKeyDirection(event: Pick<KeyboardEvent, "key" | "code">):
 
 export function keyboardTargetIsInteractive(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) return false;
-  const interactive = target.closest<HTMLElement>("button, input, textarea, select, a, [contenteditable='true']");
+  const interactive = target.closest<HTMLElement>("button, input, textarea, select, a, [contenteditable='true'], [tabindex]:not([tabindex='-1'])");
   if (!interactive) return false;
 
   // A control from the previous chapter can retain focus after a smooth scroll.

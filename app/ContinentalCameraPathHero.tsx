@@ -8,7 +8,7 @@ type CameraPathMessage = {
   direction?: 1 | -1;
 };
 
-export function ContinentalCameraPathHero({ active }: { active: boolean }) {
+export function ContinentalCameraPathHero({ active, shouldLoad }: { active: boolean; shouldLoad: boolean }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [ready, setReady] = useState(false);
 
@@ -51,15 +51,15 @@ export function ContinentalCameraPathHero({ active }: { active: boolean }) {
   }, [active, sendPlaybackState]);
 
   return (
-    <div className={`continental-camera-path-hero ${ready ? "is-ready" : ""}`}>
+    <div className={`continental-camera-path-hero ${ready && shouldLoad ? "is-ready" : ""}`}>
       <iframe
         ref={frameRef}
-        src="/media/continental-camera-path/index.html?embed=1&autoplay=0"
+        src={shouldLoad ? "/media/continental-camera-path/index.html?embed=1&autoplay=0" : undefined}
         title="Interactive Continental Rooftop Gaussian Splatting camera path"
         aria-label="Interactive Continental Rooftop Gaussian Splatting camera path"
-        loading="eager"
+        loading="lazy"
         allow="autoplay; fullscreen"
-        onLoad={() => sendPlaybackState(active)}
+        onLoad={() => shouldLoad && sendPlaybackState(active)}
       />
       <div className="camera-path-interaction" aria-hidden="true">Drag to orbit · Scroll to zoom</div>
     </div>

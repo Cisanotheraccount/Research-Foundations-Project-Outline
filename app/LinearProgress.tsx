@@ -24,11 +24,7 @@ export function LinearProgress() {
     const target = document.getElementById(id);
     if (!target) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const openingIndex = pages.slice(0, 4).findIndex(([pageId]) => pageId === id);
-    const openingSequence = document.querySelector<HTMLElement>(".opening-sequence");
-    const targetTop = openingIndex >= 0 && openingSequence
-      ? openingSequence.offsetTop + openingIndex * window.innerHeight
-      : window.scrollY + target.getBoundingClientRect().top;
+    const targetTop = window.scrollY + target.getBoundingClientRect().top;
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     setActiveIndex(index);
     window.history.replaceState(null, "", `#${id}`);
