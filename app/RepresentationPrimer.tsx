@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import gsap from "gsap";
+import { keyboardTargetIsInteractive, sectionOwnsViewportCenter, spatialKeyDirection } from "./spatialKeyboard";
 
 type PrimerState = "idle" | "playing" | "ready" | "complete" | "reversing";
 
@@ -354,17 +355,16 @@ export function RepresentationPrimer() {
   }, [goToStep]);
 
   useEffect(() => {
-    const targetIsEditable = (target: EventTarget | null) => target instanceof HTMLElement
-      && target.matches("button, input, textarea, select, [contenteditable='true']");
-
     const move = (direction: 1 | -1) => goToStep(currentStepRef.current + direction);
     const continueToStory = () => document.getElementById("story")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const returnToOpening = () => document.getElementById("opening-gaussian")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (!activeRef.current || targetIsEditable(event.target)) return;
-      const direction = event.key === " " || event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0;
+      if (!sectionOwnsViewportCenter(sectionRef.current) || keyboardTargetIsInteractive(event.target)) return;
+      const direction = spatialKeyDirection(event);
       if (direction === 0) return;
       event.preventDefault();
+      event.stopImmediatePropagation();
       if (event.repeat || transitionRef.current) return;
       if (move(direction)) {
         wheelTotalRef.current = 0;
@@ -372,6 +372,8 @@ export function RepresentationPrimer() {
       }
       if (direction === 1 && currentStepRef.current === stepLabels.length - 1) {
         continueToStory();
+      } else if (direction === -1 && currentStepRef.current === 0) {
+        returnToOpening();
       }
     };
 

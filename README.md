@@ -19,7 +19,7 @@ Version 1 remains frozen; future design and content changes continue here.
 
 ## Controls
 
-- `Space` or `Arrow Down`: advance an animation step or continue to the next chapter.
+- `Space`, `Enter`, or `Arrow Down`: advance an animation step or continue to the next chapter.
 - `Arrow Up` or upward wheel movement: rewind where supported.
 - Mouse wheel / trackpad: control the current sequence, then resume normal vertical scrolling.
 - Right-side dots: jump directly to the corresponding page.

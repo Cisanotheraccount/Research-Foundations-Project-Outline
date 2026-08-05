@@ -5,6 +5,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import gsap from "gsap";
+import { keyboardTargetIsInteractive, sectionOwnsViewportCenter, spatialKeyDirection } from "./spatialKeyboard";
 
 type FinaleState = "idle" | "playing" | "complete" | "reversing";
 
@@ -250,9 +251,6 @@ export function ApplicationsFinale() {
   }, []);
 
   useEffect(() => {
-    const targetIsEditable = (target: EventTarget | null) => target instanceof HTMLElement
-      && target.matches("button, input, textarea, select, [contenteditable='true']");
-
     const move = (direction: 1 | -1) => {
       const timeline = animationRef.current;
       if (!timeline) return false;
@@ -270,15 +268,22 @@ export function ApplicationsFinale() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== " " || !activeRef.current || targetIsEditable(event.target)) return;
-      if (move(1)) {
-        event.preventDefault();
-        return;
-      }
-      if ((animationRef.current?.progress() ?? 0) >= 0.999) {
-        event.preventDefault();
-        document.getElementById("ending")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      if (!sectionOwnsViewportCenter(sectionRef.current) || keyboardTargetIsInteractive(event.target)) return;
+      const direction = spatialKeyDirection(event);
+      if (direction === 0) return;
+      const timeline = animationRef.current;
+      if (!timeline) return;
+      const progress = timeline.progress();
+      const boundarySection = direction === 1
+        ? document.getElementById("ending")
+        : document.getElementById("timeline");
+      const canMove = direction === 1 ? progress < 0.999 : progress > 0.001;
+      if (!canMove && !boundarySection) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (event.repeat) return;
+      if (move(direction)) return;
+      boundarySection?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     const onWheel = (event: WheelEvent) => {

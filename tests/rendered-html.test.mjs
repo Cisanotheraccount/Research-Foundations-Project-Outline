@@ -19,7 +19,7 @@ test("server-renders the rebuilt cinematic opening", async () => {
   const html = await response.text();
   assert.match(html, /<title>FROM PHOTOGRAPHS TO SPATIAL FIELDS — Gaussian Splatting<\/title>/i);
   assert.match(html, /FROM PHOTOGRAPHS TO SPATIAL FIELDS/);
-  assert.match(html, /we are living in a 3D space and a 4D world/);
+  assert.match(html, /We are living in a 3D space and a 4D world/);
   assert.doesNotMatch(html, /We live in 3D\.|We remember in 2D\./);
   assert.match(html, /The room in front of you is real geometry/);
   assert.match(html, /LiDAR samples/);
@@ -64,7 +64,7 @@ test("server-renders the rebuilt cinematic opening", async () => {
 });
 
 test("keeps the opening continuous, user-controlled and accessible", async () => {
-  const [component, applicationsFinale, endingQuestion, representationPrimer, originsTimeline, recordEvolution, gaussianPrimitive, continentalCameraPath, embeddedCameraPath, linearProgress, css] = await Promise.all([
+  const [component, applicationsFinale, endingQuestion, representationPrimer, originsTimeline, recordEvolution, gaussianPrimitive, continentalCameraPath, embeddedCameraPath, linearProgress, spatialKeyboard, css] = await Promise.all([
     readFile(new URL("../app/OpeningExperience.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/ApplicationsFinale.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/EndingQuestion.tsx", import.meta.url), "utf8"),
@@ -75,6 +75,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
     readFile(new URL("../app/ContinentalCameraPathHero.tsx", import.meta.url), "utf8"),
     readFile(new URL("../public/media/continental-camera-path/index.html", import.meta.url), "utf8"),
     readFile(new URL("../app/LinearProgress.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/spatialKeyboard.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   assert.match(component, /new THREE\.WebGLRenderer/);
@@ -89,9 +90,9 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(component, /anisotropic-gaussian-field/);
   assert.match(component, /Gaussian<br \/>Splatting/);
   assert.match(component, /Not a flat image\. A field you can enter and explore\./);
-  assert.match(component, /event\.key === " "/);
+  assert.match(component, /spatialKeyDirection/);
   assert.match(component, /getBoundingClientRect/);
-  assert.match(component, /event\.key === " " && openingIsActive\(\)/);
+  assert.match(component, /keyboardTargetIsInteractive/);
   assert.match(component, /continueToStory/);
   assert.match(component, /ContinentalCameraPathHero/);
   assert.doesNotMatch(component, /GaussianFieldHero|WorldLabsSplatViewer|WorldLabsVideoHero/);
@@ -124,7 +125,20 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(continentalCameraPath, /Drag to orbit · Scroll to zoom/);
   assert.match(embeddedCameraPath, /setPlaying\(playbackRequested\)/);
   assert.match(embeddedCameraPath, /action: 'ready'/);
-  assert.match(embeddedCameraPath, /action: 'advance'/);
+  assert.match(embeddedCameraPath, /action: 'navigate', direction/);
+  assert.match(embeddedCameraPath, /event\.key === 'Enter'/);
+  assert.match(embeddedCameraPath, /event\.key === 'ArrowDown'/);
+  assert.match(embeddedCameraPath, /event\.key === 'ArrowUp'/);
+  assert.match(continentalCameraPath, /event\.data\.direction === 1 \|\| event\.data\.direction === -1/);
+  assert.match(spatialKeyboard, /event\.key === "ArrowUp"/);
+  assert.match(spatialKeyboard, /event\.key === "Enter"/);
+  assert.match(spatialKeyboard, /event\.key === "ArrowDown"/);
+  assert.match(spatialKeyboard, /event\.code === "Space"/);
+  assert.match(spatialKeyboard, /sectionOwnsViewportCenter/);
+  for (const keyboardComponent of [component, applicationsFinale, endingQuestion, representationPrimer, originsTimeline, recordEvolution]) {
+    assert.match(keyboardComponent, /spatialKeyDirection/);
+    assert.match(keyboardComponent, /stopImmediatePropagation/);
+  }
   assert.match(component, /addEventListener\("wheel", onWheel, \{ passive: false \}\)/);
   assert.match(component, /nextDirection === 1 \? currentStep < 3 : currentStep > 0/);
   assert.match(component, /unflattenRoom/);
@@ -181,7 +195,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(recordEvolution, /import gsap from "gsap"/);
   assert.match(recordEvolution, /timeline\.reverse\(\)/);
   assert.match(recordEvolution, /document\.getElementById\("timeline"\)/);
-  assert.match(recordEvolution, /nextSection\.scrollIntoView/);
+  assert.match(recordEvolution, /boundarySection\?\.scrollIntoView/);
   assert.match(recordEvolution, /addEventListener\("wheel", onWheel, \{ passive: false \}\)/);
   assert.match(recordEvolution, /nyc-window\.mp4/);
   assert.match(recordEvolution, /continental-rooftop-capture-loop\.mp4/);
@@ -296,8 +310,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(representationPrimer, /timeline\.timeScale\(0\.78\)/);
   assert.match(representationPrimer, /const stepLabels = \["step-01", "step-02", "step-03"\]/);
   assert.match(representationPrimer, /timeline\.tweenTo\(stepLabels\[targetStep\]/);
-  assert.match(representationPrimer, /event\.key === "ArrowDown"/);
-  assert.match(representationPrimer, /event\.key === "ArrowUp"/);
+  assert.match(representationPrimer, /returnToOpening/);
   assert.match(representationPrimer, /01 plays on arrival/);
   assert.doesNotMatch(representationPrimer, /timeline\.play\(\)/);
   assert.match(representationPrimer, /document\.getElementById\("story"\)/);

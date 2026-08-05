@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type CameraPathMessage = {
   source?: string;
   action?: string;
+  direction?: 1 | -1;
 };
 
 export function ContinentalCameraPathHero({ active }: { active: boolean }) {
@@ -35,8 +36,13 @@ export function ContinentalCameraPathHero({ active }: { active: boolean }) {
         sendPlaybackState(active);
       }
 
-      if (event.data.action === "advance") {
-        window.dispatchEvent(new KeyboardEvent("keydown", { key: " ", code: "Space", bubbles: true }));
+      if (event.data.action === "navigate" && (event.data.direction === 1 || event.data.direction === -1)) {
+        const forward = event.data.direction === 1;
+        window.dispatchEvent(new KeyboardEvent("keydown", {
+          key: forward ? "Enter" : "ArrowUp",
+          code: forward ? "Enter" : "ArrowUp",
+          bubbles: true,
+        }));
       }
     };
 

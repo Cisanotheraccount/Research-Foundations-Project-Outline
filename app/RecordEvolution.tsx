@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import gsap from "gsap";
 import { GaussianPrimitiveWebGL } from "./GaussianPrimitiveWebGL";
+import { keyboardTargetIsInteractive, sectionOwnsViewportCenter, spatialKeyDirection } from "./spatialKeyboard";
 
 type RecordChapterId = "photo" | "video" | "3dgs" | "4dgs";
 type ChapterState = "idle" | "playing" | "complete" | "reversing";
@@ -357,8 +358,6 @@ export function RecordEvolution() {
   useEffect(() => {
     if (reducedMotion) return;
     const activeTimeline = () => timelineRefs.current[activeRef.current];
-    const targetIsEditable = (target: EventTarget | null) => target instanceof HTMLElement
-      && target.matches("button, input, textarea, select, [contenteditable='true']");
 
     const move = (direction: 1 | -1) => {
       const timeline = activeTimeline();
@@ -393,17 +392,24 @@ export function RecordEvolution() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== " " || activeRef.current < 0 || targetIsEditable(event.target)) return;
-      if (move(1)) {
-        event.preventDefault();
-        return;
-      }
-      const nextSection = sectionRefs.current[activeRef.current + 1]
-        ?? (activeRef.current === chapters.length - 1 ? document.getElementById("timeline") : null);
-      if (nextSection) {
-        event.preventDefault();
-        nextSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      if (keyboardTargetIsInteractive(event.target)) return;
+      const index = sectionRefs.current.findIndex((section) => sectionOwnsViewportCenter(section));
+      const direction = spatialKeyDirection(event);
+      if (index < 0 || direction === 0) return;
+      activeRef.current = index;
+      const timeline = activeTimeline();
+      if (!timeline) return;
+      const progress = timeline.progress();
+      const canMove = direction === 1 ? progress < 0.999 : progress > 0.001;
+      const boundarySection = direction === 1
+        ? sectionRefs.current[index + 1] ?? (index === chapters.length - 1 ? document.getElementById("timeline") : null)
+        : sectionRefs.current[index - 1] ?? (index === 0 ? document.getElementById("representations") : null);
+      if (!canMove && !boundarySection) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (event.repeat) return;
+      if (move(direction)) return;
+      boundarySection?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });

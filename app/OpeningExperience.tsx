@@ -11,6 +11,7 @@ import { RecordEvolution } from "./RecordEvolution";
 import { LinearProgress } from "./LinearProgress";
 import { OriginsTimeline } from "./OriginsTimeline";
 import { RepresentationPrimer } from "./RepresentationPrimer";
+import { keyboardTargetIsInteractive, spatialKeyDirection } from "./spatialKeyboard";
 
 type Motion = "idle" | "flatten" | "unfold" | "compare";
 
@@ -22,7 +23,7 @@ type RoomBuild = {
 const copy = [
   {
     eyebrow: "3D space · 4D world",
-    title: "we are living in a 3D space and a 4D world",
+    title: "We are living in a 3D space and a 4D world",
     detail: "The room in front of you is real geometry—not a photograph.",
   },
   {
@@ -833,15 +834,18 @@ export function OpeningExperience() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.matches("button, input, textarea, select, [contenteditable='true']")) return;
-      if (event.key === " " && openingIsActive()) {
-        event.preventDefault();
-        if (currentStep < 3) {
-          if (!animationLocked) void transition(1);
-        } else {
-          continueToStory();
-        }
+      if (keyboardTargetIsInteractive(event.target) || !openingIsActive()) return;
+      const direction = spatialKeyDirection(event);
+      if (direction === 0 || (direction === -1 && currentStep === 0)) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (event.repeat || animationLocked) return;
+      if (direction === -1) {
+        void transition(-1);
+      } else if (currentStep < 3) {
+        void transition(1);
+      } else {
+        continueToStory();
       }
     };
 

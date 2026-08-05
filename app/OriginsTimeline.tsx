@@ -5,6 +5,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import gsap from "gsap";
+import { keyboardTargetIsInteractive, sectionOwnsViewportCenter, spatialKeyDirection } from "./spatialKeyboard";
 
 type TimelineState = "idle" | "playing" | "complete" | "reversing";
 
@@ -272,9 +273,6 @@ export function OriginsTimeline() {
   }, []);
 
   useEffect(() => {
-    const targetIsEditable = (target: EventTarget | null) => target instanceof HTMLElement
-      && target.matches("button, input, textarea, select, [contenteditable='true']");
-
     const playForward = () => {
       const timeline = animationRef.current;
       if (!timeline || timeline.progress() >= 0.999) return false;
@@ -284,12 +282,28 @@ export function OriginsTimeline() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== " " || !activeRef.current || targetIsEditable(event.target)) return;
+      if (!sectionOwnsViewportCenter(sectionRef.current) || keyboardTargetIsInteractive(event.target)) return;
+      const direction = spatialKeyDirection(event);
+      if (direction === 0) return;
       const timeline = animationRef.current;
       if (!timeline) return;
+      const progress = timeline.progress();
+      const boundarySection = direction === 1
+        ? document.getElementById("applications")
+        : document.getElementById("4dgs");
+      const canMove = direction === 1 ? progress < 0.999 : progress > 0.001;
+      if (!canMove && !boundarySection) return;
       event.preventDefault();
-      if (timeline.progress() < 0.999) playForward();
-      else document.getElementById("applications")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      event.stopImmediatePropagation();
+      if (event.repeat) return;
+      if (direction === 1 && canMove) {
+        playForward();
+      } else if (direction === -1 && canMove) {
+        setState("reversing");
+        timeline.reverse();
+      } else {
+        boundarySection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     };
 
     const onWheel = (event: WheelEvent) => {
