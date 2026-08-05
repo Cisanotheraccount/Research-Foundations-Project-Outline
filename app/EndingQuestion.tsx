@@ -34,7 +34,6 @@ export function EndingQuestion() {
         <i className="ending-plane ending-plane-back" />
         <i className="ending-plane ending-plane-mid" />
         <i className="ending-plane ending-plane-front" />
-        <b />
       </div>
 
       <div className="ending-question-copy">
