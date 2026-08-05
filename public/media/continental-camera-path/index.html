@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Continental Rooftop — Camera Path Viewer</title>
+  <script>
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.documentElement.classList.add('embed');
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --panel: rgba(14, 17, 23, 0.78);
+      --panel-strong: rgba(14, 17, 23, 0.93);
+      --line: rgba(255, 255, 255, 0.14);
+      --text: #f4f7fb;
+      --muted: #aeb8c7;
+      --cyan: #d9e5ea;
+      --gold: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #080a0f;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    }
+
+    #viewer { position: fixed; inset: 0; }
+    #viewer canvas { display: block; width: 100%; height: 100%; }
+
+    .glass {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 60px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(20px) saturate(130%);
+      -webkit-backdrop-filter: blur(20px) saturate(130%);
+    }
+
+    .topbar {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      min-height: 56px;
+      padding: 11px 14px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      pointer-events: none;
+    }
+
+    .title { font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+    .subtitle { margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .stats { color: var(--muted); font-size: 12px; text-align: right; white-space: nowrap; }
+    .stats strong { color: var(--text); font-weight: 600; }
+
+    .controls {
+      position: fixed;
+      left: 18px;
+      bottom: 18px;
+      width: min(440px, calc(100vw - 36px));
+      padding: 14px;
+      border-radius: 16px;
+    }
+
+    .transport {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button, select, input { font: inherit; }
+
+    button, select {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    button { cursor: pointer; padding: 0 11px; }
+    button:hover { background: rgba(255, 255, 255, 0.14); }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+    #play {
+      width: 44px;
+      padding: 0;
+      font-size: 16px;
+      color: #071015;
+      border-color: transparent;
+      background: var(--cyan);
+    }
+
+    #play:hover { filter: brightness(1.08); }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--cyan);
+    }
+
+    .frame {
+      min-width: 86px;
+      color: var(--muted);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .options label { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .options input[type="checkbox"] { accent-color: var(--cyan); }
+    .options select { min-height: 30px; padding: 0 26px 0 9px; font-size: 12px; }
+    .options .push { margin-left: auto; }
+
+    .hint {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 11px;
+      pointer-events: none;
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 40%, #151b26 0%, #080a0f 65%);
+      z-index: 20;
+      transition: opacity 420ms ease, visibility 420ms ease;
+    }
+
+    .loading.done { opacity: 0; visibility: hidden; }
+
+    .loader-card {
+      width: min(360px, calc(100vw - 40px));
+      padding: 20px;
+      border-radius: 16px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
+    }
+
+    .loader-title { font-size: 14px; font-weight: 600; }
+    .loader-status { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .progress { height: 4px; margin-top: 16px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,0.1); }
+    .progress > div { width: 2%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--gold)); transition: width 160ms ease; }
+
+    .error {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      z-index: 30;
+      background: #080a0f;
+      color: #ffd2d2;
+      text-align: center;
+    }
+
+    .embed .topbar,
+    .embed .controls { display: none; }
+    .embed .hint {
+      right: 28px;
+      bottom: 12%;
+      padding: 7px 10px;
+      border-color: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.56);
+      background: rgba(0,0,0,.46);
+      box-shadow: none;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .embed .loading { background: #030303; }
+    .embed .loader-card {
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      text-align: center;
+    }
+    .embed .progress { height: 2px; }
+    .embed .progress > div { background: #f5f5f7; }
+
+    @media (max-width: 760px) {
+      .topbar { align-items: flex-start; }
+      .stats { display: none; }
+      .hint { display: none; }
+      .controls { right: 18px; width: auto; }
+      .options .push { margin-left: 0; }
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three.module.js",
+        "three/addons/": "./vendor/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="viewer" aria-label="Interactive Gaussian scene with camera trajectory"></main>
+
+  <header class="topbar glass">
+    <div>
+      <div class="title">Continental Rooftop · Camera Path</div>
+      <div class="subtitle">Gaussian scene with reconstructed SfM camera poses</div>
+    </div>
+    <div class="stats"><strong id="gaussian-count">137,722</strong> Gaussians&nbsp;&nbsp;·&nbsp;&nbsp;<strong id="camera-count">1,481</strong> camera poses</div>
+  </header>
+
+  <section class="controls glass" aria-label="Playback controls">
+    <div class="transport">
+      <button id="play" type="button" aria-label="Play camera path">▶</button>
+      <input id="timeline" type="range" min="0" max="1480" value="0" step="0.01" aria-label="Camera path frame">
+      <output id="frame-label" class="frame">0001 / 1481</output>
+    </div>
+    <div class="options">
+      <label>Speed
+        <select id="speed" aria-label="Playback speed">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+          <option value="2">2×</option>
+          <option value="4">4×</option>
+        </select>
+      </label>
+      <label>Frustums
+        <select id="density" aria-label="Camera frustum density">
+          <option value="4">Every 4</option>
+          <option value="8">Every 8</option>
+          <option value="12">Every 12</option>
+          <option value="20" selected>Every 20</option>
+          <option value="40">Every 40</option>
+        </select>
+      </label>
+      <label><input id="show-frustums" type="checkbox" checked> Cameras</label>
+      <label><input id="show-route" type="checkbox" checked> Route</label>
+      <label><input id="xray" type="checkbox" checked> X-ray</label>
+      <button id="reset" class="push" type="button">Reset view</button>
+    </div>
+  </section>
+
+  <div class="hint glass">Drag to orbit · Scroll to zoom · Space to play/pause</div>
+
+  <div id="loading" class="loading" role="status" aria-live="polite">
+    <div class="loader-card">
+      <div class="loader-title">Loading Gaussian scene</div>
+      <div id="loading-status" class="loader-status">Preparing camera poses…</div>
+      <div class="progress"><div id="progress-bar"></div></div>
+    </div>
+  </div>
+
+  <div id="error" class="error" role="alert"></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from './vendor/OrbitControls.js';
+    import { SparkRenderer, SplatMesh } from './vendor/spark.module.js';
+
+    const embedParams = new URLSearchParams(location.search);
+    const embedded = embedParams.get('embed') === '1';
+    let playbackRequested = embedParams.get('autoplay') === '1';
+
+    const viewer = document.getElementById('viewer');
+    const loading = document.getElementById('loading');
+    const loadingStatus = document.getElementById('loading-status');
+    const progressBar = document.getElementById('progress-bar');
+    const errorPanel = document.getElementById('error');
+    const playButton = document.getElementById('play');
+    const timeline = document.getElementById('timeline');
+    const frameLabel = document.getElementById('frame-label');
+    const speedSelect = document.getElementById('speed');
+    const densitySelect = document.getElementById('density');
+    const showFrustums = document.getElementById('show-frustums');
+    const showRoute = document.getElementById('show-route');
+    const xray = document.getElementById('xray');
+    const resetButton = document.getElementById('reset');
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x080a0f);
+    scene.fog = new THREE.FogExp2(0x080a0f, 0.006);
+
+    const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 0.01, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    viewer.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.075;
+    controls.screenSpacePanning = true;
+
+    const spark = new SparkRenderer({ renderer });
+    scene.add(spark);
+
+    const pathGroup = new THREE.Group();
+    pathGroup.renderOrder = 20;
+    scene.add(pathGroup);
+
+    const frustumGroup = new THREE.Group();
+    frustumGroup.renderOrder = 21;
+    scene.add(frustumGroup);
+
+    const activeCameraGroup = new THREE.Group();
+    activeCameraGroup.renderOrder = 30;
+    scene.add(activeCameraGroup);
+
+    const markerGroup = new THREE.Group();
+    markerGroup.renderOrder = 22;
+    scene.add(markerGroup);
+
+    let poses = [];
+    let playhead = 0;
+    let playing = false;
+    let lastTime = performance.now();
+    let routeLine = null;
+    let sampledFrustums = null;
+    let sceneCenter = new THREE.Vector3(-1, 1, 0.2);
+    let sceneRadius = 7;
+
+    const localFrustumSegments = makeLocalFrustumSegments(0.78, 16 / 9);
+    const activeGeometry = new THREE.BufferGeometry().setFromPoints(localFrustumSegments);
+    const activeMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 1, depthTest: false, depthWrite: false });
+    const activeFrustum = new THREE.LineSegments(activeGeometry, activeMaterial);
+    activeFrustum.renderOrder = 30;
+    activeCameraGroup.add(activeFrustum);
+
+    const forwardGeometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, -1.2)
+    ]);
+    const forwardLine = new THREE.LineSegments(forwardGeometry, new THREE.LineBasicMaterial({ color: 0xd9e5ea, depthTest: false, depthWrite: false }));
+    activeCameraGroup.add(forwardLine);
+
+    function makeLocalFrustumSegments(depth, aspect) {
+      const halfH = depth * 0.43;
+      const halfW = halfH * aspect;
+      const o = new THREE.Vector3(0, 0, 0);
+      const tl = new THREE.Vector3(-halfW, halfH, -depth);
+      const tr = new THREE.Vector3(halfW, halfH, -depth);
+      const br = new THREE.Vector3(halfW, -halfH, -depth);
+      const bl = new THREE.Vector3(-halfW, -halfH, -depth);
+      const top = new THREE.Vector3(0, halfH * 1.28, -depth);
+      return [
+        o, tl, o, tr, o, br, o, bl,
+        tl, tr, tr, br, br, bl, bl, tl,
+        tl, top, top, tr
+      ];
+    }
+
+    function matrixFromPose(frame) {
+      const m = frame.transform_matrix;
+      return new THREE.Matrix4().set(
+        m[0][0], m[0][1], m[0][2], m[0][3],
+        m[1][0], m[1][1], m[1][2], m[1][3],
+        m[2][0], m[2][1], m[2][2], m[2][3],
+        0, 0, 0, 1
+      );
+    }
+
+    function buildPoseData(frames) {
+      return frames.map((frame, index) => {
+        const matrix = matrixFromPose(frame);
+        const position = new THREE.Vector3();
+        const quaternion = new THREE.Quaternion();
+        const scale = new THREE.Vector3();
+        matrix.decompose(position, quaternion, scale);
+        return { index, position, quaternion, matrix };
+      });
+    }
+
+    function rebuildRoute() {
+      if (routeLine) {
+        pathGroup.remove(routeLine);
+        routeLine.geometry.dispose();
+        routeLine.material.dispose();
+      }
+      const curve = new THREE.CatmullRomCurve3(poses.map(p => p.position), false, 'centripetal', 0.5);
+      const geometry = new THREE.TubeGeometry(curve, Math.min(1600, poses.length), 0.012, 5, false);
+      const material = new THREE.MeshBasicMaterial({ color: 0xd9e5ea, transparent: true, opacity: 0.94, depthTest: !xray.checked, depthWrite: false });
+      routeLine = new THREE.Mesh(geometry, material);
+      routeLine.renderOrder = 20;
+      routeLine.visible = showRoute.checked;
+      pathGroup.add(routeLine);
+    }
+
+    function rebuildFrustums() {
+      if (sampledFrustums) {
+        frustumGroup.remove(sampledFrustums);
+        sampledFrustums.geometry.dispose();
+        sampledFrustums.material.dispose();
+      }
+
+      const step = Number(densitySelect.value);
+      const small = makeLocalFrustumSegments(0.4, 16 / 9);
+      const points = [];
+      const transformed = new THREE.Vector3();
+
+      for (let i = 0; i < poses.length; i += step) {
+        const matrix = poses[i].matrix;
+        for (const point of small) {
+          transformed.copy(point).applyMatrix4(matrix);
+          points.push(transformed.clone());
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const material = new THREE.LineBasicMaterial({
+        color: 0x10141b,
+        transparent: true,
+        opacity: 0.98,
+        depthTest: !xray.checked,
+        depthWrite: false
+      });
+      sampledFrustums = new THREE.LineSegments(geometry, material);
+      sampledFrustums.renderOrder = 21;
+      sampledFrustums.visible = showFrustums.checked;
+      frustumGroup.add(sampledFrustums);
+    }
+
+    function buildEndpointMarkers() {
+      markerGroup.clear();
+      const geometry = new THREE.SphereGeometry(0.055, 16, 12);
+      const start = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: 0xd9e5ea, depthTest: !xray.checked }));
+      const end = new THREE.Mesh(geometry.clone(), new THREE.MeshBasicMaterial({ color: 0xffffff, depthTest: !xray.checked }));
+      start.position.copy(poses[0].position);
+      end.position.copy(poses[poses.length - 1].position);
+      markerGroup.add(start, end);
+    }
+
+    function updateActiveCamera(value) {
+      if (!poses.length) return;
+      const max = poses.length - 1;
+      const clamped = THREE.MathUtils.clamp(value, 0, max);
+      const i = Math.floor(clamped);
+      const next = Math.min(i + 1, max);
+      const t = clamped - i;
+      activeCameraGroup.position.lerpVectors(poses[i].position, poses[next].position, t);
+      activeCameraGroup.quaternion.slerpQuaternions(poses[i].quaternion, poses[next].quaternion, t);
+      frameLabel.textContent = `${String(i + 1).padStart(4, '0')} / ${poses.length}`;
+      timeline.value = String(clamped);
+    }
+
+    function setPlaying(next) {
+      playing = next;
+      playButton.textContent = playing ? '❚❚' : '▶';
+      playButton.setAttribute('aria-label', playing ? 'Pause camera path' : 'Play camera path');
+      lastTime = performance.now();
+    }
+
+    function resetView() {
+      const offset = new THREE.Vector3(1.25, 0.78, 1.35).normalize().multiplyScalar(sceneRadius * 1.8);
+      camera.position.copy(sceneCenter).add(offset);
+      controls.target.copy(sceneCenter);
+      controls.minDistance = Math.max(0.25, sceneRadius * 0.08);
+      controls.maxDistance = sceneRadius * 8;
+      controls.update();
+    }
+
+    function fail(error) {
+      console.error(error);
+      loading.classList.add('done');
+      errorPanel.style.display = 'grid';
+      errorPanel.innerHTML = `Unable to load the viewer.<br><small>${String(error.message || error)}</small>`;
+    }
+
+    const transformsPromise = fetch('./assets/transforms.json')
+      .then(response => {
+        if (!response.ok) throw new Error(`Camera data: HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        poses = buildPoseData(data.frames);
+        document.getElementById('camera-count').textContent = poses.length.toLocaleString();
+        timeline.max = String(Math.max(0, poses.length - 1));
+        rebuildRoute();
+        rebuildFrustums();
+        buildEndpointMarkers();
+        updateActiveCamera(0);
+        loadingStatus.textContent = `Loaded ${poses.length.toLocaleString()} camera poses · loading splats…`;
+        progressBar.style.width = '10%';
+        return data;
+      });
+
+    const splat = new SplatMesh({
+      url: './assets/scene.ply',
+      onProgress: event => {
+        if (!event.lengthComputable) return;
+        const pct = Math.round((event.loaded / event.total) * 100);
+        progressBar.style.width = `${Math.max(10, pct)}%`;
+        loadingStatus.textContent = `Loading Gaussian scene… ${pct}%`;
+      }
+    });
+    splat.opacity = 0.9;
+    scene.add(splat);
+
+    Promise.all([transformsPromise, splat.initialized])
+      .then(() => {
+        document.getElementById('gaussian-count').textContent = splat.numSplats.toLocaleString();
+        const bounds = splat.getBoundingBox(true);
+        bounds.getCenter(sceneCenter);
+        sceneRadius = Math.max(1, bounds.getSize(new THREE.Vector3()).length() * 0.5);
+        resetView();
+        progressBar.style.width = '100%';
+        loadingStatus.textContent = 'Ready';
+        setPlaying(playbackRequested);
+        parent.postMessage({ source: 'continental-camera-path', action: 'ready' }, location.origin);
+        setTimeout(() => loading.classList.add('done'), 280);
+      })
+      .catch(fail);
+
+    playButton.addEventListener('click', () => setPlaying(!playing));
+    timeline.addEventListener('input', () => {
+      playhead = Number(timeline.value);
+      updateActiveCamera(playhead);
+    });
+    speedSelect.addEventListener('change', () => { lastTime = performance.now(); });
+    densitySelect.addEventListener('change', rebuildFrustums);
+    showFrustums.addEventListener('change', () => { if (sampledFrustums) sampledFrustums.visible = showFrustums.checked; });
+    showRoute.addEventListener('change', () => { if (routeLine) routeLine.visible = showRoute.checked; });
+    xray.addEventListener('change', () => {
+      const depthTest = !xray.checked;
+      activeMaterial.depthTest = depthTest;
+      forwardLine.material.depthTest = depthTest;
+      if (routeLine) routeLine.material.depthTest = depthTest;
+      if (sampledFrustums) sampledFrustums.material.depthTest = depthTest;
+      markerGroup.traverse(object => { if (object.material) object.material.depthTest = depthTest; });
+    });
+    resetButton.addEventListener('click', resetView);
+
+    addEventListener('message', event => {
+      if (event.origin !== location.origin || event.data?.source !== 'continental-camera-path') return;
+      if (event.data.action === 'play') {
+        playbackRequested = true;
+        setPlaying(true);
+      }
+      if (event.data.action === 'pause') {
+        playbackRequested = false;
+        setPlaying(false);
+      }
+      if (event.data.action === 'reset') {
+        playhead = 0;
+        updateActiveCamera(playhead);
+        resetView();
+      }
+    });
+
+    addEventListener('keydown', event => {
+      if (event.code === 'Space' && event.target.tagName !== 'SELECT') {
+        event.preventDefault();
+        if (embedded) {
+          parent.postMessage({ source: 'continental-camera-path', action: 'advance' }, location.origin);
+        } else {
+          setPlaying(!playing);
+        }
+      }
+    });
+
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    renderer.setAnimationLoop(now => {
+      const delta = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
+      if (playing && poses.length) {
+        playhead += delta * 30 * Number(speedSelect.value);
+        if (playhead >= poses.length - 1) playhead = 0;
+        updateActiveCamera(playhead);
+      }
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  </script>
+</body>
+</html>

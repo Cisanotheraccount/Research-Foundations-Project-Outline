@@ -1,37 +1,38 @@
-# From Images to Places — Cinematic Record Evolution
+# FROM PHOTOGRAPHS TO SPATIAL FIELDS
 
-A local, presentation-ready website for the Columbia GSAPP Gaussian Splatting project.
+Version 1 of a presentation-ready, interactive website for the Columbia GSAPP Gaussian Splatting project.
 
-The opening is a user-controlled spatial transformation:
+The site follows one continuous vertical narrative:
 
-`3D room → flat image → phone capture → LiDAR → mesh → Gaussian field`
+`3D space → photograph → video → spatial representations → 3DGS → 4DGS → history → applications → open question`
 
-It continues into four full-viewport chapters:
+It combines native page scrolling with presentation controls. Space, Arrow Up/Down, the mouse wheel, and the chapter dots move through the story; chapter-specific animations remain reversible. Section 04 uses the project's own Continental Rooftop Gaussian Splatting capture and interactive camera path.
 
-`Photo → Video / Stereo → 3DGS → 4DGS`
+## Version
 
-Nothing flips between slides and nothing advances automatically. The opening room is real WebGL geometry. Its final state resolves into the official Inria 3DGS result so a conceptual Gaussian transition is never presented as a trained reconstruction.
+- Stable snapshot: **Version 1**
+- Frozen: **August 5, 2026**
+- Git tag: `from-photographs-to-spatial-fields-v1`
+- GitHub branch: `from-photographs-to-spatial-fields-v1`
+
+Future changes continue in the separate Version 2 working copy.
 
 ## Controls
 
-- The opening begins as an idle three-dimensional room.
-- Each `Space` press triggers exactly one gradual transformation or one chapter animation.
-- Step 1 compresses the room into a camera-rendered image.
-- Step 2 restores spatial depth behind a moving phone path.
-- Step 3 moves the same room through LiDAR points, wireframe mesh and anisotropic Gaussian billboards, then crossfades to an official 3DGS result.
-- A second `Space` press after a chapter finishes moves smoothly to the next chapter.
-- Wheel down plays an unfinished chapter; wheel up reverses it. Once the chapter reaches an endpoint, native page scrolling resumes.
-- `Replay` rebuilds the room and returns to the beginning.
-- `prefers-reduced-motion` shows the final stable state without autoplay.
+- `Space` or `Arrow Down`: advance an animation step or continue to the next chapter.
+- `Arrow Up` or upward wheel movement: rewind where supported.
+- Mouse wheel / trackpad: control the current sequence, then resume normal vertical scrolling.
+- Right-side dots: jump directly to the corresponding page.
+- `prefers-reduced-motion`: presents a stable, reduced-motion version.
 
 ## Evidence and sources
 
-- Photo and stereo frames: Charlotte May / Pexels.
-- 3DGS: official Inria / SIGGRAPH 2023 playroom result.
-- 4DGS: official CVPR 2024 result, CC BY-SA 4.0.
-- *Interstellar* (2014) tesseract image: classroom-only visual metaphor.
+- Original project capture: Continental Rooftop, 2026.
+- Photo and video sequences: credited source footage recorded in the source manifests.
+- 3DGS and 4DGS technical examples: official project material where identified.
+- Conceptual and derived visuals are labeled separately from technical results.
 
-See `public/media/record-evolution/source-manifest.md` for the detailed asset audit.
+See the source manifests under `public/media/` for the detailed asset audit.
 
 ## Local development
 
@@ -41,4 +42,4 @@ npm run dev
 npm test
 ```
 
-This project is intentionally local-only and has not been connected to or published over the existing public research website.
+The local development server defaults to `http://localhost:3000/`.

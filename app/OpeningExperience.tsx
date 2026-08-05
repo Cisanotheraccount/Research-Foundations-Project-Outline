@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { ApplicationsFinale } from "./ApplicationsFinale";
+import { ContinentalCameraPathHero } from "./ContinentalCameraPathHero";
+import { EndingQuestion } from "./EndingQuestion";
 import { RecordEvolution } from "./RecordEvolution";
+import { LinearProgress } from "./LinearProgress";
+import { OriginsTimeline } from "./OriginsTimeline";
+import { RepresentationPrimer } from "./RepresentationPrimer";
 
 type Motion = "idle" | "flatten" | "unfold" | "compare";
 
@@ -16,7 +22,7 @@ type RoomBuild = {
 const copy = [
   {
     eyebrow: "3D space · 4D world",
-    title: <>We live in 3D.<br />We remember in 2D.</>,
+    title: "we are living in a 3D space and a 4D world",
     detail: "The room in front of you is real geometry—not a photograph.",
   },
   {
@@ -32,9 +38,11 @@ const copy = [
   {
     eyebrow: "A spatial field",
     title: <>Gaussian<br />Splatting</>,
-    detail: "Not a virtual world. A captured one.",
+    detail: "Not a flat image. A field you can enter and explore.",
   },
 ] as const;
+
+const openingIds = ["opening-space", "opening-flat", "opening-field", "opening-gaussian"] as const;
 
 function easeInOutQuint(value: number) {
   return value < 0.5 ? 16 * value ** 5 : 1 - ((-2 * value + 2) ** 5) / 2;
@@ -423,6 +431,7 @@ function buildRepresentations(room: THREE.Group) {
 export function OpeningExperience() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const openingRef = useRef<HTMLElement>(null);
+  const openingPanelRefs = useRef<Array<HTMLElement | null>>([]);
   const advanceRef = useRef<() => void>(() => undefined);
   const [step, setStep] = useState(0);
   const [motion, setMotion] = useState<Motion>("idle");
@@ -527,9 +536,10 @@ export function OpeningExperience() {
 
     const animate = (duration: number, update: (eased: number, linear: number) => void) => new Promise<void>((resolve) => {
       const startedAt = performance.now();
+      const slowedDuration = duration * 1.18;
       const tick = (now: number) => {
         if (disposed) return;
-        const linear = Math.min(1, (now - startedAt) / duration);
+        const linear = Math.min(1, (now - startedAt) / slowedDuration);
         update(easeInOutQuint(linear), linear);
         if (linear < 1) animationFrame = requestAnimationFrame(tick);
         else resolve();
@@ -731,35 +741,90 @@ export function OpeningExperience() {
     const transition = async (nextDirection: 1 | -1) => {
       const targetStep = currentStep + nextDirection;
       if (animationLocked || targetStep < 0 || targetStep > 3) return;
+      const sourceStep = currentStep;
       animationLocked = true;
       idleCamera = false;
       setBusy(true);
       setDirection(nextDirection);
-      const transitionIndex = nextDirection === 1 ? currentStep : targetStep;
+      const transitionIndex = nextDirection === 1 ? sourceStep : targetStep;
       const nextMotion: Motion = transitionIndex === 0 ? "flatten" : transitionIndex === 1 ? "unfold" : "compare";
-      setMotion(nextMotion);
-      if (nextDirection === 1 && currentStep === 0) await flattenRoom();
-      if (nextDirection === 1 && currentStep === 1) await unfoldRoom();
-      if (nextDirection === 1 && currentStep === 2) await compareRepresentations();
-      if (nextDirection === -1 && currentStep === 1) await unflattenRoom();
-      if (nextDirection === -1 && currentStep === 2) await foldRoom();
-      if (nextDirection === -1 && currentStep === 3) await rewindRepresentations();
       currentStep = targetStep;
-      setStep(currentStep);
+      setStep(targetStep);
+      setMotion(nextMotion);
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      window.scrollTo({
+        top: (openingRef.current?.offsetTop ?? 0) + targetStep * window.innerHeight,
+        behavior: "smooth",
+      });
+      if (nextDirection === 1 && sourceStep === 0) await flattenRoom();
+      if (nextDirection === 1 && sourceStep === 1) await unfoldRoom();
+      if (nextDirection === 1 && sourceStep === 2) await compareRepresentations();
+      if (nextDirection === -1 && sourceStep === 1) await unflattenRoom();
+      if (nextDirection === -1 && sourceStep === 2) await foldRoom();
+      if (nextDirection === -1 && sourceStep === 3) await rewindRepresentations();
       setMotion("idle");
       setBusy(false);
       animationLocked = false;
       wheelAccumulator = 0;
       wheelLockedUntil = performance.now() + 320;
     };
-    const continueToStory = () => document.getElementById("story")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const continueToStory = () => document.getElementById("representations")?.scrollIntoView({ behavior: "smooth", block: "start" });
     advanceRef.current = () => {
       if (currentStep < 3) void transition(1);
       else continueToStory();
     };
 
+    const onProgressNavigate = (event: Event) => {
+      const id = (event as CustomEvent<{ id?: string }>).detail?.id;
+      const targetStep = openingIds.findIndex((openingId) => openingId === id);
+      if (targetStep < 0 || animationLocked) return;
+
+      currentStep = targetStep;
+      setStep(targetStep);
+      setMotion("idle");
+      setBusy(false);
+      representations.pointsGroup.visible = false;
+      representations.wireGroup.visible = false;
+      room.scale.z = 1;
+      setRepresentationOpacity([representations.pointsMaterial, representations.wireMaterial], 0);
+
+      if (targetStep === 0) {
+        room.visible = true;
+        photoPlane.visible = false;
+        photoMaterial.opacity = 0;
+        setMaterialOpacity(solidMaterials, 1);
+        setGaussianOpacity(0);
+        lookFrom(initialCamera);
+        idleCamera = true;
+      } else if (targetStep === 1) {
+        room.visible = false;
+        photoPlane.visible = true;
+        photoMaterial.opacity = 1;
+        setMaterialOpacity(solidMaterials, 0);
+        setGaussianOpacity(0);
+        lookFrom(frontCamera);
+        idleCamera = false;
+      } else if (targetStep === 2) {
+        room.visible = true;
+        photoPlane.visible = false;
+        photoMaterial.opacity = 0;
+        setMaterialOpacity(solidMaterials, 1);
+        setGaussianOpacity(0);
+        lookFrom(unfoldedCamera);
+        idleCamera = false;
+      } else {
+        room.visible = true;
+        photoPlane.visible = false;
+        photoMaterial.opacity = 0;
+        setMaterialOpacity(solidMaterials, 1);
+        setGaussianOpacity(1);
+        lookFrom(comparedCamera);
+        idleCamera = false;
+      }
+    };
+
     const openingIsActive = () => {
-      const bounds = openingRef.current?.getBoundingClientRect();
+      const bounds = openingPanelRefs.current[currentStep]?.getBoundingClientRect();
       return Boolean(
         bounds
         && bounds.top < window.innerHeight * 0.35
@@ -796,6 +861,7 @@ export function OpeningExperience() {
     };
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("spatial:navigate", onProgressNavigate);
 
     const render = (time: number) => {
       if (disposed) return;
@@ -817,6 +883,7 @@ export function OpeningExperience() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("spatial:navigate", onProgressNavigate);
       renderTarget.dispose();
       photoPlane.geometry.dispose();
       photoMaterial.dispose();
@@ -845,63 +912,76 @@ export function OpeningExperience() {
 
   return (
     <main className="opening-page">
-      <section className="opening-stage" data-motion={motion} data-step={step} ref={openingRef}>
-        <header className="site-header">
-          <span>From Images to Places</span>
-          <span>A spatial record · Columbia GSAPP</span>
-        </header>
+      <header className="site-header">
+        <span>FROM PHOTOGRAPHS TO SPATIAL FIELDS</span>
+        <span>A spatial record · Columbia GSAPP</span>
+      </header>
 
-        <div className="opening-copy" key={step}>
-          <p>{copy[step].eyebrow}</p>
-          <h1>{copy[step].title}</h1>
-          <span>{copy[step].detail}</span>
-          {step === 3 && (
-            <div className="gaussian-attributes" aria-label="A Gaussian splat records position, scale, rotation, color and opacity">
-              <i>Position</i><i>Scale</i><i>Rotation</i><i>Color</i><i>Opacity</i>
+      <section className="opening-sequence" ref={openingRef} aria-label="Opening sequence">
+        <div className="opening-stage opening-visual-sticky" data-motion={motion} data-step={step}>
+          <div className="canvas-stage">
+            <canvas ref={canvasRef} aria-hidden="true" />
+            <div className="opening-official-result">
+              <ContinentalCameraPathHero active={step === 3 && motion === "idle"} />
             </div>
-          )}
-        </div>
-
-        <div className="canvas-stage">
-          <canvas ref={canvasRef} aria-hidden="true" />
-          <video className="opening-official-result" muted loop autoPlay playsInline preload="metadata" poster="/media/record-evolution/s07-3dgs-playroom-front-1920.webp" aria-label="Official Inria 3D Gaussian Splatting playroom result">
-            <source src="/media/record-evolution/inria-3dgs-playroom.mp4" type="video/mp4" />
-          </video>
-          <div className="real-geometry-badge">{step === 3 ? "Official 3DGS result · Inria" : "Live WebGL geometry"}</div>
-          <div className="phone-path" aria-hidden="true"><i /><span /></div>
-          <div className="representation-cues" aria-hidden="true">
-            <span>LiDAR samples</span><span>Photogrammetry mesh</span><span>Gaussian field</span>
+            <div className="real-geometry-badge">{step === 3 ? "Continental Rooftop · live Gaussian splat · 1,481 camera poses" : "Live WebGL geometry"}</div>
+            <div className="phone-path" aria-hidden="true"><i /><span /></div>
+            <div className="representation-cues" aria-hidden="true">
+              <span>LiDAR samples</span><span>Photogrammetry mesh</span><span>Gaussian field</span>
+            </div>
           </div>
         </div>
 
-        <footer className="sequence-footer">
-          <div className="step-dots" aria-label={`Opening step ${step + 1} of 4`}>
-            {[0, 1, 2, 3].map((index) => <i className={index <= step ? "is-complete" : ""} key={index} />)}
-          </div>
-          <button type="button" className="space-control" onClick={() => advanceRef.current()} disabled={busy || !ready}>
-            <kbd>Space</kbd><span>{instruction}</span>
-          </button>
-          <button
-            type="button"
-            className="replay-control"
-            onClick={() => {
-              setReady(false);
-              setBusy(false);
-              setMotion("idle");
-              setStep(0);
-              setRun((value) => value + 1);
-            }}
-          >
-            Replay
-          </button>
-        </footer>
+        <div className="opening-panels">
+          {copy.map((page, index) => (
+            <section
+              className={`opening-panel ${step === index ? "is-active" : ""}`}
+              id={openingIds[index]}
+              key={openingIds[index]}
+              ref={(element) => { openingPanelRefs.current[index] = element; }}
+              aria-label={`Opening page ${index + 1} of 4`}
+            >
+              <div className="opening-copy">
+                <p>{page.eyebrow}</p>
+                <h1>{page.title}</h1>
+                <span>{page.detail}</span>
+                {index === 3 && (
+                  <div className="gaussian-attributes" aria-label="A Gaussian splat records position, scale, rotation, color and opacity">
+                    <i>Position</i><i>Scale</i><i>Rotation</i><i>Color</i><i>Opacity</i>
+                  </div>
+                )}
+              </div>
 
-        <a className="scroll-cue" href="#story" aria-label="Scroll to the next chapter">
-          <span>Scroll to continue</span><i aria-hidden="true" />
-        </a>
+              <footer className="sequence-footer">
+                <button type="button" className="space-control" onClick={() => advanceRef.current()} disabled={busy || !ready}>
+                  <kbd>Space</kbd><span>{instruction}</span>
+                </button>
+                <button
+                  type="button"
+                  className="replay-control"
+                  onClick={() => {
+                    setReady(false);
+                    setBusy(false);
+                    setMotion("idle");
+                    setStep(0);
+                    window.scrollTo({ top: openingRef.current?.offsetTop ?? 0, behavior: "smooth" });
+                    setRun((value) => value + 1);
+                  }}
+                >
+                  Replay
+                </button>
+              </footer>
+            </section>
+          ))}
+        </div>
       </section>
 
-      <RecordEvolution />
+      <RepresentationPrimer />
+      <RecordEvolution key="record-evolution-2-5d" />
+      <OriginsTimeline />
+      <ApplicationsFinale />
+      <EndingQuestion />
+      <LinearProgress />
     </main>
   );
 }

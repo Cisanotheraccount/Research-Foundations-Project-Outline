@@ -5,6 +5,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import gsap from "gsap";
+import { GaussianPrimitiveWebGL } from "./GaussianPrimitiveWebGL";
 
 type RecordChapterId = "photo" | "video" | "3dgs" | "4dgs";
 type ChapterState = "idle" | "playing" | "complete" | "reversing";
@@ -23,21 +24,21 @@ const chapters: Chapter[] = [
     eyebrow: "Photo · A 2D record",
     title: "A photograph samples light on a plane.",
     statement: "Brightness and color are preserved—one pixel at a time.",
-    credit: "Real video frame · Charlotte May / Pexels",
+    credit: "Real NYC video frame · Caleb Oquendo / Pexels",
   },
   {
     id: "video",
     eyebrow: "Video · 2D + time",
-    title: "Video adds time. The record is still flat.",
-    statement: "Stereo gives our eyes two surfaces. Our brain supplies the depth.",
-    credit: "Real sequential frames · Derived stereo demonstration",
+    title: "A video is a sequence of photographs.",
+    statement: "Played continuously, still images become a two-dimensional record plus time.",
+    credit: "Seven sequential frames · Same Pexels camera movement",
   },
   {
     id: "3dgs",
     eyebrow: "3DGS · A spatial field",
     title: "A recording becomes a place you can move through.",
     statement: "Optimized Gaussians carry position, scale, rotation, color and opacity.",
-    credit: "Official 3DGS result · Inria / SIGGRAPH 2023",
+    credit: "Capture footage and stills · Continental Rooftop · 2026",
   },
   {
     id: "4dgs",
@@ -49,6 +50,7 @@ const chapters: Chapter[] = [
 ];
 
 const mediaRoot = "/media/record-evolution";
+const continuityRoot = "/media/continuity";
 
 function ResponsivePicture({ name, alt, className = "" }: { name: string; alt: string; className?: string }) {
   return (
@@ -65,12 +67,17 @@ function PhotoVisual() {
   return (
     <div className="photo-visual record-media-stage">
       <div className="photo-plane">
-        <ResponsivePicture name="s04-room-photo" alt="A real living room frame recorded by a digital camera" />
+        <picture>
+          <source media="(max-width: 720px)" srcSet={`${continuityRoot}/nyc-window-photo-960.webp`} type="image/webp" />
+          <img src={`${continuityRoot}/nyc-window-photo-1920.webp`} alt="A real video frame of the Empire State Building seen through a Manhattan window" />
+        </picture>
         <div className="photo-grid" aria-hidden="true" />
         <div className="photo-scan" aria-hidden="true" />
       </div>
       <div className="pixel-sample">
-        <ResponsivePicture name="s04-pixel-detail" alt="A nearest-neighbor enlargement of pixels from the living-room frame" />
+        <figure className="pixel-sample-image">
+          <img src={`${continuityRoot}/nyc-window-pixel-detail-48.png`} alt="A 48 by 48 pixel crop enlarged with nearest-neighbor rendering from the same New York video frame" />
+        </figure>
         <div><b>ONE SAMPLE</b><span>Brightness</span><span>RGB color</span></div>
       </div>
       <div className="plane-edge-label">x · y · no depth</div>
@@ -81,18 +88,20 @@ function PhotoVisual() {
 function VideoVisual() {
   return (
     <div className="video-visual record-media-stage">
-      <div className="video-frame-stack" aria-label="Six sequential frames from one real camera movement">
-        {[1, 2, 3, 4, 5, 6].map((number) => (
-          <img key={number} src={`${mediaRoot}/s05-frame-0${number}.jpg`} alt={`Living-room video frame ${number}`} loading="lazy" decoding="async" />
-        ))}
+      <video className="video-source" muted loop autoPlay playsInline preload="metadata" poster={`${continuityRoot}/nyc-window-photo-1920.webp`}>
+        <source src={`${continuityRoot}/nyc-window.mp4`} type="video/mp4" />
+      </video>
+      <div className="video-frame-camera" aria-label="Seven flat photographs arranged along a three-dimensional time axis">
+        <div className="video-frame-world">
+          {[1, 2, 3, 4, 5, 6, 7].map((number) => (
+            <figure className="video-frame" key={number}>
+              <img src={`${continuityRoot}/nyc-window-frame-0${number}.webp`} alt={`New York video frame ${number}`} loading="lazy" decoding="async" />
+              <figcaption>0{number}</figcaption>
+            </figure>
+          ))}
+        </div>
       </div>
-      <div className="time-axis"><span>t0</span><i /><span>t5</span></div>
-      <div className="stereo-pair">
-        <ResponsivePicture name="s06-stereo-left" alt="Conceptual left view from the same living-room camera move" className="stereo-left" />
-        <ResponsivePicture name="s06-stereo-right" alt="Conceptual right view from the same living-room camera move" className="stereo-right" />
-      </div>
-      <ResponsivePicture name="s06-anaglyph" alt="Red and cyan stereo illusion derived from adjacent living-room frames" className="anaglyph-result" />
-      <div className="stereo-verdict">Two images · Perceived depth</div>
+      <div className="video-verdict">Images in sequence · 2D + time</div>
     </div>
   );
 }
@@ -100,23 +109,36 @@ function VideoVisual() {
 function GaussianVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement | null> }) {
   return (
     <div className="gs-visual record-media-stage">
-      <video ref={videoRef} muted loop playsInline preload="metadata" poster={`${mediaRoot}/s07-3dgs-playroom-front-1920.webp`}>
-        <source src={`${mediaRoot}/inria-3dgs-playroom.mp4`} type="video/mp4" />
+      <video
+        ref={videoRef}
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={`${mediaRoot}/continental-rooftop-capture-poster.jpg`}
+        aria-label="Personal capture footage recorded for the Continental Rooftop Gaussian Splatting project"
+      >
+        <source src={`${mediaRoot}/continental-rooftop-capture-loop.mp4`} type="video/mp4" />
       </video>
       <div className="gs-view-strip">
         {[
-          ["s07-3dgs-playroom-left", "Left"],
-          ["s07-3dgs-playroom-front", "Front"],
-          ["s07-3dgs-playroom-right", "Right"],
-        ].map(([name, label]) => (
+          ["continental-rooftop-view-01.jpg", "Capture 01"],
+          ["continental-rooftop-view-02.jpg", "Capture 02"],
+          ["continental-rooftop-view-03.jpg", "Capture 03"],
+        ].map(([file, label]) => (
           <figure className="gs-view-card" key={label}>
-            <ResponsivePicture name={name} alt={`${label} view of the official Inria 3DGS playroom`} />
+            <img
+              src={`${mediaRoot}/${file}`}
+              alt={`${label} from the Continental Rooftop Gaussian Splatting capture path`}
+              loading="lazy"
+              decoding="async"
+            />
             <figcaption>{label}</figcaption>
           </figure>
         ))}
       </div>
       <div className="gaussian-primitive-demo" aria-label="An anisotropic Gaussian primitive">
-        <div className="primitive-core" />
+        <GaussianPrimitiveWebGL />
         {[
           ["Position", "position"], ["Scale", "scale"], ["Rotation", "rotation"], ["Color", "color"], ["Opacity", "opacity"],
         ].map(([label, className]) => <span className={`primitive-label ${className}`} key={label}>{label}</span>)}
@@ -161,7 +183,6 @@ export function RecordEvolution() {
   const video4DRef = useRef<HTMLVideoElement>(null);
   const activeRef = useRef(-1);
   const wheelTotalRef = useRef(0);
-  const [activeIndex, setActiveIndex] = useState(-1);
   const [states, setStates] = useState<ChapterState[]>(chapters.map(() => "idle"));
   const [reducedMotion] = useState(() => typeof window !== "undefined"
     && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -186,6 +207,7 @@ export function RecordEvolution() {
           onComplete: () => updateState(index, "complete"),
           onReverseComplete: () => updateState(index, "idle"),
         });
+        timeline.timeScale(0.82);
 
         if (index === 0) {
           timeline
@@ -202,30 +224,42 @@ export function RecordEvolution() {
         }
 
         if (index === 1) {
-          const frames = gsap.utils.toArray<HTMLElement>(".video-frame-stack img");
+          const frames = gsap.utils.toArray<HTMLElement>(".video-frame");
+          const depthStep = Math.min(112, Math.max(68, window.innerWidth * 0.055));
           timeline
-            .set(frames, { opacity: 0, x: 0, y: 0, scale: 0.82, rotationY: 0 })
-            .set(".time-axis", { opacity: 0, scaleX: 0.5 })
-            .set(".stereo-pair", { opacity: 0, scale: 0.9 })
-            .set(".anaglyph-result", { opacity: 0, scale: 0.92 })
-            .set(".stereo-verdict", { opacity: 0, y: 12 })
+            .set(frames, {
+              opacity: 0,
+              x: 0,
+              y: 0,
+              z: 0,
+              scale: 0.9,
+              rotationX: 0,
+              rotationY: 0,
+              rotationZ: 0,
+              transformOrigin: "center center",
+            })
+            .set(".video-frame-world", { scale: 0.88, transformOrigin: "50% 50%" })
+            .set(".video-verdict", { opacity: 0, y: 12 })
+            .set(".video-source", { opacity: 1, scale: 1 })
+            .to(".video-source", { scale: 1.035, duration: 0.58 }, 0.04)
+            .to(".video-source", { opacity: 0.08, filter: "blur(12px) brightness(.42)", duration: 0.58 }, 0.54)
             .to(frames, {
               opacity: 1,
-              x: (itemIndex) => (itemIndex - 2.5) * 104,
-              y: (itemIndex) => Math.abs(itemIndex - 2.5) * 7,
-              scale: 0.58,
-              duration: 0.9,
+              duration: 0.62,
               stagger: 0.07,
-            }, 0.12)
-            .to(".time-axis", { opacity: 1, scaleX: 1, duration: 0.48 }, 0.62)
-            .to(frames, { opacity: 0, y: -42, duration: 0.45, stagger: 0.025 }, 1.38)
-            .to(".time-axis", { opacity: 0, duration: 0.25 }, 1.46)
-            .to(".stereo-pair", { opacity: 1, scale: 1, duration: 0.62 }, 1.62)
-            .to(".stereo-left", { xPercent: -18, rotationY: 10, duration: 0.58 }, 1.82)
-            .to(".stereo-right", { xPercent: 18, rotationY: -10, duration: 0.58 }, 1.82)
-            .to(".stereo-pair", { opacity: 0, duration: 0.4 }, 2.42)
-            .to(".anaglyph-result", { opacity: 1, scale: 1, rotationY: -9, duration: 0.7 }, 2.38)
-            .to(".stereo-verdict", { opacity: 1, y: 0, duration: 0.42 }, 2.84);
+            }, 0.6)
+            .to(frames, {
+              z: (itemIndex) => (itemIndex - 3) * depthStep,
+              scale: 0.9,
+              duration: 1.08,
+              stagger: 0.055,
+              ease: "power4.inOut",
+            }, 1.12)
+            .to(".video-frame-world", { scale: 1, duration: 0.92, ease: "power3.out" }, 1.18)
+            .to(frames, { filter: "brightness(.72)", duration: 0.24 }, 2.12)
+            .to(frames, { filter: "brightness(1.08)", duration: 0.14, stagger: 0.09 }, 2.18)
+            .to(frames, { filter: "brightness(.78)", duration: 0.18, stagger: 0.09 }, 2.31)
+            .to(".video-verdict", { opacity: 1, y: 0, duration: 0.42 }, 2.72);
         }
 
         if (index === 2) {
@@ -234,14 +268,14 @@ export function RecordEvolution() {
           timeline
             .set(".gs-visual > video", { opacity: 0, scale: 0.88, clipPath: "inset(14% 18% 14% 18% round 22px)" })
             .set(cards, { opacity: 0, y: 42, scale: 0.82 })
-            .set(".gaussian-primitive-demo", { opacity: 0, scale: 0.55, rotation: -16 })
+            .set(".gaussian-primitive-demo", { opacity: 0, scale: 0.82, y: 22 })
             .set(labels, { opacity: 0, scale: 0.74 })
             .set(".gs-verdict", { opacity: 0, y: 12 })
             .to(".gs-visual > video", { opacity: 1, scale: 1, clipPath: "inset(0% 0% 0% 0% round 0px)", duration: 0.9 }, 0.1)
             .to(cards, { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.14 }, 1.02)
             .to(cards, { opacity: 0.18, scale: 0.86, duration: 0.46, stagger: 0.05 }, 2.08)
             .to(".gs-visual > video", { opacity: 0.28, filter: "blur(7px)", duration: 0.5 }, 2.08)
-            .to(".gaussian-primitive-demo", { opacity: 1, scale: 1, rotation: 7, duration: 0.7 }, 2.12)
+            .to(".gaussian-primitive-demo", { opacity: 1, scale: 1, y: 0, duration: 0.82 }, 2.12)
             .to(labels, { opacity: 1, scale: 1, duration: 0.34, stagger: 0.12 }, 2.62)
             .to(".gs-verdict", { opacity: 1, y: 0, duration: 0.42 }, 3.42)
             .to(".gs-visual > video", { opacity: 0.44, filter: "blur(3.5px)", duration: 0.55 }, 3.45);
@@ -306,7 +340,11 @@ export function RecordEvolution() {
       });
       const nextIndex = bestRatio >= 0.42 ? bestIndex : -1;
       activeRef.current = nextIndex;
-      setActiveIndex(nextIndex);
+      const nextTimeline = nextIndex >= 0 ? timelineRefs.current[nextIndex] : null;
+      if (nextTimeline && nextTimeline.progress() <= 0.001 && !nextTimeline.isActive()) {
+        updateState(nextIndex, "playing");
+        nextTimeline.play();
+      }
       if (nextIndex === 2 && bestRatio > 0.25) void video3DRef.current?.play().catch(() => undefined);
       else video3DRef.current?.pause();
       if (nextIndex === 3 && bestRatio > 0.25) void video4DRef.current?.play().catch(() => undefined);
@@ -360,7 +398,8 @@ export function RecordEvolution() {
         event.preventDefault();
         return;
       }
-      const nextSection = sectionRefs.current[activeRef.current + 1];
+      const nextSection = sectionRefs.current[activeRef.current + 1]
+        ?? (activeRef.current === chapters.length - 1 ? document.getElementById("timeline") : null);
       if (nextSection) {
         event.preventDefault();
         nextSection.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -378,8 +417,13 @@ export function RecordEvolution() {
   const toggleChapter = (index: number) => {
     const timeline = timelineRefs.current[index];
     if (!timeline) return;
-    if (timeline.progress() >= 0.999) timeline.reverse();
-    else timeline.play();
+    if (timeline.progress() >= 0.999) {
+      const nextSection = sectionRefs.current[index + 1]
+        ?? (index === chapters.length - 1 ? document.getElementById("timeline") : null);
+      nextSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    timeline.play();
   };
 
   return (
@@ -404,17 +448,12 @@ export function RecordEvolution() {
             {chapter.id === "4dgs" && <FourDVisual videoRef={video4DRef} />}
             <small className="record-credit">{chapter.credit}</small>
           </div>
-          <button className="chapter-play-control" type="button" onClick={() => toggleChapter(index)} aria-label={`${states[index] === "complete" ? "Reverse" : "Play"} ${chapter.eyebrow} animation`}>
-            <kbd>Space</kbd><span>{states[index] === "complete" ? "Scroll ↑ to reverse" : states[index] === "reversing" ? "Reversing…" : states[index] === "playing" ? "Playing…" : "Space or scroll ↓ to play"}</span>
+          <button className="chapter-play-control" type="button" onClick={() => toggleChapter(index)} aria-label={`${states[index] === "complete" ? "Continue after" : "Play"} ${chapter.eyebrow} animation`}>
+            <kbd>Space</kbd><span>{states[index] === "complete" ? "Space to continue · scroll ↑ to reverse" : states[index] === "reversing" ? "Reversing…" : states[index] === "playing" ? "Playing automatically…" : "Autoplay on arrival"}</span>
           </button>
         </article>
       ))}
 
-      <nav className={`record-progress ${activeIndex >= 0 ? "is-visible" : ""}`} aria-label="Record evolution chapters">
-        {chapters.map((chapter, index) => (
-          <a href={`#${chapter.id === "photo" ? "story" : chapter.id}`} className={activeIndex === index ? "is-active" : ""} key={chapter.id} aria-label={`Go to ${chapter.eyebrow}`} />
-        ))}
-      </nav>
     </section>
   );
 }
