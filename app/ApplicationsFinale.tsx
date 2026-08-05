@@ -29,10 +29,10 @@ const applications = [
     source: "Nankai University · FastGS · CVPR 2026 Highlight",
   },
   {
-    label: "Robotics & SLAM",
-    title: "A moving camera can build its own map.",
-    body: "SplaTAM tracks the camera and expands a dense Gaussian map online from one unposed RGB-D stream.",
-    source: "SplaTAM · CMU + MIT · CVPR 2024",
+    label: "Aerial reconstruction",
+    title: "A drone survey becomes a real-time 3D environment.",
+    body: "VastGaussian reconstructs the 500 × 250 m Mill 19 site from high-resolution drone imagery. It trains spatial cells in parallel, then merges them into one photoreal Gaussian environment for real-time exploration.",
+    source: "VastGaussian · Tsinghua + Huawei Noah’s Ark Lab · CVPR 2024",
   },
   {
     label: "Creative tools",
@@ -100,11 +100,11 @@ function RapidFieldVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement |
 function RoboticsVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement | null> }) {
   return (
     <div className="application-visual robotics-visual">
-      <video ref={videoRef} muted loop playsInline preload="metadata" poster="/media/applications/splatam-collage-poster.jpg" aria-label="Official SplaTAM online Gaussian mapping results">
-        <source src="/media/applications/splatam-collage.mp4" type="video/mp4" />
+      <video ref={videoRef} muted loop playsInline preload="metadata" poster="/media/applications/vastgaussian-mill19-building-poster.png" aria-label="Official VastGaussian fly-through of the Mill 19 Building scene reconstructed from drone imagery">
+        <source src="/media/applications/vastgaussian-mill19-building.mp4" type="video/mp4" />
       </video>
       <div className="robotics-route" aria-hidden="true"><i /><i /><i /><i /><b /></div>
-      <div className="robotics-status"><span>Track</span><i /><span>Map</span><i /><span>Render</span></div>
+      <div className="robotics-status"><span>Aerial frames</span><i /><span>Parallel cells</span><i /><span>3DGS world</span></div>
     </div>
   );
 }

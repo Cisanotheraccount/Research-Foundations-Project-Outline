@@ -40,10 +40,10 @@ export function EndingQuestion() {
       <div className="ending-question-copy">
         <p>One last question</p>
         <h2 id="ending-question-title">
-          If every place can be captured as a world—and every viewpoint chosen later—
-          <em>who decides which version becomes our memory?</em>
+          As Gaussian Splatting turns ordinary places into explorable worlds—
+          <em>what could it change in our everyday lives?</em>
         </h2>
-        <span>A photograph preserves a view. A spatial record preserves the power to choose one.</span>
+        <span>How might we remember, learn, travel, work, and share places differently?</span>
       </div>
 
       <button className="ending-restart" type="button" onClick={restart}>
