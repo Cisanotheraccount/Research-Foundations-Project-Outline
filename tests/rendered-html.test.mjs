@@ -54,7 +54,8 @@ test("server-renders the rebuilt cinematic opening", async () => {
   assert.match(html, /Fragile artifacts can remain explorable/);
   assert.match(html, /Potential application · inference/);
   assert.match(html, /Page 1 of 12/);
-  assert.match(html, /what could it change in our everyday lives/);
+  assert.match(html, /What there for us\?/);
+  assert.doesNotMatch(html, /what could it change in our everyday lives|How might we remember/);
   assert.doesNotMatch(html, /Opening step 1 of 4|record-progress|step-dots/);
   assert.match(html, /A recording becomes a place you can move through/);
   assert.match(html, /3D \+ time: space becomes a sequence of states/);
@@ -311,8 +312,8 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.ok(component.indexOf("<RecordEvolution") < component.indexOf("<OriginsTimeline />"));
   assert.ok(component.indexOf("<OriginsTimeline />") < component.indexOf("<ApplicationsFinale />"));
   assert.ok(component.indexOf("<ApplicationsFinale />") < component.indexOf("<EndingQuestion />"));
-  assert.match(endingQuestion, /As Gaussian Splatting turns ordinary places into explorable worlds/);
-  assert.match(endingQuestion, /what could it change in our everyday lives/);
+  assert.match(endingQuestion, /What there for us\?/);
+  assert.doesNotMatch(endingQuestion, /As Gaussian Splatting turns ordinary places into explorable worlds|what could it change in our everyday lives|How might we remember/);
   assert.match(endingQuestion, /Return to the beginning/);
   assert.match(representationPrimer, /Photogrammetry/);
   assert.match(representationPrimer, /NeRF/);

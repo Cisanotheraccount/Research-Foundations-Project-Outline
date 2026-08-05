@@ -39,11 +39,7 @@ export function EndingQuestion() {
 
       <div className="ending-question-copy">
         <p>One last question</p>
-        <h2 id="ending-question-title">
-          As Gaussian Splatting turns ordinary places into explorable worlds—
-          <em>what could it change in our everyday lives?</em>
-        </h2>
-        <span>How might we remember, learn, travel, work, and share places differently?</span>
+        <h2 id="ending-question-title">What there for us?</h2>
       </div>
 
       <button className="ending-restart" type="button" onClick={restart}>
