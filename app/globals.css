@@ -212,19 +212,8 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
 .field-use-cases i { display: block; height: 1px; background: rgba(255,255,255,.42); }
 .field-use-cases small { grid-column: 1/5; color: rgba(255,255,255,.48); font-size: 5px; letter-spacing: .12em; }
 .aerial-reconstruction-visual video { object-fit: cover; filter: brightness(.82) saturate(.76); }
-.aerial-route { position: absolute; z-index: 6; inset: 16% 15%; filter: drop-shadow(0 0 7px rgba(255,255,255,.52)); }
-.aerial-route::before,.aerial-route::after { position: absolute; height: 1px; transform-origin: left; background: rgba(255,255,255,.72); content: ""; }
-.aerial-route::before { top: 54%; left: 6%; width: 45%; transform: rotate(-13deg); }
-.aerial-route::after { top: 43%; left: 48%; width: 39%; transform: rotate(18deg); }
-.aerial-route i { position: absolute; width: 6px; height: 6px; border: 1px solid rgba(255,255,255,.82); border-radius: 50%; background: #080809; }
-.aerial-route i:nth-child(1) { top: 55%; left: 5%; }
-.aerial-route i:nth-child(2) { top: 42%; left: 31%; }
-.aerial-route i:nth-child(3) { top: 37%; left: 51%; }
-.aerial-route i:nth-child(4) { top: 52%; left: 85%; }
-.aerial-route b { position: absolute; top: 31%; left: 46%; width: 20px; height: 13px; border: 1px solid rgba(255,255,255,.72); background: rgba(0,0,0,.58); }
-.aerial-route b::after { position: absolute; top: 100%; left: 50%; width: 1px; height: 8px; transform: translateX(-50%); background: rgba(255,255,255,.72); content: ""; }
-.aerial-status { position: absolute; z-index: 8; right: 12px; bottom: 10px; left: 12px; display: grid; grid-template-columns: auto minmax(10px,1fr) auto minmax(10px,1fr) auto minmax(10px,1fr) auto; align-items: center; gap: 5px; color: rgba(255,255,255,.78); font-size: 5.5px; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; }
-.aerial-status i { display: block; height: 1px; background: rgba(255,255,255,.42); }
+.aerial-status { position: absolute; z-index: 8; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(7,auto); align-items: center; justify-content: center; gap: 7px; padding: 10px 12px; color: rgba(255,255,255,.82); background: linear-gradient(180deg,transparent,rgba(0,0,0,.84)); font-size: 5.5px; font-weight: 650; letter-spacing: .08em; text-shadow: 0 1px 6px rgba(0,0,0,.9); text-transform: uppercase; }
+.aerial-status b { color: rgba(255,255,255,.46); font-size: 8px; font-weight: 520; }
 .niantic-vps-visual { background: #050617; }
 .niantic-vps-visual img { object-fit: cover; object-position: center; filter: brightness(.88) saturate(.9); }
 .niantic-vps-sequence { position: absolute; z-index: 8; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; padding: 9px 12px; color: rgba(255,255,255,.86); background: linear-gradient(180deg,rgba(3,4,18,.12),rgba(3,4,18,.9)); font-size: 6px; font-weight: 680; letter-spacing: .11em; text-shadow: 0 1px 6px rgba(0,0,0,.9); text-transform: uppercase; backdrop-filter: blur(5px); }

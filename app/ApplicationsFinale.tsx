@@ -103,8 +103,12 @@ function AerialReconstructionVisual({ videoRef }: { videoRef: RefObject<HTMLVide
       <video ref={videoRef} muted loop playsInline preload="metadata" poster="/media/applications/vastgaussian-mill19-building-poster.png" aria-label="Official VastGaussian fly-through of a large-scale 3D Gaussian environment reconstructed from aerial drone imagery">
         <source src="/media/applications/vastgaussian-mill19-building.mp4" type="video/mp4" />
       </video>
-      <div className="aerial-route" aria-hidden="true"><i /><i /><i /><i /><b /></div>
-      <div className="aerial-status"><span>Aerial images</span><i /><span>SfM + sparse points</span><i /><span>Parallel cells</span><i /><span>Merged 3DGS</span></div>
+      <div className="aerial-status" aria-label="Aerial images become camera poses, scene cells, and a merged 3D Gaussian environment">
+        <span>Aerial images</span><b aria-hidden="true">→</b>
+        <span>SfM poses</span><b aria-hidden="true">→</b>
+        <span>Scene cells</span><b aria-hidden="true">→</b>
+        <span>Merged 3DGS</span>
+      </div>
     </div>
   );
 }
@@ -178,7 +182,6 @@ export function ApplicationsFinale() {
       gsap.set(".fastgs-counter", { opacity: 0, y: 14 });
       gsap.set(".field-use-cases", { opacity: 0, y: 12 });
       gsap.set(".aerial-reconstruction-visual video", { scale: 1.08, filter: "brightness(.48) saturate(.52) blur(5px)" });
-      gsap.set(".aerial-route", { opacity: 0, scale: 0.84 });
       gsap.set(".aerial-status", { opacity: 0, y: 10 });
       gsap.set(".niantic-vps-visual img", { scale: 1.08, filter: "brightness(.5) saturate(.55) blur(5px)" });
       gsap.set(".niantic-vps-sequence", { opacity: 0, y: 12 });
@@ -202,8 +205,7 @@ export function ApplicationsFinale() {
         .to(".field-use-cases", { opacity: 1, y: 0, duration: 0.5 }, 5.5)
         .to(cards[3], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 6.2)
         .to(".aerial-reconstruction-visual video", { scale: 1, filter: "brightness(.82) saturate(.76) blur(0px)", duration: 0.86 }, 6.34)
-        .to(".aerial-route", { opacity: 1, scale: 1, duration: 0.54 }, 6.7)
-        .to(".aerial-status", { opacity: 1, y: 0, duration: 0.44 }, 7.04)
+        .to(".aerial-status", { opacity: 1, y: 0, duration: 0.48 }, 6.72)
         .to(cards[4], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 7.78)
         .to(".niantic-vps-visual img", { scale: 1, filter: "brightness(.88) saturate(.9) blur(0px)", duration: 0.86 }, 7.94)
         .to(".niantic-vps-sequence", { opacity: 1, y: 0, duration: 0.48 }, 8.34)

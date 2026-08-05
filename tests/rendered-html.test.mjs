@@ -282,9 +282,11 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(applicationsFinale, /Aerial photographs become an explorable 3DGS environment/);
   assert.match(applicationsFinale, /VastGaussian/);
   assert.match(applicationsFinale, /Aerial images/);
-  assert.match(applicationsFinale, /SfM \+ sparse points/);
-  assert.match(applicationsFinale, /Parallel cells/);
+  assert.match(applicationsFinale, /SfM poses/);
+  assert.match(applicationsFinale, /Scene cells/);
   assert.match(applicationsFinale, /Merged 3DGS/);
+  assert.doesNotMatch(applicationsFinale, /aerial-route/);
+  assert.doesNotMatch(css, /\.aerial-route/);
   assert.doesNotMatch(applicationsFinale, /Robotics|SplaTAM|robotics-/);
   assert.match(applicationsFinale, /Crowdsourced spatial mapping/);
   assert.match(applicationsFinale, /optional PokéStop Scan tasks/);
