@@ -375,6 +375,7 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
 [id="4dgs"][data-state="idle"] .time-frame:nth-child(3) { opacity: 1 !important; transform: scale(1) !important; }
 [id="4dgs"][data-state="idle"] .four-d-axis,
 [id="4dgs"][data-state="idle"] .tesseract-metaphor,
+[id="4dgs"][data-state="idle"] .four-d-capture-inset,
 [id="4dgs"][data-state="idle"] .film-credit { opacity: 0 !important; }
 
 .photo-plane { position: absolute; inset: 0; width: 100%; transform-origin: left center; transform-style: preserve-3d; }
@@ -423,6 +424,12 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
 .time-frame { position: absolute; z-index: 5; top: 17%; left: 29%; width: 42%; margin: 0; overflow: hidden; background: #000; box-shadow: 0 22px 68px rgba(0,0,0,.72); transform-style: preserve-3d; }
 .time-frame picture { aspect-ratio: 16 / 9; }
 .time-frame figcaption { position: absolute; right: 9px; bottom: 8px; color: #fff; font-size: 8px; font-weight: 650; letter-spacing: .12em; }
+.four-d-capture-inset { position: absolute; z-index: 18; bottom: 22%; left: 5%; width: clamp(180px,18vw,320px); aspect-ratio: 16 / 9; margin: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.22); background: #050506; box-shadow: 0 20px 54px rgba(0,0,0,.72); transform-origin: left bottom; }
+.four-d-capture-inset::after { position: absolute; inset: 0; background: linear-gradient(180deg,transparent 42%,rgba(0,0,0,.82)); content: ""; pointer-events: none; }
+.four-d-capture-inset img { display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(.82) brightness(.82) contrast(1.08); }
+.four-d-capture-inset figcaption { position: absolute; z-index: 2; right: 10px; bottom: 9px; left: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; color: #f5f5f7; text-transform: uppercase; }
+.four-d-capture-inset figcaption b { font-size: 8px; font-weight: 650; letter-spacing: .1em; }
+.four-d-capture-inset figcaption span { color: rgba(255,255,255,.64); font-size: 6px; font-weight: 600; letter-spacing: .08em; text-align: right; }
 .four-d-axis { position: absolute; right: 8%; bottom: 12%; left: 8%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 13px; transform-origin: left center; color: #9a9aa0; font-size: 7px; letter-spacing: .16em; }
 .four-d-axis i { height: 1px; background: linear-gradient(90deg, rgba(255,255,255,.15), rgba(255,255,255,.9)); }
 .four-d-axis b { color: #f5f5f7; font-weight: 650; }
@@ -492,6 +499,9 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
   .record-chapter-copy h2 { max-width: 760px; font-size: clamp(48px, 7.2vw, 74px); }
   .record-chapter-copy > span { margin-top: 18px; }
   .record-chapter-visual { width: min(100%, 900px); max-height: 54vh; justify-self: center; }
+  .four-d-capture-inset { bottom: 15%; left: 4%; width: clamp(120px,14vw,150px); }
+  .four-d-capture-inset figcaption { right: 7px; bottom: 6px; left: 7px; }
+  .four-d-capture-inset figcaption span { display: none; }
   .chapter-play-control { bottom: 22px; }
 }
 
@@ -503,6 +513,8 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
   .opening-copy > span { width: 80%; }
   .canvas-stage { inset: 28% -24% 10% -27%; }
   .real-geometry-badge { display: none; }
+  .four-d-capture-inset { bottom: 18%; width: 100px; }
+  .four-d-capture-inset figcaption { display: none; }
   .representation-cues { right: 25%; bottom: 18%; }
   .sequence-footer { right: 20px; bottom: 22px; left: 20px; }
   .space-control { font-size: 8px; }

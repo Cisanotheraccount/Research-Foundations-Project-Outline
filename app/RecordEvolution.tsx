@@ -171,6 +171,18 @@ function FourDVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement | null
           </figure>
         ))}
       </div>
+      <figure className="four-d-capture-inset">
+        <img
+          src="/media/applications/superman-4dgs-capture-context.jpg"
+          alt="A nearly 200-camera volumetric performance capture stage used for 4D Gaussian Splatting in Superman"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <b>Nearly 200 cameras</b>
+          <span>Framestore / Infinite Realities</span>
+        </figcaption>
+      </figure>
       <div className="four-d-axis"><span>SPACE</span><i /><b>TIME</b></div>
       <div className="film-credit">Visual metaphor — <i>Interstellar</i> (2014)</div>
     </div>
@@ -289,6 +301,7 @@ export function RecordEvolution() {
             .set(frames[2], { opacity: 1, scale: 1 })
             .set(".four-d-axis", { opacity: 0, scaleX: 0.55 })
             .set(".tesseract-metaphor", { opacity: 0, scale: 1.06 })
+            .set(".four-d-capture-inset", { opacity: 0, y: 18, scale: 0.92 })
             .set(".film-credit", { opacity: 0, y: 10 })
             .to(frames, {
               opacity: (itemIndex) => itemIndex === 2 ? 1 : 0.72,
@@ -299,6 +312,7 @@ export function RecordEvolution() {
               duration: 1.05,
               stagger: 0.08,
             }, 0.18)
+            .to(".four-d-capture-inset", { opacity: 1, y: 0, scale: 1, duration: 0.62 }, 0.78)
             .to(".four-d-axis", { opacity: 1, scaleX: 1, duration: 0.48 }, 0.88)
             .to(frames, { opacity: 0.32, duration: 0.28 }, 1.62)
             .to(frames[0], { opacity: 1, scale: 1.04, duration: 0.32 }, 1.7)

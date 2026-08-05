@@ -61,6 +61,8 @@ test("server-renders the rebuilt cinematic opening", async () => {
   assert.match(html, /3D \+ time: space becomes a sequence of states/);
   assert.match(html, /Capture footage and stills · Continental Rooftop/);
   assert.match(html, /Official 4DGS result/);
+  assert.match(html, /Nearly 200 cameras/);
+  assert.match(html, /superman-4dgs-capture-context\.jpg/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -234,6 +236,11 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.doesNotMatch(recordEvolution, /stereo-pair|anaglyph-result|stereo-verdict/);
   assert.doesNotMatch(recordEvolution, /record-progress/);
   assert.match(recordEvolution, /s09-interstellar-tesseract/);
+  assert.match(recordEvolution, /className="four-d-capture-inset"/);
+  assert.match(recordEvolution, /Framestore \/ Infinite Realities/);
+  assert.match(recordEvolution, /\.set\("\.four-d-capture-inset"/);
+  assert.match(recordEvolution, /\.to\("\.four-d-capture-inset"/);
+  assert.match(css, /\.four-d-capture-inset \{[^}]*bottom: 22%/);
   assert.match(css, /\.record-chapter/);
   assert.match(css, /\.linear-progress/);
   assert.match(css, /\.gaussian-primitive-demo/);
