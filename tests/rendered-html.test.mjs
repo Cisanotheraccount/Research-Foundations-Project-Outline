@@ -292,7 +292,8 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(applicationsFinale, /Playable environments/);
   assert.match(applicationsFinale, /Postcard combines Gaussian splats/);
   assert.match(applicationsFinale, /vastgaussian-mill19-building\.mp4/);
-  assert.match(applicationsFinale, /niantic-vps-workflow\.jpg/);
+  assert.match(applicationsFinale, /pokemon-go-reality-blending\.png/);
+  assert.doesNotMatch(applicationsFinale, /niantic-vps-workflow\.jpg/);
   assert.doesNotMatch(applicationsFinale, /Creative tools|painting-with-splats/);
   assert.match(applicationsFinale, /postcard-gaussian-game\.jpg/);
   assert.doesNotMatch(applicationsFinale, /Cultural heritage|gaussian-heritage/);
@@ -352,7 +353,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   await access(new URL("../public/media/applications/fastgs-train.mp4", import.meta.url));
   await access(new URL("../public/media/applications/vastgaussian-mill19-building.mp4", import.meta.url));
   await access(new URL("../public/media/applications/vastgaussian-mill19-building-poster.png", import.meta.url));
-  await access(new URL("../public/media/applications/niantic-vps-workflow.jpg", import.meta.url));
+  await access(new URL("../public/media/applications/pokemon-go-reality-blending.png", import.meta.url));
   await access(new URL("../public/media/applications/postcard-gaussian-game.jpg", import.meta.url));
   await access(new URL("../public/media/world-labs/ancient-stone-crypt-official.mp4", import.meta.url));
   await access(new URL("../public/media/world-labs/ancient-stone-crypt-thumbnail.webp", import.meta.url));

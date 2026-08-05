@@ -112,7 +112,7 @@ function AerialReconstructionVisual({ videoRef }: { videoRef: RefObject<HTMLVide
 function NianticVpsVisual() {
   return (
     <div className="application-visual niantic-vps-visual">
-      <img src="/media/applications/niantic-vps-workflow.jpg" alt="Official Niantic Lightship VPS workflow showing a scanned Wayspot, its 3D map, and cloud-based device localization" />
+      <img src="/media/applications/pokemon-go-reality-blending.png" alt="Official Pokémon GO Reality Blending comparison showing Bulbasaur positioned in a real outdoor space" />
       <div className="niantic-vps-sequence"><span>Optional player scans</span><i /><b>VPS 3D map</b></div>
     </div>
   );
