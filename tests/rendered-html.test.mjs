@@ -49,7 +49,7 @@ test("server-renders the rebuilt cinematic opening", async () => {
   assert.match(html, /Record first/);
   assert.match(html, /Superman \(2025\)/);
   assert.match(html, /FastGS trained a benchmark scene in about 100 seconds/);
-  assert.match(html, /A drone survey becomes a real-time 3D environment/);
+  assert.match(html, /Aerial photographs become an explorable 3DGS environment/);
   assert.match(html, /Reality itself can become a brush/);
   assert.match(html, /Fragile artifacts can remain explorable/);
   assert.match(html, /Potential application · inference/);
@@ -277,11 +277,14 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(applicationsFinale, /superman-4dgs-final-context\.jpg/);
   assert.match(applicationsFinale, /192-camera stage/);
   assert.match(applicationsFinale, /Fortress hologram/);
-  assert.match(applicationsFinale, /Aerial reconstruction/);
+  assert.match(applicationsFinale, /Aerial 3DGS reconstruction/);
+  assert.match(applicationsFinale, /Aerial photographs become an explorable 3DGS environment/);
   assert.match(applicationsFinale, /VastGaussian/);
-  assert.match(applicationsFinale, /Aerial frames/);
+  assert.match(applicationsFinale, /Aerial images/);
+  assert.match(applicationsFinale, /SfM \+ sparse points/);
   assert.match(applicationsFinale, /Parallel cells/);
-  assert.match(applicationsFinale, /3DGS world/);
+  assert.match(applicationsFinale, /Merged 3DGS/);
+  assert.doesNotMatch(applicationsFinale, /Robotics|SplaTAM|robotics-/);
   assert.match(applicationsFinale, /Creative tools/);
   assert.match(applicationsFinale, /Cultural heritage/);
   assert.match(applicationsFinale, /vastgaussian-mill19-building\.mp4/);

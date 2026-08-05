@@ -29,9 +29,9 @@ const applications = [
     source: "Nankai University · FastGS · CVPR 2026 Highlight",
   },
   {
-    label: "Aerial reconstruction",
-    title: "A drone survey becomes a real-time 3D environment.",
-    body: "VastGaussian reconstructs the 500 × 250 m Mill 19 site from high-resolution drone imagery. It trains spatial cells in parallel, then merges them into one photoreal Gaussian environment for real-time exploration.",
+    label: "Aerial 3DGS reconstruction",
+    title: "Aerial photographs become an explorable 3DGS environment.",
+    body: "VastGaussian starts from aerial images and SfM camera poses. It partitions the large scene into cells, optimizes them in parallel, then merges them into one continuous 3DGS environment for high-fidelity, real-time rendering.",
     source: "VastGaussian · Tsinghua + Huawei Noah’s Ark Lab · CVPR 2024",
   },
   {
@@ -97,14 +97,14 @@ function RapidFieldVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement |
   );
 }
 
-function RoboticsVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement | null> }) {
+function AerialReconstructionVisual({ videoRef }: { videoRef: RefObject<HTMLVideoElement | null> }) {
   return (
-    <div className="application-visual robotics-visual">
-      <video ref={videoRef} muted loop playsInline preload="metadata" poster="/media/applications/vastgaussian-mill19-building-poster.png" aria-label="Official VastGaussian fly-through of the Mill 19 Building scene reconstructed from drone imagery">
+    <div className="application-visual aerial-reconstruction-visual">
+      <video ref={videoRef} muted loop playsInline preload="metadata" poster="/media/applications/vastgaussian-mill19-building-poster.png" aria-label="Official VastGaussian fly-through of a large-scale 3D Gaussian environment reconstructed from aerial drone imagery">
         <source src="/media/applications/vastgaussian-mill19-building.mp4" type="video/mp4" />
       </video>
-      <div className="robotics-route" aria-hidden="true"><i /><i /><i /><i /><b /></div>
-      <div className="robotics-status"><span>Aerial frames</span><i /><span>Parallel cells</span><i /><span>3DGS world</span></div>
+      <div className="aerial-route" aria-hidden="true"><i /><i /><i /><i /><b /></div>
+      <div className="aerial-status"><span>Aerial images</span><i /><span>SfM + sparse points</span><i /><span>Parallel cells</span><i /><span>Merged 3DGS</span></div>
     </div>
   );
 }
@@ -135,7 +135,7 @@ function HeritageVisual() {
 export function ApplicationsFinale() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const roboticsVideoRef = useRef<HTMLVideoElement>(null);
+  const aerialVideoRef = useRef<HTMLVideoElement>(null);
   const animationRef = useRef<gsap.core.Timeline | null>(null);
   const activeRef = useRef(false);
   const wheelTotalRef = useRef(0);
@@ -145,7 +145,7 @@ export function ApplicationsFinale() {
     const section = sectionRef.current;
     if (!section) return;
     const video = videoRef.current;
-    const roboticsVideo = roboticsVideoRef.current;
+    const aerialVideo = aerialVideoRef.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const context = gsap.context(() => {
@@ -156,13 +156,13 @@ export function ApplicationsFinale() {
         onStart: () => {
           setState(timeline.reversed() ? "reversing" : "playing");
           void video?.play().catch(() => undefined);
-          void roboticsVideo?.play().catch(() => undefined);
+          void aerialVideo?.play().catch(() => undefined);
         },
         onComplete: () => setState("complete"),
         onReverseComplete: () => {
           setState("idle");
           video?.pause();
-          roboticsVideo?.pause();
+          aerialVideo?.pause();
         },
       });
       timeline.timeScale(0.82);
@@ -178,9 +178,9 @@ export function ApplicationsFinale() {
       gsap.set(".field-scan-grid", { opacity: 0, backgroundPosition: "0 0" });
       gsap.set(".fastgs-counter", { opacity: 0, y: 14 });
       gsap.set(".field-use-cases", { opacity: 0, y: 12 });
-      gsap.set(".robotics-visual video", { scale: 1.08, filter: "brightness(.48) saturate(.52) blur(5px)" });
-      gsap.set(".robotics-route", { opacity: 0, scale: 0.84 });
-      gsap.set(".robotics-status", { opacity: 0, y: 10 });
+      gsap.set(".aerial-reconstruction-visual video", { scale: 1.08, filter: "brightness(.48) saturate(.52) blur(5px)" });
+      gsap.set(".aerial-route", { opacity: 0, scale: 0.84 });
+      gsap.set(".aerial-status", { opacity: 0, y: 10 });
       gsap.set(".creative-visual img", { scale: 1.08, filter: "brightness(.5) saturate(.55) blur(5px)" });
       gsap.set(".creative-label", { opacity: 0, y: 12 });
       gsap.set(".heritage-visual img", { scale: 1.08, filter: "brightness(.48) saturate(.5) blur(5px)" });
@@ -202,9 +202,9 @@ export function ApplicationsFinale() {
         .to(".fastgs-counter b", { textContent: 100, snap: { textContent: 1 }, duration: 1.22, ease: "power2.out" }, 4.78)
         .to(".field-use-cases", { opacity: 1, y: 0, duration: 0.5 }, 5.5)
         .to(cards[3], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 6.2)
-        .to(".robotics-visual video", { scale: 1, filter: "brightness(.82) saturate(.76) blur(0px)", duration: 0.86 }, 6.34)
-        .to(".robotics-route", { opacity: 1, scale: 1, duration: 0.54 }, 6.7)
-        .to(".robotics-status", { opacity: 1, y: 0, duration: 0.44 }, 7.04)
+        .to(".aerial-reconstruction-visual video", { scale: 1, filter: "brightness(.82) saturate(.76) blur(0px)", duration: 0.86 }, 6.34)
+        .to(".aerial-route", { opacity: 1, scale: 1, duration: 0.54 }, 6.7)
+        .to(".aerial-status", { opacity: 1, y: 0, duration: 0.44 }, 7.04)
         .to(cards[4], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 7.78)
         .to(".creative-visual img", { scale: 1, filter: "brightness(.78) saturate(.82) blur(0px)", duration: 0.86 }, 7.94)
         .to(".creative-brush", { opacity: 1, y: 0, duration: 0.42 }, 8.34)
@@ -224,7 +224,7 @@ export function ApplicationsFinale() {
     return () => {
       animationRef.current = null;
       video?.pause();
-      roboticsVideo?.pause();
+      aerialVideo?.pause();
       context.revert();
     };
   }, []);
@@ -236,13 +236,13 @@ export function ApplicationsFinale() {
       activeRef.current = entry.intersectionRatio >= 0.2;
       if (!activeRef.current) {
         videoRef.current?.pause();
-        roboticsVideoRef.current?.pause();
+        aerialVideoRef.current?.pause();
       }
       const timeline = animationRef.current;
       if (activeRef.current && timeline && timeline.progress() <= 0.001 && !timeline.isActive()) {
         setState("playing");
         void videoRef.current?.play().catch(() => undefined);
-        void roboticsVideoRef.current?.play().catch(() => undefined);
+        void aerialVideoRef.current?.play().catch(() => undefined);
         timeline.play();
       }
     }, { threshold: [0, 0.2, 0.46, 0.7] });
@@ -336,7 +336,7 @@ export function ApplicationsFinale() {
             {index === 0 && <EverydayVisual />}
             {index === 1 && <CinemaVisual />}
             {index === 2 && <RapidFieldVisual videoRef={videoRef} />}
-            {index === 3 && <RoboticsVisual videoRef={roboticsVideoRef} />}
+            {index === 3 && <AerialReconstructionVisual videoRef={aerialVideoRef} />}
             {index === 4 && <CreativeVisual />}
             {index === 5 && <HeritageVisual />}
             <div className="application-copy">

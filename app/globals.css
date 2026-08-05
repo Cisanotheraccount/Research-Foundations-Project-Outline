@@ -211,20 +211,20 @@ button { color: inherit; font: inherit; -webkit-tap-highlight-color: transparent
 .field-use-cases { position: absolute; z-index: 7; right: 14px; bottom: 13px; left: 14px; display: grid; grid-template-columns: auto 1fr auto 1fr; align-items: center; gap: 8px; color: #e8e8ed; font-size: 6px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
 .field-use-cases i { display: block; height: 1px; background: rgba(255,255,255,.42); }
 .field-use-cases small { grid-column: 1/5; color: rgba(255,255,255,.48); font-size: 5px; letter-spacing: .12em; }
-.robotics-visual video { object-fit: cover; filter: brightness(.82) saturate(.76); }
-.robotics-route { position: absolute; z-index: 6; inset: 16% 15%; filter: drop-shadow(0 0 7px rgba(255,255,255,.52)); }
-.robotics-route::before,.robotics-route::after { position: absolute; height: 1px; transform-origin: left; background: rgba(255,255,255,.72); content: ""; }
-.robotics-route::before { top: 54%; left: 6%; width: 45%; transform: rotate(-13deg); }
-.robotics-route::after { top: 43%; left: 48%; width: 39%; transform: rotate(18deg); }
-.robotics-route i { position: absolute; width: 6px; height: 6px; border: 1px solid rgba(255,255,255,.82); border-radius: 50%; background: #080809; }
-.robotics-route i:nth-child(1) { top: 55%; left: 5%; }
-.robotics-route i:nth-child(2) { top: 42%; left: 31%; }
-.robotics-route i:nth-child(3) { top: 37%; left: 51%; }
-.robotics-route i:nth-child(4) { top: 52%; left: 85%; }
-.robotics-route b { position: absolute; top: 31%; left: 46%; width: 20px; height: 13px; border: 1px solid rgba(255,255,255,.72); background: rgba(0,0,0,.58); }
-.robotics-route b::after { position: absolute; top: 100%; left: 50%; width: 1px; height: 8px; transform: translateX(-50%); background: rgba(255,255,255,.72); content: ""; }
-.robotics-status { position: absolute; z-index: 8; right: 12px; bottom: 10px; left: 12px; display: grid; grid-template-columns: auto 1fr auto 1fr auto; align-items: center; gap: 7px; color: rgba(255,255,255,.78); font-size: 6px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
-.robotics-status i { display: block; height: 1px; background: rgba(255,255,255,.42); }
+.aerial-reconstruction-visual video { object-fit: cover; filter: brightness(.82) saturate(.76); }
+.aerial-route { position: absolute; z-index: 6; inset: 16% 15%; filter: drop-shadow(0 0 7px rgba(255,255,255,.52)); }
+.aerial-route::before,.aerial-route::after { position: absolute; height: 1px; transform-origin: left; background: rgba(255,255,255,.72); content: ""; }
+.aerial-route::before { top: 54%; left: 6%; width: 45%; transform: rotate(-13deg); }
+.aerial-route::after { top: 43%; left: 48%; width: 39%; transform: rotate(18deg); }
+.aerial-route i { position: absolute; width: 6px; height: 6px; border: 1px solid rgba(255,255,255,.82); border-radius: 50%; background: #080809; }
+.aerial-route i:nth-child(1) { top: 55%; left: 5%; }
+.aerial-route i:nth-child(2) { top: 42%; left: 31%; }
+.aerial-route i:nth-child(3) { top: 37%; left: 51%; }
+.aerial-route i:nth-child(4) { top: 52%; left: 85%; }
+.aerial-route b { position: absolute; top: 31%; left: 46%; width: 20px; height: 13px; border: 1px solid rgba(255,255,255,.72); background: rgba(0,0,0,.58); }
+.aerial-route b::after { position: absolute; top: 100%; left: 50%; width: 1px; height: 8px; transform: translateX(-50%); background: rgba(255,255,255,.72); content: ""; }
+.aerial-status { position: absolute; z-index: 8; right: 12px; bottom: 10px; left: 12px; display: grid; grid-template-columns: auto minmax(10px,1fr) auto minmax(10px,1fr) auto minmax(10px,1fr) auto; align-items: center; gap: 5px; color: rgba(255,255,255,.78); font-size: 5.5px; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; }
+.aerial-status i { display: block; height: 1px; background: rgba(255,255,255,.42); }
 .creative-visual { background: #ecece9; }
 .creative-visual img { object-fit: cover; object-position: center; filter: brightness(.78) saturate(.82); }
 .creative-label { position: absolute; z-index: 8; top: 12px; display: grid; gap: 2px; padding: 7px 9px; border: 1px solid rgba(0,0,0,.2); color: #111; background: rgba(245,245,247,.82); box-shadow: 0 8px 22px rgba(0,0,0,.18); text-transform: uppercase; backdrop-filter: blur(12px); }
