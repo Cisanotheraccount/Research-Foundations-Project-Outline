@@ -35,10 +35,10 @@ const applications = [
     source: "VastGaussian · Tsinghua + Huawei Noah’s Ark Lab · CVPR 2024",
   },
   {
-    label: "Creative tools",
-    title: "Reality itself can become a brush.",
-    body: "Artists can pick up captured texture and geometry, then paint new spatial scenes with Gaussian splat brushes in real time.",
-    source: "U of Toronto + NVIDIA · SIGGRAPH 2025",
+    label: "Crowdsourced spatial mapping",
+    title: "Pokémon GO players helped turn landmarks into machine-readable 3D maps.",
+    body: "Through optional PokéStop Scan tasks, players recorded short videos around public landmarks. Niantic processed those images into 3D maps for Lightship VPS, aligning persistent AR content with the physical world.",
+    source: "Niantic · PokéStop Scanning 2020 · Lightship VPS 2022",
   },
   {
     label: "Cultural heritage",
@@ -109,12 +109,11 @@ function AerialReconstructionVisual({ videoRef }: { videoRef: RefObject<HTMLVide
   );
 }
 
-function CreativeVisual() {
+function NianticVpsVisual() {
   return (
-    <div className="application-visual creative-visual">
-      <img src="/media/applications/painting-with-splats.jpg" alt="A captured garden remixed with trees, flowers, birds and a path using 3D Gaussian splat brushes" />
-      <div className="creative-label creative-brush"><span>Captured brush</span><b>Reality</b></div>
-      <div className="creative-label creative-result"><span>Painted world</span><b>Remix</b></div>
+    <div className="application-visual niantic-vps-visual">
+      <img src="/media/applications/niantic-vps-workflow.jpg" alt="Official Niantic Lightship VPS workflow showing a scanned Wayspot, its 3D map, and cloud-based device localization" />
+      <div className="niantic-vps-sequence"><span>Optional player scans</span><i /><b>VPS 3D map</b></div>
     </div>
   );
 }
@@ -181,8 +180,8 @@ export function ApplicationsFinale() {
       gsap.set(".aerial-reconstruction-visual video", { scale: 1.08, filter: "brightness(.48) saturate(.52) blur(5px)" });
       gsap.set(".aerial-route", { opacity: 0, scale: 0.84 });
       gsap.set(".aerial-status", { opacity: 0, y: 10 });
-      gsap.set(".creative-visual img", { scale: 1.08, filter: "brightness(.5) saturate(.55) blur(5px)" });
-      gsap.set(".creative-label", { opacity: 0, y: 12 });
+      gsap.set(".niantic-vps-visual img", { scale: 1.08, filter: "brightness(.5) saturate(.55) blur(5px)" });
+      gsap.set(".niantic-vps-sequence", { opacity: 0, y: 12 });
       gsap.set(".heritage-visual img", { scale: 1.08, filter: "brightness(.48) saturate(.5) blur(5px)" });
       gsap.set(".heritage-sequence", { opacity: 0, y: 10 });
 
@@ -206,9 +205,8 @@ export function ApplicationsFinale() {
         .to(".aerial-route", { opacity: 1, scale: 1, duration: 0.54 }, 6.7)
         .to(".aerial-status", { opacity: 1, y: 0, duration: 0.44 }, 7.04)
         .to(cards[4], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 7.78)
-        .to(".creative-visual img", { scale: 1, filter: "brightness(.78) saturate(.82) blur(0px)", duration: 0.86 }, 7.94)
-        .to(".creative-brush", { opacity: 1, y: 0, duration: 0.42 }, 8.34)
-        .to(".creative-result", { opacity: 1, y: 0, duration: 0.42 }, 8.62)
+        .to(".niantic-vps-visual img", { scale: 1, filter: "brightness(.88) saturate(.9) blur(0px)", duration: 0.86 }, 7.94)
+        .to(".niantic-vps-sequence", { opacity: 1, y: 0, duration: 0.48 }, 8.34)
         .to(cards[5], { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.72 }, 9.28)
         .to(".heritage-visual img", { scale: 1, filter: "brightness(.8) saturate(.72) blur(0px)", duration: 0.86 }, 9.44)
         .to(".heritage-sequence", { opacity: 1, y: 0, duration: 0.5 }, 9.94)
@@ -337,7 +335,7 @@ export function ApplicationsFinale() {
             {index === 1 && <CinemaVisual />}
             {index === 2 && <RapidFieldVisual videoRef={videoRef} />}
             {index === 3 && <AerialReconstructionVisual videoRef={aerialVideoRef} />}
-            {index === 4 && <CreativeVisual />}
+            {index === 4 && <NianticVpsVisual />}
             {index === 5 && <HeritageVisual />}
             <div className="application-copy">
               <span>0{index + 1} · {application.label}</span>

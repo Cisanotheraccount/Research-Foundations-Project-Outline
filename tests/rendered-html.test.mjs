@@ -50,7 +50,7 @@ test("server-renders the rebuilt cinematic opening", async () => {
   assert.match(html, /Superman \(2025\)/);
   assert.match(html, /FastGS trained a benchmark scene in about 100 seconds/);
   assert.match(html, /Aerial photographs become an explorable 3DGS environment/);
-  assert.match(html, /Reality itself can become a brush/);
+  assert.match(html, /Pokémon GO players helped turn landmarks into machine-readable 3D maps/);
   assert.match(html, /Fragile artifacts can remain explorable/);
   assert.match(html, /Potential application · inference/);
   assert.match(html, /Page 1 of 12/);
@@ -286,10 +286,13 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   assert.match(applicationsFinale, /Parallel cells/);
   assert.match(applicationsFinale, /Merged 3DGS/);
   assert.doesNotMatch(applicationsFinale, /Robotics|SplaTAM|robotics-/);
-  assert.match(applicationsFinale, /Creative tools/);
+  assert.match(applicationsFinale, /Crowdsourced spatial mapping/);
+  assert.match(applicationsFinale, /optional PokéStop Scan tasks/);
+  assert.match(applicationsFinale, /Lightship VPS/);
   assert.match(applicationsFinale, /Cultural heritage/);
   assert.match(applicationsFinale, /vastgaussian-mill19-building\.mp4/);
-  assert.match(applicationsFinale, /painting-with-splats\.jpg/);
+  assert.match(applicationsFinale, /niantic-vps-workflow\.jpg/);
+  assert.doesNotMatch(applicationsFinale, /Creative tools|painting-with-splats/);
   assert.match(applicationsFinale, /gaussian-heritage\.jpg/);
   assert.match(applicationsFinale, /document\.getElementById\("ending"\)/);
   assert.doesNotMatch(applicationsFinale, /cinema-camera-frame/);
@@ -347,7 +350,7 @@ test("keeps the opening continuous, user-controlled and accessible", async () =>
   await access(new URL("../public/media/applications/fastgs-train.mp4", import.meta.url));
   await access(new URL("../public/media/applications/vastgaussian-mill19-building.mp4", import.meta.url));
   await access(new URL("../public/media/applications/vastgaussian-mill19-building-poster.png", import.meta.url));
-  await access(new URL("../public/media/applications/painting-with-splats.jpg", import.meta.url));
+  await access(new URL("../public/media/applications/niantic-vps-workflow.jpg", import.meta.url));
   await access(new URL("../public/media/applications/gaussian-heritage.jpg", import.meta.url));
   await access(new URL("../public/media/world-labs/ancient-stone-crypt-official.mp4", import.meta.url));
   await access(new URL("../public/media/world-labs/ancient-stone-crypt-thumbnail.webp", import.meta.url));
